@@ -1,0 +1,33 @@
+{
+    "keyboard": {
+        "quit_key": "q",
+        "special_keys": ["shift", "ctrl", "alt", "enter", "space"],
+        "print_screen_key": "print_screen"
+    },
+    "mouse": {
+        "track_press": true,
+        "track_release": true
+    },
+    "Event_Monitor_window": {
+        "title": "Event Monitor",
+        "width": 800,
+        "height": 50,
+        "opacity": 0.8,
+        "position": {
+            "x": 10,
+            "y": 10
+        }
+    },
+    "event": {
+        "priority": "medium",
+        "step_prefix": "Step"
+    },
+    "Print_Screen_window": {
+        "PSW_width": 600,
+        "PSW_height": 600,
+        "PSW_position": {
+            "PSW_x": 10,
+            "PSW_y": 10
+        }
+    }
+} 
