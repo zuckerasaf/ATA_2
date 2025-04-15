@@ -17,6 +17,7 @@ from src.utils.test import Test
 from src.utils.config import Config
 from src.utils.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename, get_latest_json_base_filename
 
 config = Config()
 
@@ -25,10 +26,12 @@ class TestRunner:
         self.test = test
         self.running = True
         self.quit_key = config.get_keyboard_quit_key()
+        self.print_screen_key = config.get_print_screen_key()
         self.keyboard_listener = None
         self.mouse_controller = mouse.Controller()
         self.keyboard_controller = keyboard.Controller()
         self.event_window = None
+        self.screenshot_counter = 0
         
     def on_press(self, key):
         try:
@@ -41,7 +44,44 @@ class TestRunner:
                     self.event_window.after(0, self.event_window.destroy)
                 return False
         except AttributeError:
-            pass
+            # Handle special keys
+            if key.name in config.get_special_keys() or key.name == self.print_screen_key:
+                if key.name == self.print_screen_key:
+                    print("\nPrint screen key pressed...")
+                    # Add a small delay to allow the window to update
+                    time.sleep(0.1)  # 100ms delay
+                    screenshot = capture_screen()
+                    if screenshot:
+                        # Get base filename and generate screenshot filename
+                        base_filename = get_latest_json_base_filename()
+                        if base_filename:
+                            self.screenshot_counter += 1
+                            screenshot_filename, screenshot_path = generate_screenshot_filename(
+                                base_filename, self.screenshot_counter
+                            )
+                            
+                            if screenshot_filename and screenshot_path:
+                                # Create event for the screenshot
+                                event = Event(
+                                    counter=len(self.test.events) + 1,
+                                    time=int(time.time() * 1000),
+                                    position=(0, 0),
+                                    event_type="keyboard",
+                                    action=f"Special key '{self.print_screen_key}' pressed",
+                                    priority=config.get_event_priority(),
+                                    step_on=f"{config.get_step_prefix()} {len(self.test.events) + 1}",
+                                    time_from_last=0,
+                                    step_desc="Screen capture",
+                                    step_accep="Screenshot saved successfully",
+                                    step_resau="none",
+                                    screenshot=screenshot
+                                )
+                                
+                                # Save the screenshot and update the event window
+                                event.save_screenshot(screenshot_path)
+                                self.test.add_event(event)
+                                if self.event_window:
+                                    self.event_window.update_event(event)
             
     def execute_mouse_event(self, event):
         """Execute a mouse event."""
@@ -77,6 +117,31 @@ class TestRunner:
                 self.keyboard_listener.stop()
             if self.event_window:
                 self.event_window.after(0, self.event_window.destroy)
+            return
+            
+        # If this is a print screen event, capture the screen
+        if key_text == self.print_screen_key:
+            print("\nPrint screen key pressed...")
+            # Add a small delay to allow the window to update
+            time.sleep(0.1)  # 100ms delay
+            screenshot = capture_screen()
+            if screenshot:
+                # Get base filename and generate screenshot filename
+                base_filename = get_latest_json_base_filename()
+                if base_filename:
+                    self.screenshot_counter += 1
+                    screenshot_filename, screenshot_path = generate_screenshot_filename(
+                        base_filename, self.screenshot_counter
+                    )
+                    
+                    if screenshot_filename and screenshot_path:
+                        # Update the event with the screenshot
+                        event.screenshot = screenshot
+                        event.save_screenshot(screenshot_path)
+                        event.step_desc = "Screen capture"
+                        event.step_accep = "Screenshot saved successfully"
+                        if self.event_window:
+                            self.event_window.update_event(event)
             return
         
         # Handle special keys
@@ -177,21 +242,8 @@ def create_test_from_json(filepath):
         
         # Add events from JSON
         for event_data in data.get('events', []):
-            # Create Event object from the dictionary data
-            event = Event(
-                counter=event_data.get('counter', 0),
-                time=event_data.get('time', 0),
-                position=tuple(event_data.get('position', (0, 0))),
-                event_type=event_data.get('event_type', ''),
-                action=event_data.get('action', ''),
-                priority=event_data.get('priority', ''),
-                step_on=event_data.get('step_on', ''),
-                time_from_last=event_data.get('time_from_last', 0),
-                step_desc=event_data.get('step_desc', 'none'),
-                step_accep=event_data.get('step_accep', 'none'),
-                step_resau=event_data.get('step_resau', 'none'),
-                pic=event_data.get('pic', 'none')
-            )
+            # Convert dictionary to Event object using from_dict
+            event = Event.from_dict(event_data)
             test.add_event(event)
             
         return test

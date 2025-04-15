@@ -8,8 +8,27 @@ from datetime import datetime
 from typing import List
 from src.utils.event_mouse_keyboard import Event
 
+class CompactJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles base64 image data in a compact way."""
+    def default(self, obj):
+        return super().default(obj)
+    
+    def encode(self, obj):
+        if isinstance(obj, dict):
+            # For dictionaries, handle image_data specially
+            if 'image_data' in obj:
+                # Replace long base64 string with a placeholder
+                obj['image_data'] = f"[BASE64_IMAGE_DATA_LENGTH={len(obj['image_data'])}]"
+            # Recursively encode all values
+            return '{' + ','.join(f'{self.encode(k)}:{self.encode(v)}' for k, v in obj.items()) + '}'
+        elif isinstance(obj, list):
+            # For lists, recursively encode all items
+            return '[' + ','.join(self.encode(item) for item in obj) + ']'
+        else:
+            return super().encode(obj)
+
 class Test:
-    def __init__(self, config: str = "", comment1: str = "", comment2: str = ""):
+    def __init__(self, config: str = "", comment1: str = "", comment2: str = "", accuracy_level: int = 5, starting_point: str = "none"):
         """
         Initialize a new Test instance.
         
@@ -17,12 +36,25 @@ class Test:
             config (str): Configuration string for the test
             comment1 (str): First comment for the test
             comment2 (str): Second comment for the test
+            accuracy_level (int): Accuracy level between 1-10 (default: 5)
+            starting_point (str): Starting point for the test (default: "none")
         """
         self.events: List[Event] = []
         self.config = config
         self.comment1 = comment1
         self.comment2 = comment2
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # Validate and set accuracy level
+        if not isinstance(accuracy_level, int) or accuracy_level < 1 or accuracy_level > 10:
+            raise ValueError("Accuracy level must be an integer between 1 and 10")
+        self.accuracy_level = accuracy_level
+        
+        # Validate and set starting point
+        valid_starting_points = ["none", "desktop", "point_A", "point_B", "point_C"]
+        if starting_point not in valid_starting_points:
+            raise ValueError(f"Starting point must be one of: {valid_starting_points}")
+        self.starting_point = starting_point
     
     def add_event(self, event: Event) -> None:
         """
@@ -83,6 +115,53 @@ class Test:
             tuple: (comment1, comment2)
         """
         return (self.comment1, self.comment2)
+        
+    def set_accuracy_level(self, level: int) -> None:
+        """
+        Set the accuracy level.
+        
+        Args:
+            level (int): Accuracy level between 1-10
+            
+        Raises:
+            ValueError: If level is not between 1 and 10
+        """
+        if not isinstance(level, int) or level < 1 or level > 10:
+            raise ValueError("Accuracy level must be an integer between 1 and 10")
+        self.accuracy_level = level
+        
+    def get_accuracy_level(self) -> int:
+        """
+        Get the accuracy level.
+        
+        Returns:
+            int: Current accuracy level (1-10)
+        """
+        return self.accuracy_level
+        
+    def set_starting_point(self, point: str) -> None:
+        """
+        Set the starting point.
+        
+        Args:
+            point (str): Starting point for the test
+            
+        Raises:
+            ValueError: If point is not a valid starting point
+        """
+        valid_starting_points = ["none", "desktop", "point_A", "point_B", "point_C"]
+        if point not in valid_starting_points:
+            raise ValueError(f"Starting point must be one of: {valid_starting_points}")
+        self.starting_point = point
+        
+    def get_starting_point(self) -> str:
+        """
+        Get the starting point.
+        
+        Returns:
+            str: Current starting point
+        """
+        return self.starting_point
     
     def to_dict(self) -> dict:
         """
@@ -92,11 +171,13 @@ class Test:
             dict: Dictionary representation of the test
         """
         return {
-            'events': [event.__dict__ for event in self.events],
+            'events': [event.to_dict() for event in self.events],
             'config': self.config,
             'comment1': self.comment1,
             'comment2': self.comment2,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'accuracy_level': self.accuracy_level,
+            'starting_point': self.starting_point
         }
     
     @classmethod
@@ -113,7 +194,9 @@ class Test:
         test = cls(
             config=data.get('config', ''),
             comment1=data.get('comment1', ''),
-            comment2=data.get('comment2', '')
+            comment2=data.get('comment2', ''),
+            accuracy_level=data.get('accuracy_level', 5),
+            starting_point=data.get('starting_point', 'none')
         )
         
         # Reconstruct events from dictionary data
@@ -148,8 +231,8 @@ class Test:
         filename = f"test_{self.timestamp}.json"
         filepath = os.path.join(db_path, filename)
         
-        # Convert test to dictionary and save to file
+        # Convert test to dictionary and save to file using custom encoder
         with open(filepath, 'w') as f:
-            json.dump(self.to_dict(), f, indent=4)
+            json.dump(self.to_dict(), f, indent=4, cls=CompactJSONEncoder)
             
         return filepath 

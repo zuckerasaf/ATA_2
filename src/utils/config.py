@@ -101,4 +101,32 @@ class Config:
     def get_Print_Screen_window_position(self) -> tuple:
         """Get the Print Screen window position as (x, y)."""
         pos = self.get('Print_Screen_window.PSW_position', {'PSW_x': 10, 'PSW_y': 10})
-        return (pos.get('PSW_x', 10), pos.get('PSW_y', 10)) 
+        return (pos.get('PSW_x', 10), pos.get('PSW_y', 10))
+        
+    def get_Control_Panel_config(self) -> dict:
+        """Get the Control Panel configuration."""
+        return self.get('Control_Panel', {
+            'title': 'Test Control Panel',
+            'width': 1000,
+            'height': 600,
+            'position': {
+                'x': 100,
+                'y': 100
+            }
+        })
+        
+    def get_starting_point(self) -> str:
+        """Get the configured starting point for tests."""
+        return self.get('startingPoint', 'none')
+        
+    def get_Test_Name_Dialog_config(self) -> dict:
+        """Get the Test Name Dialog configuration."""
+        return self.get('Test_Name_Dialog', {
+            'title': 'New Test Configuration',
+            'width': 400,
+            'height': 500,
+            'position': {
+                'x': 200,
+                'y': 200
+            }
+        }) 

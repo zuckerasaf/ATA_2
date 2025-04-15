@@ -29,5 +29,28 @@
             "PSW_x": 10,
             "PSW_y": 10
         }
+    },
+    "startingPoint": ["none", "desktop", "point_A", "point_B", "point_C"],
+    "Control_Panel": {
+        "title": "Test Control Panel",
+        "width": 1000,
+        "height": 600,
+        "position": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "Test_Name_Dialog": {
+        "title": "New Test Configuration",
+        "width": 400,
+        "height": 500,
+        "position": {
+            "x": 200,
+            "y": 200
+        }
+    },
+    "paths": {
+        "db_path": "C:\\projectPython\\ATA_V2\\DB",
+        "test_path": "Test"
     }
 } 

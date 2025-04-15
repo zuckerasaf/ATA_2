@@ -9,8 +9,8 @@ import threading
 from pynput import mouse, keyboard
 from datetime import datetime
 import atexit
-from PIL import ImageGrab
 import json
+import subprocess
 
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -20,9 +20,19 @@ from src.utils.event_mouse_keyboard import Event
 from src.utils.event_window import EventWindow
 from src.utils.config import Config
 from src.utils.test import Test
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename
+from src.utils.starting_points import go_to_starting_point
 
 LOCK_FILE = "cursor_listener.lock"
 config = Config()
+
+def restart_control_panel():
+    """Start the control panel in a new process."""
+    try:
+        control_panel_path = os.path.join(project_root, "src", "gui", "control_panel.py")
+        subprocess.Popen([sys.executable, control_panel_path])
+    except Exception as e:
+        print(f"Error starting control panel: {e}")
 
 def cleanup():
     """Clean up function to remove lock file on exit."""
@@ -57,7 +67,7 @@ def close_existing_mouse_threads():
         print(f"Warning: Could not close existing threads: {e}")
 
 class EventListener:
-    def __init__(self, event_window):
+    def __init__(self, event_window, test_name=None):
         self.counter = 0
         self.screenshot_counter = 0
         self.start_time = int(time.time() * 1000)
@@ -66,49 +76,39 @@ class EventListener:
         self.event_window = event_window
         self.quit_key = config.get_keyboard_quit_key()
         self.print_screen_key = config.get_print_screen_key()
+        self.test_name = test_name
         
         # Create a new test instance
         self.current_test = Test(
             config="nothing for now",
-            comment1="Test started",
+            comment1=f"Test: {test_name}" if test_name else "Test started",
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
         
-    def capture_screen(self):
-        """Capture the screen and save it as a JPG file."""
+    def save_test(self):
+        """Save the test data with custom filename if provided."""
         try:
-            # Get the DB directory path
-            db_dir = os.path.join(project_root, "DB")
-            
-            # Get the most recent JSON file name (without extension)
-            json_files = [f for f in os.listdir(db_dir) if f.endswith('.json')]
-            if not json_files:
-                print("No JSON files found in the DB directory.")
-                return
+            if self.test_name:
+                # Create DB/Test directory structure if it doesn't exist
+                db_path = os.path.join(project_root, "DB", "Test", self.test_name)
+                os.makedirs(db_path, exist_ok=True)
                 
-            base_filename = os.path.splitext(json_files[0])[0]
-            
-            # Create screenshot filename with counter
-            self.screenshot_counter += 1
-            screenshot_filename = f"{base_filename}_{self.screenshot_counter}.jpg"
-            screenshot_path = os.path.join(db_dir, screenshot_filename)
-            
-            # Get Print Screen window configuration
-            width, height = config.get_Print_Screen_window_size()
-            x, y = config.get_Print_Screen_window_position()
-            
-            # Capture the screen with configured dimensions and position
-            screenshot = ImageGrab.grab(bbox=(x, y, x + width, y + height))
-            
-            # Save the screenshot
-            screenshot.save(screenshot_path, 'JPEG')
-            print(f"Screenshot saved: {screenshot_filename}")
-            
-            return screenshot_filename
+                # Set custom filename
+                filename = f"{self.test_name}.json"
+                filepath = os.path.join(db_path, filename)
+                
+                # Save with custom filename
+                with open(filepath, 'w') as f:
+                    json.dump(self.current_test.to_dict(), f, indent=4)
+                print(f"Test data saved to: {filepath}")
+                return filepath
+            else:
+                # Use default save method
+                return self.current_test.save_to_file()
         except Exception as e:
-            print(f"Error capturing screenshot: {e}")
-            return None
-        
+            print(f"Error saving test data: {e}")
+            raise
+
     def on_click(self, x, y, button, pressed):
         if not self.running:
             return False
@@ -179,15 +179,37 @@ class EventListener:
                 print("\nStopping event listener...")
                 self.running = False
                 
+                # Add the final event to test before saving
+                self.current_test.add_event(event)
+                
+                # Save any pending screenshots and convert to base64
+                for event in self.current_test.events:
+                    if event.screenshot:
+                        # Generate filename for unsaved screenshot if needed
+                        if not event.pic:
+                            self.screenshot_counter += 1
+                            screenshot_filename, screenshot_path = generate_screenshot_filename(
+                                self.test_name, self.screenshot_counter
+                            )
+                            if screenshot_filename and screenshot_path:
+                                event.save_screenshot(screenshot_path)
+                        
+                        # Convert screenshot to base64 if not already done
+                        if not event.image_data:
+                            event._convert_screenshot_to_base64()
+                
                 # Save the test data
                 try:
-                    filepath = self.current_test.save_to_file()
-                    print(f"Test data saved to: {filepath}")
+                    filepath = self.save_test()
                 except Exception as e:
                     print(f"Error saving test data: {e}")
                 
-                # Schedule window destruction in the main thread
-                self.event_window.after(0, self.event_window.destroy)
+                # Schedule window destruction and control panel restart in the main thread
+                def cleanup_and_restart():
+                    self.event_window.destroy()
+                    restart_control_panel()
+                
+                self.event_window.after(0, cleanup_and_restart)
                 return False
                 
         except AttributeError:
@@ -213,11 +235,24 @@ class EventListener:
                 
                 if key.name == self.print_screen_key:
                     print("\nPrint screen key pressed...")
-                    screenshot_filename = self.capture_screen()
-                    if screenshot_filename:
-                        event.step_desc = "Screen capture"
-                        event.step_accep = "Screenshot saved successfully"
-                        event.pic = screenshot_filename
+                    # Add a small delay to allow the window to update
+                    time.sleep(0.1)  # 100ms delay
+                    screenshot = capture_screen()
+                    if screenshot:
+                        # Generate screenshot filename with test name
+                        self.screenshot_counter += 1
+                        screenshot_filename, screenshot_path = generate_screenshot_filename(
+                            self.test_name, self.screenshot_counter
+                        )
+                        
+                        if screenshot_filename and screenshot_path:
+                            # Store screenshot in event and save it
+                            event.screenshot = screenshot
+                            event.save_screenshot(screenshot_path)
+                            event.step_desc = "Screen capture"
+                            event.step_accep = "Screenshot saved successfully"
+                            # Update window with final event data
+                            self.event_window.update_event(event)
                     else:
                         return True
             else:
@@ -227,7 +262,14 @@ class EventListener:
         self.current_test.add_event(event)
         self.last_event_time = current_time
 
-def main():
+def main(test_name=None, starting_point="none"):
+    """
+    Main function to start recording a test.
+    
+    Args:
+        test_name (str, optional): Name of the test to record
+        starting_point (str, optional): Starting point for the test ("desktop", "point_A", etc.)
+    """
     # Register cleanup function
     atexit.register(cleanup)
     
@@ -235,11 +277,19 @@ def main():
     if is_already_running():
         return
         
+    # Navigate to starting point if specified
+    if starting_point.lower() != "none":
+        print(f"Navigating to starting point: {starting_point}")
+        if not go_to_starting_point(starting_point):
+            print("Failed to navigate to starting point. Recording cancelled.")
+            cleanup()
+            return
+        
     # Create and show the event window
     event_window = EventWindow()
     
-    # Create event listener
-    listener = EventListener(event_window)
+    # Create event listener with test name
+    listener = EventListener(event_window, test_name)
     
     # Create and start mouse and keyboard listeners
     mouse_listener = mouse.Listener(on_click=listener.on_click)
