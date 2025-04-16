@@ -1,70 +1,37 @@
 """
-Mouse click listener for creating Event objects.
+Test recording module for capturing mouse and keyboard events.
 """
 
 import os
 import sys
 import time
-import threading
-from pynput import mouse, keyboard
-from datetime import datetime
-import atexit
 import json
-import subprocess
-
-# Add project root to Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-sys.path.insert(0, project_root)
-
-from src.utils.event_mouse_keyboard import Event
-from src.utils.event_window import EventWindow
+import atexit
+import threading
+import tkinter as tk
+from datetime import datetime
+from pynput import mouse, keyboard
 from src.utils.config import Config
 from src.utils.test import Test
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename
-from src.utils.starting_points import go_to_starting_point
+from src.utils.event_mouse_keyboard import Event
+from src.utils.process_utils import is_already_running, register_cleanup
+from src.utils.app_lifecycle import restart_control_panel
+from src.gui.event_window import EventWindow
+from src.gui.screenshot_dialog import ScreenshotDialog
 
-LOCK_FILE = "cursor_listener.lock"
+
+# Global lock file
+lock_file = "cursor_listener.lock"
 config = Config()
-
-def restart_control_panel():
-    """Start the control panel in a new process."""
-    try:
-        control_panel_path = os.path.join(project_root, "src", "gui", "control_panel.py")
-        subprocess.Popen([sys.executable, control_panel_path])
-    except Exception as e:
-        print(f"Error starting control panel: {e}")
-
-def cleanup():
-    """Clean up function to remove lock file on exit."""
-    try:
-        if os.path.exists(LOCK_FILE):
-            os.remove(LOCK_FILE)
-    except:
-        pass
-
-def is_already_running():
-    """Check if another instance is already running."""
-    if os.path.exists(LOCK_FILE):
-        print("Another instance is already running!")
-        print("If this is an error, manually delete the cursor_listener.lock file.")
-        return True
-    
-    # Create lock file
-    try:
-        with open(LOCK_FILE, 'w') as f:
-            f.write(str(os.getpid()))
-        return False
-    except:
-        return True
 
 def close_existing_mouse_threads():
     """Close any existing mouse listener threads."""
-    try:
-        for thread in threading.enumerate():
-            if isinstance(thread, mouse.Listener):
-                thread.stop()
-    except Exception as e:
-        print(f"Warning: Could not close existing threads: {e}")
+    for thread in threading.enumerate():
+        if thread.name == "MouseListener":
+            thread._stop()
+            thread.join()
+
 
 class EventListener:
     def __init__(self, event_window, test_name=None):
@@ -77,6 +44,7 @@ class EventListener:
         self.quit_key = config.get_keyboard_quit_key()
         self.print_screen_key = config.get_print_screen_key()
         self.test_name = test_name
+        self.dialog_open = False  # Flag to track if dialog is open
         
         # Create a new test instance
         self.current_test = Test(
@@ -89,13 +57,18 @@ class EventListener:
         """Save the test data with custom filename if provided."""
         try:
             if self.test_name:
+                # Get paths from config
+                paths_config = config.get('paths', {})
+                db_path = paths_config.get('db_path', "DB")
+                test_path = paths_config.get('test_path', "Test")
+                
                 # Create DB/Test directory structure if it doesn't exist
-                db_path = os.path.join(project_root, "DB", "Test", self.test_name)
-                os.makedirs(db_path, exist_ok=True)
+                test_dir = os.path.join(test_path, self.test_name)
+                os.makedirs(test_dir, exist_ok=True)
                 
                 # Set custom filename
                 filename = f"{self.test_name}.json"
-                filepath = os.path.join(db_path, filename)
+                filepath = os.path.join(test_dir, filename)
                 
                 # Save with custom filename
                 with open(filepath, 'w') as f:
@@ -263,60 +236,48 @@ class EventListener:
         self.last_event_time = current_time
 
 def main(test_name=None, starting_point="none"):
-    """
-    Main function to start recording a test.
-    
-    Args:
-        test_name (str, optional): Name of the test to record
-        starting_point (str, optional): Starting point for the test ("desktop", "point_A", etc.)
-    """
+    """Main function to start the event listener."""
+    # Check if another instance is already running
+    if is_already_running(lock_file):
+        sys.exit(1)
+        
     # Register cleanup function
-    atexit.register(cleanup)
+    register_cleanup(lock_file)
     
-    # Check if already running
-    if is_already_running():
-        return
-        
-    # Navigate to starting point if specified
-    if starting_point.lower() != "none":
-        print(f"Navigating to starting point: {starting_point}")
-        if not go_to_starting_point(starting_point):
-            print("Failed to navigate to starting point. Recording cancelled.")
-            cleanup()
-            return
-        
-    # Create and show the event window
+    # Close any existing mouse listener threads
+    close_existing_mouse_threads()
+    
+    # Create the floating window
     event_window = EventWindow()
     
-    # Create event listener with test name
+    # Create the event listener
     listener = EventListener(event_window, test_name)
     
-    # Create and start mouse and keyboard listeners
-    mouse_listener = mouse.Listener(on_click=listener.on_click)
-    keyboard_listener = keyboard.Listener(on_press=listener.on_press)
-    
+    # Start the mouse listener
+    mouse_listener = mouse.Listener(
+        on_click=listener.on_click
+    )
+    mouse_listener.name = "MouseListener"
     mouse_listener.start()
+    
+    # Start the keyboard listener
+    keyboard_listener = keyboard.Listener(
+        on_press=listener.on_press
+    )
     keyboard_listener.start()
     
-    print(f"Event listeners are active. Click anywhere, press keys, or press '{config.get_keyboard_quit_key()}' to quit...")
-    print(f"Press '{config.get_print_screen_key()}' to capture a screenshot")
+    # Start the main loop
+    event_window.mainloop()
     
-    try:
-        # Run tkinter main loop
-        event_window.mainloop()
-    except KeyboardInterrupt:
-        print("\nStopping event listener...")
-        listener.running = False
-    finally:
-        # Stop all listeners
-        mouse_listener.stop()
-        keyboard_listener.stop()
-        try:
-            event_window.destroy()
-        except:
-            pass
-        print("Event listeners stopped.")
-        cleanup()
+    # Stop the listeners
+    mouse_listener.stop()
+    keyboard_listener.stop()
+    
+    # Join the threads
+    mouse_listener.join()
+    keyboard_listener.join()
+    
+    return listener.current_test
 
 if __name__ == "__main__":
     main() 

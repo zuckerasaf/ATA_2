@@ -49,8 +49,18 @@
             "y": 200
         }
     },
+    "Screenshot_Dialog": {
+        "title": "Screenshot Configuration",
+        "width": 400,
+        "height": 300,
+        "position": {
+            "x": 200,
+            "y": 200
+        }
+    },
     "paths": {
+        "project_root" : "C:\\projectPython\\ATA_V2",
         "db_path": "C:\\projectPython\\ATA_V2\\DB",
-        "test_path": "Test"
+        "test_path": "C:\\projectPython\\ATA_V2\\DB\\Test"
     }
 } 

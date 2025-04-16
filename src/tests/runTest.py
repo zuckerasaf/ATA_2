@@ -15,7 +15,7 @@ sys.path.insert(0, project_root)
 
 from src.utils.test import Test
 from src.utils.config import Config
-from src.utils.event_window import EventWindow
+from gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename, get_latest_json_base_filename
 
