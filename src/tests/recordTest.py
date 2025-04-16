@@ -40,6 +40,7 @@ class EventListener:
         self.start_time = int(time.time() * 1000)
         self.last_event_time = self.start_time
         self.running = True
+        self.save = True  # Global save flag with default True
         self.event_window = event_window
         self.quit_key = config.get_keyboard_quit_key()
         self.print_screen_key = config.get_print_screen_key()
@@ -59,7 +60,6 @@ class EventListener:
             if self.test_name:
                 # Get paths from config
                 paths_config = config.get('paths', {})
-                db_path = paths_config.get('db_path', "DB")
                 test_path = paths_config.get('test_path', "Test")
                 
                 # Create DB/Test directory structure if it doesn't exist
@@ -115,15 +115,16 @@ class EventListener:
             pic="none"
         )
         
-        # Add event to current test
-        self.current_test.add_event(event)
-        
-        # Update the floating window
-        self.event_window.update_event(event)
-        self.last_event_time = current_time
+        if self.save == True:
+            # Add event to current test
+            self.current_test.add_event(event)
+            
+            # Update the floating window
+            self.event_window.update_event(event)
+            self.last_event_time = current_time
 
     def on_press(self, key):
-        try:
+        try: # the "try" part deal with all the NOT speaceial keys tha one that got valid {key.char}
             # Create common event data
             self.counter += 1
             current_time = int(time.time() * 1000)
@@ -135,42 +136,27 @@ class EventListener:
                 counter=self.counter,
                 time=time_total,
                 position=(0, 0),
-                event_type="keyboard",
                 action=f"Key '{key.char}' pressed",
+                event_type="keyboard",
                 priority=config.get_event_priority(),
                 step_on=f"{config.get_step_prefix()} {self.counter}",
-                time_from_last=time_diff,
-                step_desc="none",
-                step_accep="none",
-                step_resau="none",
-                pic="none"
+                time_from_last=time_diff
             )
             
-            # Update the floating window
-            self.event_window.update_event(event)
+
             if key.char == self.quit_key:
+                #event.action=f"Key '{key.char}' pressed",
+                event.event_type="keyboard  - quit and save command"
                 print("\nStopping event listener...")
                 self.running = False
-                
-                # Add the final event to test before saving
-                self.current_test.add_event(event)
-                
-                # Save any pending screenshots and convert to base64
+                self.current_test.add_event(event)  # Add event to current test
+                self.event_window.update_event(event) # Update the floating window
+
+                # Convert any remaining screenshots to base64
                 for event in self.current_test.events:
-                    if event.screenshot:
-                        # Generate filename for unsaved screenshot if needed
-                        if not event.pic:
-                            self.screenshot_counter += 1
-                            screenshot_filename, screenshot_path = generate_screenshot_filename(
-                                self.test_name, self.screenshot_counter
-                            )
-                            if screenshot_filename and screenshot_path:
-                                event.save_screenshot(screenshot_path)
-                        
-                        # Convert screenshot to base64 if not already done
-                        if not event.image_data:
-                            event._convert_screenshot_to_base64()
-                
+                    if event.screenshot and not event.image_data:
+                        event._convert_screenshot_to_base64()
+
                 # Save the test data
                 try:
                     filepath = self.save_test()
@@ -184,9 +170,9 @@ class EventListener:
                 
                 self.event_window.after(0, cleanup_and_restart)
                 return False
-                
+
         except AttributeError:
-            # Handle special keys
+            # Handle special keys  and the print screen key 
             if key.name in config.get_special_keys() or key.name == self.print_screen_key:
                 # Create base event for special keys
                 event = Event(
@@ -203,36 +189,49 @@ class EventListener:
                     step_resau="none",
                     pic="none"
                 )
-                # Update the floating window
-                self.event_window.update_event(event)
+
                 
                 if key.name == self.print_screen_key:
+                    event.event_type="keyboard - snapshot comand"
+                    self.save = False # stop the saving of the listener data while deal with the snapshot 
                     print("\nPrint screen key pressed...")
-                    # Add a small delay to allow the window to update
-                    time.sleep(0.1)  # 100ms delay
-                    screenshot = capture_screen()
-                    if screenshot:
-                        # Generate screenshot filename with test name
-                        self.screenshot_counter += 1
-                        screenshot_filename, screenshot_path = generate_screenshot_filename(
-                            self.test_name, self.screenshot_counter
-                        )
-                        
-                        if screenshot_filename and screenshot_path:
-                            # Store screenshot in event and save it
-                            event.screenshot = screenshot
-                            event.save_screenshot(screenshot_path)
-                            event.step_desc = "Screen capture"
-                            event.step_accep = "Screenshot saved successfully"
-                            # Update window with final event data
-                            self.event_window.update_event(event)
-                    else:
-                        return True
+                    
+                    # Create dialog and wait for it
+                    dialog = ScreenshotDialog()
+                    dialog.dialog.wait_window()
+                    time.sleep(0.1)  # 100ms delay for close the snapshot window 
+                    # Only proceed if user clicked OK
+                    if dialog.result:
+                        #Add a small delay to allow the window to update
+                        time.sleep(0.1)  # 100ms delay
+                        screenshot = capture_screen()
+                        if screenshot:
+                            # Generate screenshot filename with test name
+                            self.screenshot_counter += 1
+                            screenshot_filename, screenshot_path = generate_screenshot_filename(
+                                self.test_name, self.screenshot_counter, dialog.result['image_name'])
+                            
+                            if screenshot_filename and screenshot_path:
+                                self.save = True # Resume saving events
+                                # Store screenshot in event and save it
+                                event.screenshot = screenshot
+                                event.save_screenshot(screenshot_path)
+                                # Use dialog results
+                                event.step_desc = dialog.result['step_desc']
+                                event.step_accep = dialog.result['step_accep']
+                                event.priority = dialog.result['priority']
+                     
+                    self.save = True
             else:
-                return True
+                self.save = True
                 
-        # Add event to current test  
-        self.current_test.add_event(event)
+        if self.save == True:        
+            # Add event to current test
+            self.current_test.add_event(event)
+            
+            # Update the floating window
+            self.event_window.update_event(event)
+            
         self.last_event_time = current_time
 
 def main(test_name=None, starting_point="none"):

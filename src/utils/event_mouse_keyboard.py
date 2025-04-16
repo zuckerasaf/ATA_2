@@ -14,7 +14,7 @@ class Event:
     def __init__(self, counter: int, time: int, position: tuple, event_type: str, 
                  action: str, priority: str = PRIORITY_MEDIUM, step_on: str = "",
                  time_from_last: int = 0, step_desc: str = "none", 
-                 step_accep: str = "none", step_resau: str = "none", 
+                 step_accep: str = "none", step_resau: str = "none",
                  pic: str = "none", screenshot = None, image_data: str = None):
         """
         Initialize a new Event instance.
@@ -85,7 +85,8 @@ class Event:
                f"type='{self.event_type}', action='{self.action}', priority={self.priority}, " \
                f"step_on='{self.step_on}', time_from_last={self.time_from_last}, " \
                f"step_desc='{self.step_desc}', step_accep='{self.step_accep}', " \
-               f"step_resau='{self.step_resau}', pic='{self.pic}', has_image={bool(self.image_data)})"
+               f"step_resau='{self.step_resau}', pic='{self.pic}', " \
+               f"has_image={bool(self.image_data)})"
     
     def __repr__(self) -> str:
         """Detailed string representation of the Event."""

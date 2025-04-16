@@ -6,8 +6,8 @@ import tkinter as tk
 from tkinter import ttk, StringVar
 from src.utils.config import Config
 
-class ScreenshotDialog:
-    def __init__(self, parent):
+class ScreenshotDialog ():
+    def __init__(self):
         self.result = None
         self.config = Config()
         
@@ -15,9 +15,9 @@ class ScreenshotDialog:
         dialog_config = self.config.get('Screenshot_Dialog', {})
         
         # Create the dialog window
-        self.dialog = tk.Toplevel(parent)
+        self.dialog = tk.Toplevel()
         self.dialog.title(dialog_config.get("title", "Screenshot Configuration"))
-        self.dialog.transient(parent)
+        self.dialog.transient()
         self.dialog.grab_set()  # Make the dialog modal
         
         # Set window size and position from config
@@ -49,6 +49,12 @@ class ScreenshotDialog:
                 variable=self.priority_var,
                 value=priority
             ).pack(side="left", padx=5)
+        
+                # Step Description Section
+        ttk.Label(main_frame, text="image name:").pack(anchor="w", pady=(0, 5))
+        self.imagName_var = StringVar()
+        self.imagName_entry = ttk.Entry(main_frame, textvariable=self.imagName_var, width=40)
+        self.imagName_entry.pack(fill="x", pady=(0, 10))
         
         # Step Description Section
         ttk.Label(main_frame, text="Step Description:").pack(anchor="w", pady=(0, 5))
@@ -84,6 +90,7 @@ class ScreenshotDialog:
         """Handle OK button click."""
         # Store all parameters in result
         self.result = {
+            'image_name':self.imagName_var.get().strip(),
             'priority': self.priority_var.get(),
             'step_desc': self.desc_entry.get().strip(),  # Get directly from entry widget
             'step_accep': self.accep_entry.get().strip()  # Get directly from entry widget
