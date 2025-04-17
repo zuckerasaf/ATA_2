@@ -8,6 +8,7 @@ import json
 import time
 from pynput import mouse, keyboard
 from datetime import datetime
+import threading
 
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -15,11 +16,21 @@ sys.path.insert(0, project_root)
 
 from src.utils.test import Test
 from src.utils.config import Config
-from gui.event_window import EventWindow
+from src.gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
-from src.utils.picture_handle import capture_screen, generate_screenshot_filename, get_latest_json_base_filename
+from src.utils.process_utils import is_already_running, register_cleanup
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename
 
+# Global lock file
+lock_file = "cursor_listener.lock"
 config = Config()
+
+def close_existing_mouse_threads():
+    """Close any existing mouse listener threads."""
+    for thread in threading.enumerate():
+        if thread.name == "MouseListener":
+            thread._stop()
+            thread.join()
 
 class TestRunner:
     def __init__(self, test):
@@ -258,25 +269,30 @@ def create_test_from_json(filepath):
         print(f"Error loading test data: {e}")
         return None
 
-def main():
-    # Get the DB directory path
-    db_dir = os.path.join(project_root, "DB")
+def main(test_full_name=None):
+
+        # Check if another instance is already running
+    if is_already_running(lock_file):
+        sys.exit(1)
+
+        # Register cleanup function
+    register_cleanup(lock_file)
     
-    # Get the first JSON file in the DB directory
-    json_files = [f for f in os.listdir(db_dir) if f.endswith('.json')]
+    # Close any existing mouse listener threads
+    close_existing_mouse_threads()
     
-    if not json_files:
-        print("No JSON files found in the DB directory.")
-        return
-        
-    # Use the first JSON file found
-    filepath = os.path.join(db_dir, json_files[0])
+    # Create the floating window
+    event_window = EventWindow()
+
+    filename = test_full_name
+
+    print (f"the test to be run is {test_full_name}")
     
     # Create the test
-    test = create_test_from_json(filepath)
+    test = create_test_from_json(filename)
     
     if test:
-        print(f"Successfully created test from {json_files[0]}")
+        print(f"Test starting_point is: {test.starting_point}")
         print(f"Test configuration: {test.config}")
         print(f"Comment 1: {test.comment1}")
         print(f"Comment 2: {test.comment2}")

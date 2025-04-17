@@ -165,7 +165,19 @@ class EventListener:
                 
                 # Schedule window destruction and control panel restart in the main thread
                 def cleanup_and_restart():
+                    # Delete the lock file to ensure clean restart
+                    lock_file = "cursor_listener.lock"
+                    try:
+                        if os.path.exists(lock_file):
+                            os.remove(lock_file)
+                            print(f"Lock file {lock_file} deleted successfully")
+                    except Exception as e:
+                        print(f"Error deleting lock file: {e}")
+                    
+                    # Destroy the event window
                     self.event_window.destroy()
+                    time.sleep(0.2)
+                    # Restart the control panel
                     restart_control_panel()
                 
                 self.event_window.after(0, cleanup_and_restart)
@@ -192,7 +204,7 @@ class EventListener:
 
                 
                 if key.name == self.print_screen_key:
-                    event.event_type="keyboard - snapshot comand"
+                    event.event_type="keyboard - snapshot command"
                     self.save = False # stop the saving of the listener data while deal with the snapshot 
                     print("\nPrint screen key pressed...")
                     

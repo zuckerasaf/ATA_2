@@ -13,6 +13,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, project_root)
 
 from src.tests.recordTest import main as start_recording
+from src.tests.runTest import main as start_runing
 from src.utils.test import Test
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
@@ -139,10 +140,46 @@ class ControlPanel:
         
         ttk.Label(frame, textvariable=self.status_var).pack(pady=5)
         
+    def _populate_list(self, listbox, directory_path, file_pattern):
+        """
+        Generic function to populate a listbox with files from a directory.
+        
+        Args:
+            listbox: The listbox widget to populate
+            directory_path: Path to the directory containing the files
+            file_pattern: Lambda function that takes a filename and returns the path to the actual file
+                        (e.g., lambda name: os.path.join(directory, name, f"{name}.json"))
+        """
+        # Clear the listbox
+        listbox.delete(0, tk.END)
+        
+        if os.path.exists(directory_path):
+            # Create a list to store file info (name, creation time, and display name)
+            file_info = []
+            
+            for name in os.listdir(directory_path):
+                file_path = file_pattern(name)
+                if os.path.exists(file_path):
+                    # Get file creation time
+                    creation_time = os.path.getctime(file_path)
+                    # Format the creation time
+                    creation_date = datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d %H:%M:%S')
+                    # Store file info
+                    file_info.append({
+                        'name': name,
+                        'creation_time': creation_time,
+                        'display_name': f"{name} - {creation_date}"
+                    })
+            
+            # Sort by creation time (newest first)
+            file_info.sort(key=lambda x: x['creation_time'], reverse=True)
+            
+            # Add sorted items to listbox
+            for item in file_info:
+                listbox.insert(tk.END, item['display_name'])
+                
     def refresh_test_list(self):
         """Refresh the list of available tests."""
-        self.test_listbox.delete(0, tk.END)
-        
         # Get paths from config
         paths_config = self.config.get('paths', {})
         db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
@@ -150,12 +187,39 @@ class ControlPanel:
         
         # Get list of test files from DB directory
         test_dir = os.path.join(db_path, test_path)
-        if os.path.exists(test_dir):
-            for test_name in os.listdir(test_dir):
-                test_file = os.path.join(test_dir, test_name, f"{test_name}.json")
-                if os.path.exists(test_file):
-                    self.test_listbox.insert(tk.END, test_name)
-                    
+        self._populate_list(
+            self.test_listbox,
+            test_dir,
+            lambda name: os.path.join(test_dir, name, f"{name}.json")
+        )
+        
+    def refresh_result_list(self):
+        """Refresh the list of available results."""
+        # Get paths from config
+        paths_config = self.config.get('paths', {})
+        db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
+        result_path = paths_config.get('result_path', "Result")
+        
+        # Get list of result files from DB directory
+        result_dir = os.path.join(db_path, result_path)
+        self._populate_list(
+            self.result_listbox,
+            result_dir,
+            lambda name: os.path.join(result_dir, name, f"{name}.json")
+        )
+        
+    def _extract_name_from_display(self, display_text):
+        """
+        Extract the original name from the display text.
+        
+        Args:
+            display_text: The text shown in the listbox (format: "name - date")
+            
+        Returns:
+            The original name without the date suffix
+        """
+        return display_text.split(" - ")[0]
+        
     def start_recording(self):
         """Start recording a new test."""
         try:
@@ -233,16 +297,18 @@ class ControlPanel:
             self.root.deiconify()
             
     def run_test(self):
-        """Kill Old Listener if exsit."""
+        """Run the selected test."""
         self.killOldListener()
 
-        """Run the selected test."""
         selection = self.test_listbox.curselection()
         if not selection:
             messagebox.showwarning("No Test Selected", "Please select a test to run.")
             return
             
-        test_name = self.test_listbox.get(selection[0])
+        # Get the full display text and extract just the test name
+        display_text = self.test_listbox.get(selection[0])
+        test_name = self._extract_name_from_display(display_text)
+        
         try:
             self.status_var.set(f"Running test: {test_name}")
             self.root.update()
@@ -252,12 +318,14 @@ class ControlPanel:
             db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
             test_path = paths_config.get('test_path', "Test")
             
+            # Construct full path to test file
+            test_file_path = os.path.join(db_path, test_path, test_name, f"{test_name}.json")
+            
             # Hide the control panel window
             self.root.withdraw()
             
-            # TODO: Implement test running functionality
-            # This will be implemented when we create the test runner
-            
+            start_runing(test_file_path)   
+                    
             # Show the control panel window again
             self.root.deiconify()
             self.status_var.set(f"Test completed: {test_name}")
