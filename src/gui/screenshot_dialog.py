@@ -50,50 +50,79 @@ class ScreenshotDialog ():
                 value=priority
             ).pack(side="left", padx=5)
         
-                # Step Description Section
+        # Step Description Section
         ttk.Label(main_frame, text="image name:").pack(anchor="w", pady=(0, 5))
         self.imagName_var = StringVar()
         self.imagName_entry = ttk.Entry(main_frame, textvariable=self.imagName_var, width=40)
         self.imagName_entry.pack(fill="x", pady=(0, 10))
+        self.imagName_entry.insert(0, "Enter name to the saved image ...")
+        self.imagName_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter name to the saved image ..."))
+        self.imagName_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter name to the saved image..."))
         
         # Step Description Section
         ttk.Label(main_frame, text="Step Description:").pack(anchor="w", pady=(0, 5))
         self.desc_var = StringVar()
         self.desc_entry = ttk.Entry(main_frame, textvariable=self.desc_var, width=40)
         self.desc_entry.pack(fill="x", pady=(0, 10))
+        self.desc_entry.insert(0, "Enter what this step does...")
+        self.desc_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter what this step does..."))
+        self.desc_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter what this step does..."))
         
         # Step Acceptance Section
         ttk.Label(main_frame, text="Step Acceptance:").pack(anchor="w", pady=(0, 5))
         self.accep_var = StringVar()
         self.accep_entry = ttk.Entry(main_frame, textvariable=self.accep_var, width=40)
         self.accep_entry.pack(fill="x", pady=(0, 10))
+        self.accep_entry.insert(0, "Enter expected outcome...")
+        self.accep_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter expected outcome..."))
+        self.accep_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter expected outcome..."))
         
         # Button Frame
         button_frame = ttk.Frame(main_frame)
         button_frame.pack(fill="x", pady=(10, 0))
         
-        ttk.Button(button_frame, text="OK", command=self.ok_clicked).pack(side="right", padx=5)
-        ttk.Button(button_frame, text="Cancel", command=self.cancel_clicked).pack(side="right", padx=5)
+        ttk.Button(button_frame, text="OK", command=self._on_ok).pack(side="right", padx=5)
+        ttk.Button(button_frame, text="Cancel", command=self._on_cancel).pack(side="right", padx=5)
         
-        # Set focus on the description entry
-        self.desc_entry.focus_set()
+        # Set focus to the dialog window itself instead of any entry
+        self.dialog.focus_set()
+        
+        # Configure entry widgets to show placeholder text in gray
+        self.imagName_entry.config(foreground='gray')
+        self.desc_entry.config(foreground='gray')
+        self.accep_entry.config(foreground='gray')
         
         # Prevent closing the window with the X button
-        self.dialog.protocol("WM_DELETE_WINDOW", self.cancel_clicked)
+        self.dialog.protocol("WM_DELETE_WINDOW", self._on_cancel)
         
-        # Bind Enter key to OK button
-        self.dialog.bind('<Return>', lambda e: self.ok_clicked())
-        # Bind Escape key to Cancel button
-        self.dialog.bind('<Escape>', lambda e: self.cancel_clicked())
+        # Bind keyboard shortcuts
+        self.dialog.bind('<Return>', lambda e: self._on_ok())
+        self.dialog.bind('<Escape>', lambda e: self._on_cancel())
         
-    def ok_clicked(self):
+    def _on_entry_focus_in(self, event, placeholder):
+        """Handle focus in event for entry widgets."""
+        if event.widget.get() == placeholder:
+            event.widget.delete(0, tk.END)
+            event.widget.config(foreground='black')  # Change text color to black
+            
+    def _on_entry_focus_out(self, event, placeholder):
+        """Handle focus out event for entry widgets."""
+        if not event.widget.get():
+            event.widget.insert(0, placeholder)
+            event.widget.config(foreground='gray')  # Change text color to gray
+            
+    def _on_ok(self):
         """Handle OK button click."""
         # Store all parameters in result
+        image_name = self.desc_var.get() if self.accep_var.get() != "Enter name to the saved image ..." else "" 
+        step_desc = self.desc_var.get() if self.desc_var.get() != "Enter what this step does..." else ""
+        step_accep = self.accep_var.get() if self.accep_var.get() != "Enter expected outcome..." else ""
+        
         self.result = {
-            'image_name':self.imagName_var.get().strip(),
-            'priority': self.priority_var.get(),
-            'step_desc': self.desc_entry.get().strip(),  # Get directly from entry widget
-            'step_accep': self.accep_entry.get().strip()  # Get directly from entry widget
+            'image_name':image_name,
+            'step_desc': step_desc,
+            'step_accep': step_accep,
+            'priority': self.priority_var.get()
         }
         print("\nDialog data being saved:")
         print(f"Priority: {self.result['priority']}")
@@ -104,7 +133,7 @@ class ScreenshotDialog ():
         self.dialog.grab_release()
         self.dialog.destroy()
         
-    def cancel_clicked(self):
+    def _on_cancel(self):
         """Handle Cancel button click."""
         print("\nDialog cancelled")
         self.result = None

@@ -7,7 +7,7 @@ from tkinter import ttk, StringVar, messagebox
 from src.utils.config import Config
 
 class TestNameDialog:
-    def __init__(self, parent):
+    def __init__(self):
         self.result = None
         self.config = Config()
         
@@ -15,9 +15,8 @@ class TestNameDialog:
         dialog_config = self.config.get_Test_Name_Dialog_config()
         
         # Create the dialog window
-        self.dialog = tk.Toplevel(parent)
+        self.dialog = tk.Toplevel()
         self.dialog.title(dialog_config["title"])
-        self.dialog.transient(parent)
         self.dialog.grab_set()  # Make the dialog modal
         
         # Set window size and position from config
@@ -76,24 +75,28 @@ class TestNameDialog:
         button_frame = ttk.Frame(main_frame)
         button_frame.pack(fill="x", pady=(10, 0))
         
-        ttk.Button(button_frame, text="OK", command=self.ok_clicked).pack(side="right", padx=5)
-        ttk.Button(button_frame, text="Cancel", command=self.cancel_clicked).pack(side="right", padx=5)
+        ttk.Button(button_frame, text="OK", command=self._on_ok).pack(side="right", padx=5)
+        ttk.Button(button_frame, text="Cancel", command=self._on_cancel).pack(side="right", padx=5)
         
         # Set focus on the name entry
         self.name_entry.focus_set()
         
-        # Bind Enter key to OK button
-        self.dialog.bind('<Return>', lambda e: self.ok_clicked())
-        # Bind Escape key to Cancel button
-        self.dialog.bind('<Escape>', lambda e: self.cancel_clicked())
+        # Bind keyboard shortcuts
+        self.dialog.bind('<Return>', lambda e: self._on_ok())
+        self.dialog.bind('<Escape>', lambda e: self._on_cancel())
+        
+        # Prevent closing the window with the X button
+        self.dialog.protocol("WM_DELETE_WINDOW", self._on_cancel)
         
     def update_accuracy_label(self, *args):
         """Update the accuracy level label when the slider changes."""
         self.accuracy_label.config(text=str(self.accuracy_var.get()))
         
-    def ok_clicked(self):
+    def _on_ok(self):
         """Handle OK button click."""
         name = self.name_var.get().strip()
+        print(f"Test name entered: '{name}'")  # Debug print
+        
         if not name:
             messagebox.showwarning(
                 "Invalid Name",
@@ -119,8 +122,9 @@ class TestNameDialog:
             'accuracy_level': self.accuracy_var.get(),
             'starting_point': self.starting_point_var.get()
         }
+        print(f"Dialog result: {self.result}")  # Debug print
         self.dialog.destroy()
         
-    def cancel_clicked(self):
+    def _on_cancel(self):
         """Handle Cancel button click."""
         self.dialog.destroy()

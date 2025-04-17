@@ -16,6 +16,7 @@ from src.tests.recordTest import main as start_recording
 from src.utils.test import Test
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
+from src.utils.starting_points import go_to_starting_point
 
 
 class ControlPanel:
@@ -61,6 +62,10 @@ class ControlPanel:
                         pid = int(f.read().strip())
                     # On Windows, we can use taskkill to force terminate the process
                     os.system(f'taskkill /F /PID {pid}')
+                    messagebox.showinfo(
+                        "Process Cleanup", 
+                        "The system detected that it didn't close properly last time. It will be closed properly now."
+                    )
                 except:
                     pass
                 # Remove the lock file
@@ -78,7 +83,8 @@ class ControlPanel:
             
         except Exception as e:
             print(f"Error during shutdown: {e}")
-
+            # Don't re-raise the exception, just log it
+            # This allows the application to continue even if there's an error
             
     def on_closing(self):
         self.killOldListener()
@@ -151,22 +157,27 @@ class ControlPanel:
                     self.test_listbox.insert(tk.END, test_name)
                     
     def start_recording(self):
-        """Kill Old Listener if exsit."""
-        self.killOldListener()
-
         """Start recording a new test."""
-        # Show the test name dialog
-        dialog = TestNameDialog(self.root)
-        self.root.wait_window(dialog.dialog)
-        
-        # If user cancelled, return
-        if dialog.result is None:
-            return
-            
         try:
+            # First, try to kill any existing listener
+            self.killOldListener()
+            
+            # Show the test name dialog
+            dialog = TestNameDialog()
+            dialog.dialog.wait_window()  # Wait for the dialog window itself
+            
+            print(f"Dialog result after closing: {dialog.result}")  # Debug print
+            
+            # If user cancelled, return
+            if dialog.result is None:
+                print("Dialog was cancelled")  # Debug print
+                return
+                
             test_data = dialog.result
             test_name = test_data['name']
             starting_point = test_data['starting_point']
+            
+            print(f"Starting recording with test name: {test_name}")  # Debug print
             
             self.status_var.set(f"Recording new test: {test_name}")
             self.root.update()
@@ -202,6 +213,8 @@ class ControlPanel:
             
             # Hide the control panel window
             self.root.withdraw()
+
+            go_to_starting_point(starting_point)
             
             # Start recording with the specified test name and starting point
             start_recording(test_name, starting_point)
