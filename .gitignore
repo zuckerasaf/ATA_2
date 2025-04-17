@@ -3,4 +3,4 @@ venv/*
 src/utils/__pycache__/*
 src/gui/__pycache__/*
 src/tests/__pycache__/*
-cursor_listener.lock
+C:/projectPython/ATA_V2/cursor_listener.lock

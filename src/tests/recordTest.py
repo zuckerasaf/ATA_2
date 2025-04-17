@@ -34,7 +34,7 @@ def close_existing_mouse_threads():
 
 
 class EventListener:
-    def __init__(self, event_window, test_name=None):
+    def __init__(self, event_window, test_name=None,starting_point="none"):
         self.counter = 0
         self.screenshot_counter = 0
         self.start_time = int(time.time() * 1000)
@@ -51,7 +51,9 @@ class EventListener:
         self.current_test = Test(
             config="nothing for now",
             comment1=f"Test: {test_name}" if test_name else "Test started",
-            comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            starting_point=starting_point
+
         )
         
     def save_test(self):
@@ -144,48 +146,9 @@ class EventListener:
             )
             
 
-            if key.char == self.quit_key:
-                #event.action=f"Key '{key.char}' pressed",
-                event.event_type="keyboard  - quit and save command"
-                print("\nStopping event listener...")
-                self.running = False
-                self.current_test.add_event(event)  # Add event to current test
-                self.event_window.update_event(event) # Update the floating window
-
-                # Convert any remaining screenshots to base64
-                for event in self.current_test.events:
-                    if event.screenshot and not event.image_data:
-                        event._convert_screenshot_to_base64()
-
-                # Save the test data
-                try:
-                    filepath = self.save_test()
-                except Exception as e:
-                    print(f"Error saving test data: {e}")
-                
-                # Schedule window destruction and control panel restart in the main thread
-                def cleanup_and_restart():
-                    # Delete the lock file to ensure clean restart
-                    lock_file = "cursor_listener.lock"
-                    try:
-                        if os.path.exists(lock_file):
-                            os.remove(lock_file)
-                            print(f"Lock file {lock_file} deleted successfully")
-                    except Exception as e:
-                        print(f"Error deleting lock file: {e}")
-                    
-                    # Destroy the event window
-                    self.event_window.destroy()
-                    time.sleep(0.2)
-                    # Restart the control panel
-                    restart_control_panel()
-                
-                self.event_window.after(0, cleanup_and_restart)
-                return False
-
         except AttributeError:
-            # Handle special keys  and the print screen key 
-            if key.name in config.get_special_keys() or key.name == self.print_screen_key:
+            # Handle special keys such as print and quit ....
+            if key.name in config.get_special_keys() :
                 # Create base event for special keys
                 event = Event(
                     counter=self.counter,
@@ -234,9 +197,48 @@ class EventListener:
                                 event.priority = dialog.result['priority']
                      
                     self.save = True
+            
+
+                if key.name == self.quit_key:
+                    #event.action=f"Key '{key.char}' pressed",
+                    event.event_type="keyboard  - quit and save command"
+                    print("\nStopping event listener...")
+                    self.running = False
+                    self.current_test.add_event(event)  # Add event to current test
+                    self.event_window.update_event(event) # Update the floating window
+
+                    # Convert any remaining screenshots to base64
+                    for event in self.current_test.events:
+                        if event.screenshot and not event.image_data:
+                            event._convert_screenshot_to_base64()
+
+                    # Save the test data
+                    try:
+                        filepath = self.save_test()
+                    except Exception as e:
+                        print(f"Error saving test data: {e}")
+                    
+                    # Schedule window destruction and control panel restart in the main thread
+                    def cleanup_and_restart():
+                        # Delete the lock file to ensure clean restart
+                        lock_file = "cursor_listener.lock"
+                        try:
+                            if os.path.exists(lock_file):
+                                os.remove(lock_file)
+                                print(f"Lock file {lock_file} deleted successfully")
+                        except Exception as e:
+                            print(f"Error deleting lock file: {e}")
+                        
+                        # Destroy the event window
+                        self.event_window.destroy()
+                        time.sleep(0.2)
+                        # Restart the control panel
+                        restart_control_panel()
+                    
+                    self.event_window.after(0, cleanup_and_restart)
+                    return False  
             else:
-                self.save = True
-                
+                self.save = True  
         if self.save == True:        
             # Add event to current test
             self.current_test.add_event(event)
@@ -262,7 +264,7 @@ def main(test_name=None, starting_point="none"):
     event_window = EventWindow()
     
     # Create the event listener
-    listener = EventListener(event_window, test_name)
+    listener = EventListener(event_window, test_name,starting_point)
     
     # Start the mouse listener
     mouse_listener = mouse.Listener(

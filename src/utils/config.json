@@ -1,6 +1,6 @@
 {
     "keyboard": {
-        "quit_key": "q",
+        "quit_key": "esc",
         "special_keys": [
             "alt", "alt_l", "alt_r", "alt_gr",
             "backspace",
