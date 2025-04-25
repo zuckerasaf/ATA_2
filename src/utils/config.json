@@ -50,7 +50,7 @@
     },
     "Print_Screen_window": {
         "PSW_width": 600,
-        "PSW_height": 600,
+        "PSW_height": 800,
         "PSW_position": {
             "PSW_x": 10,
             "PSW_y": 10
@@ -78,7 +78,7 @@
     "Screenshot_Dialog": {
         "title": "Screenshot Configuration",
         "width": 400,
-        "height": 300,
+        "height": 400,
         "position": {
             "x": 200,
             "y": 200
@@ -87,6 +87,7 @@
     "paths": {
         "project_root" : "C:\\projectPython\\ATA_V2",
         "db_path": "C:\\projectPython\\ATA_V2\\DB",
-        "test_path": "C:\\projectPython\\ATA_V2\\DB\\Test"
+        "test_path": "C:\\projectPython\\ATA_V2\\DB\\Test",
+        "result_path": "C:\\projectPython\\ATA_V2\\DB\\Result"
     }
 } 

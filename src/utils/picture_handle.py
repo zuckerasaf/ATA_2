@@ -31,7 +31,7 @@ def capture_screen():
         print(f"Error capturing screenshot: {e}")
         return None
 
-def generate_screenshot_filename(test_name, counter, image_name):
+def generate_screenshot_filename(test_name, counter, image_name,state,result_folder_path):
     """
     Generate a filename for a screenshot using the test name and counter.
     
@@ -49,14 +49,18 @@ def generate_screenshot_filename(test_name, counter, image_name):
             
         # Get paths from config
         paths_config = config.get('paths', {})
-        db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
-        test_path = paths_config.get('test_path', "Test")
-        
-        # Generate screenshot filename
-        screenshot_filename = f"{test_name}_{image_name}_screenshot_{counter:03d}.jpg"
-        
-        # Create full path in test directory
-        test_dir = os.path.join(db_path, test_path, test_name)
+        db_path = paths_config.get('db_path', os.path.join(project_root, "DB")) 
+        if state == "Recording":
+            test_path = paths_config.get('test_path', "Test")
+            # Create full path in test directory
+            test_dir = os.path.join(db_path, test_path, test_name)
+             # Generate screenshot filename
+            screenshot_filename = f"{test_name}_{image_name}_screenshot_{counter:03d}.jpg"
+        else:
+             # Generate screenshot filename and path in result folder
+            test_dir = result_folder_path
+            screenshot_filename=f"Result_{test_name}_screenshot_{counter:03d}.jpg"   
+
         screenshot_path = os.path.join(test_dir, screenshot_filename)
         
         # Ensure the directory exists

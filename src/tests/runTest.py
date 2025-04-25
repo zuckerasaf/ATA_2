@@ -18,8 +18,9 @@ from src.utils.test import Test
 from src.utils.config import Config
 from src.gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
-from src.utils.process_utils import is_already_running, register_cleanup
+from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename
+from src.utils.starting_points import go_to_starting_point
 
 # Global lock file
 lock_file = "cursor_listener.lock"
@@ -33,7 +34,12 @@ def close_existing_mouse_threads():
             thread.join()
 
 class TestRunner:
-    def __init__(self, test):
+    def __init__(self, test,result_folder_path):
+        self.counter = 0
+        self.screenshot_counter = 0
+        self.start_time = int(time.time() * 1000)
+        self.last_event_time = self.start_time
+        self.save = True  # Global save flag with default True
         self.test = test
         self.running = True
         self.quit_key = config.get_keyboard_quit_key()
@@ -43,62 +49,72 @@ class TestRunner:
         self.keyboard_controller = keyboard.Controller()
         self.event_window = None
         self.screenshot_counter = 0
-        
+        self.result_folder_path = result_folder_path
+
+        # Create a new test instance for the running one 
+        self.current_test = Test(
+            config="nothing for now",
+            comment1=f"Test: {test.comment1}",
+            comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            starting_point=test.starting_point
+
+        )
+
     def on_press(self, key):
         try:
             if key.char == self.quit_key:
-                print("\nStopping test execution...")
+                print("\nStopping test execution in the middle of the running ...")
                 self.running = False
                 if self.keyboard_listener:
                     self.keyboard_listener.stop()
                 if self.event_window:
                     self.event_window.after(0, self.event_window.destroy)
+                
+                # Use the imported cleanup_and_restart function
+                self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
                 return False
         except AttributeError:
-            # Handle special keys
-            if key.name in config.get_special_keys() or key.name == self.print_screen_key:
-                if key.name == self.print_screen_key:
-                    print("\nPrint screen key pressed...")
-                    # Add a small delay to allow the window to update
-                    time.sleep(0.1)  # 100ms delay
-                    screenshot = capture_screen()
-                    if screenshot:
-                        # Get base filename and generate screenshot filename
-                        base_filename = get_latest_json_base_filename()
-                        if base_filename:
-                            self.screenshot_counter += 1
-                            screenshot_filename, screenshot_path = generate_screenshot_filename(
-                                base_filename, self.screenshot_counter
-                            )
-                            
-                            if screenshot_filename and screenshot_path:
-                                # Create event for the screenshot
-                                event = Event(
-                                    counter=len(self.test.events) + 1,
-                                    time=int(time.time() * 1000),
-                                    position=(0, 0),
-                                    event_type="keyboard",
-                                    action=f"Special key '{self.print_screen_key}' pressed",
-                                    priority=config.get_event_priority(),
-                                    step_on=f"{config.get_step_prefix()} {len(self.test.events) + 1}",
-                                    time_from_last=0,
-                                    step_desc="Screen capture",
-                                    step_accep="Screenshot saved successfully",
-                                    step_resau="none",
-                                    screenshot=screenshot
-                                )
-                                
-                                # Save the screenshot and update the event window
-                                event.save_screenshot(screenshot_path)
-                                self.test.add_event(event)
-                                if self.event_window:
-                                    self.event_window.update_event(event)
+            if key.name == self.quit_key:
+                print("\nStopping test execution in the middle of the running ...")
+                self.running = False
+                if self.keyboard_listener:
+                    self.keyboard_listener.stop()
+                if self.event_window:
+                    self.event_window.after(0, self.event_window.destroy)
+                
+                # Use the imported cleanup_and_restart function
+                self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
+                return False
+            else:
+                pass
             
     def execute_mouse_event(self, event):
         """Execute a mouse event."""
+
+        self.counter += 1
+        current_time = int(time.time() * 1000)
+        time_diff = current_time - self.last_event_time
+        time_total = current_time - self.start_time
+        # duplicatethe 
+        resevent = Event(
+            counter=self.counter,
+            time=time_total,  # Total time since start
+            position=(event.position[0], event.position[1]),
+            event_type=event.event_type,
+            action=event.action,
+            priority=event.priority,
+            step_on=event.step_on,
+            time_from_last=time_diff,
+            step_desc=event.step_desc,
+            step_accep=event.step_accep,
+            step_resau=event.step_resau,
+            pic=event.pic
+        )
+
         # Move mouse to position
         self.mouse_controller.position = event.position
-        
+
+
         # Handle different mouse button types
         button_map = {
             'mouse_left': mouse.Button.left,
@@ -107,52 +123,91 @@ class TestRunner:
         }
         
         if event.event_type in button_map:
-            button = button_map[event.event_type]
+            button = button_map[resevent.event_type]
             
             # Check if it's a press or release event
             if "pressed" in event.action:
                 self.mouse_controller.press(button)
             elif "released" in event.action:
                 self.mouse_controller.release(button)
-                
+        
+        if self.save == True:
+            # Add event to current test
+            self.current_test.add_event(resevent)
+            
+            # Update the floating window
+            self.event_window.update_event(resevent)
+            self.last_event_time = current_time     
+
     def execute_keyboard_event(self, event):
         """Execute a keyboard event."""
+
+        self.counter += 1
+        current_time = int(time.time() * 1000)
+        time_diff = current_time - self.last_event_time
+        time_total = current_time - self.start_time
+        # duplicatethe 
+        resevent = Event(
+            counter=self.counter,
+            time=time_total,  # Total time since start
+            position=(event.position[0], event.position[1]),
+            event_type=event.event_type,
+            action=event.action,
+            priority=event.priority,
+            step_on=event.step_on,
+            time_from_last=time_diff,
+            step_desc=event.step_desc,
+            step_accep=event.step_accep,
+            step_resau=event.step_resau,
+            pic=event.pic
+        )
+
         # Extract the key from the action text
-        key_text = event.action.split("'")[1]  # Get the key between single quotes
+        key_text = resevent.action.split("'")[1]  # Get the key between single quotes
         
         # Check if this is the quit key
         if key_text == self.quit_key:
             print("\nStopping test execution...")
             self.running = False
-            if self.keyboard_listener:
-                self.keyboard_listener.stop()
-            if self.event_window:
-                self.event_window.after(0, self.event_window.destroy)
-            return
+            self.current_test.add_event(resevent)  # Add event to current test
+            self.event_window.update_event(resevent) # Update the floating window
+
+            for resevent in self.current_test.events:
+                if resevent.screenshot and not resevent.image_data:
+                    resevent._convert_screenshot_to_base64()  
+
+            # Save the test data using the imported save_test function
+            filepath = save_test(self.current_test, self.test.comment1.split(": ")[1], "running",self.result_folder_path)
+            if not filepath:
+                print("Error saving test data")
+
+            # Schedule window destruction and control panel restart in the main thread
+            self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
+            return False
+            
             
         # If this is a print screen event, capture the screen
         if key_text == self.print_screen_key:
             print("\nPrint screen key pressed...")
+            self.save = False # stop the saving of the listener data while deal with the snapshot 
             # Add a small delay to allow the window to update
             time.sleep(0.1)  # 100ms delay
             screenshot = capture_screen()
             if screenshot:
-                # Get base filename and generate screenshot filename
-                base_filename = get_latest_json_base_filename()
-                if base_filename:
-                    self.screenshot_counter += 1
-                    screenshot_filename, screenshot_path = generate_screenshot_filename(
-                        base_filename, self.screenshot_counter
-                    )
+                self.screenshot_counter += 1
+                self.test
+                screenshot_filename, screenshot_path = generate_screenshot_filename(
+                        self.test.comment1.split(": ")[1], self.screenshot_counter,os.path.basename(resevent.pic),"running",self.result_folder_path)
                     
-                    if screenshot_filename and screenshot_path:
-                        # Update the event with the screenshot
-                        event.screenshot = screenshot
-                        event.save_screenshot(screenshot_path)
-                        event.step_desc = "Screen capture"
-                        event.step_accep = "Screenshot saved successfully"
-                        if self.event_window:
-                            self.event_window.update_event(event)
+                if screenshot_filename and screenshot_path:
+                    self.save = True # Resume saving events
+                    # Update the event with the screenshot
+                    resevent.screenshot = screenshot
+                    resevent.save_screenshot(screenshot_path)
+
+                    
+                    if self.event_window:
+                        self.event_window.update_event(resevent)
             return
         
         # Handle special keys
@@ -202,7 +257,15 @@ class TestRunner:
             # Handle regular keys
             self.keyboard_controller.press(key_text)
             self.keyboard_controller.release(key_text)
+
+        if self.save == True:
+            # Add event to current test
+            self.current_test.add_event(resevent)
             
+            # Update the floating window
+            self.event_window.update_event(resevent)
+            self.last_event_time = current_time
+
     def run_test(self, event_window):
         """Execute all events in the test."""
         self.event_window = event_window  # Store the event window reference
@@ -248,7 +311,9 @@ def create_test_from_json(filepath):
         test = Test(
             config=data.get('config', ''),
             comment1=data.get('comment1', ''),
-            comment2=data.get('comment2', '')
+            comment2=data.get('comment2', ''),
+            accuracy_level=data.get('accuracy_level', '5'),
+            starting_point=data.get('starting_point', '')
         )
         
         # Add events from JSON
@@ -271,22 +336,21 @@ def create_test_from_json(filepath):
 
 def main(test_full_name=None):
 
-        # Check if another instance is already running
+    # Check if another instance is already running
     if is_already_running(lock_file):
         sys.exit(1)
 
-        # Register cleanup function
+    # Register cleanup function
     register_cleanup(lock_file)
     
     # Close any existing mouse listener threads
     close_existing_mouse_threads()
     
-    # Create the floating window
-    event_window = EventWindow()
-
     filename = test_full_name
+    result_folder_path = get_folder_path(test_full_name)
 
-    print (f"the test to be run is {test_full_name}")
+    print(f"the test to be run is {test_full_name}")
+    print(f"test folder path is {result_folder_path}")
     
     # Create the test
     test = create_test_from_json(filename)
@@ -300,9 +364,11 @@ def main(test_full_name=None):
         
         # Create and show the event window
         event_window = EventWindow()
+
+        go_to_starting_point(test.starting_point)
         
         # Create and run the test
-        runner = TestRunner(test)
+        runner = TestRunner(test,result_folder_path)
         
         print(f"\nStarting test execution...")
         print(f"Press '{config.get_keyboard_quit_key()}' to stop at any time")

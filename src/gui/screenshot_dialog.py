@@ -3,7 +3,7 @@ Dialog for configuring screenshot event data.
 """
 
 import tkinter as tk
-from tkinter import ttk, StringVar
+from tkinter import ttk, StringVar, Text
 from src.utils.config import Config
 
 class ScreenshotDialog ():
@@ -22,7 +22,7 @@ class ScreenshotDialog ():
         
         # Set window size and position from config
         width = dialog_config.get('width', 400)
-        height = dialog_config.get('height', 300)
+        height = dialog_config.get('height', 400)  # Increased height for multi-line text
         x = dialog_config.get('position', {}).get('x', 200)
         y = dialog_config.get('position', {}).get('y', 200)
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
@@ -50,32 +50,44 @@ class ScreenshotDialog ():
                 value=priority
             ).pack(side="left", padx=5)
         
-        # Step Description Section
-        ttk.Label(main_frame, text="image name:").pack(anchor="w", pady=(0, 5))
-        self.imagName_var = StringVar()
-        self.imagName_entry = ttk.Entry(main_frame, textvariable=self.imagName_var, width=40)
-        self.imagName_entry.pack(fill="x", pady=(0, 10))
-        self.imagName_entry.insert(0, "Enter name to the saved image ...")
-        self.imagName_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter name to the saved image ..."))
-        self.imagName_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter name to the saved image..."))
+        # Image Name Section
+        ttk.Label(main_frame, text="Enter name to the saved image ...:").pack(anchor="w", pady=(0, 5))
+        self.imagName_text = Text(main_frame, height=1, width=40)
+        self.imagName_text.pack(fill="x", pady=(0, 10))
         
         # Step Description Section
-        ttk.Label(main_frame, text="Step Description:").pack(anchor="w", pady=(0, 5))
-        self.desc_var = StringVar()
-        self.desc_entry = ttk.Entry(main_frame, textvariable=self.desc_var, width=40)
-        self.desc_entry.pack(fill="x", pady=(0, 10))
-        self.desc_entry.insert(0, "Enter what this step does...")
-        self.desc_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter what this step does..."))
-        self.desc_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter what this step does..."))
+        ttk.Label(main_frame, text="Step Description - Enter what this step does...:").pack(anchor="w", pady=(0, 5))
+        # Create a frame to hold the text widget and scrollbar
+        desc_frame = ttk.Frame(main_frame)
+        desc_frame.pack(fill="x", pady=(0, 10))
+        
+        # Create scrollbar for description
+        desc_scrollbar = ttk.Scrollbar(desc_frame)
+        desc_scrollbar.pack(side="right", fill="y")
+        
+        # Create text widget with scrollbar
+        self.desc_text = Text(desc_frame, height=4, width=40, yscrollcommand=desc_scrollbar.set)
+        self.desc_text.pack(side="left", fill="x", expand=True)
+        
+        # Configure scrollbar to work with text widget
+        desc_scrollbar.config(command=self.desc_text.yview)
         
         # Step Acceptance Section
-        ttk.Label(main_frame, text="Step Acceptance:").pack(anchor="w", pady=(0, 5))
-        self.accep_var = StringVar()
-        self.accep_entry = ttk.Entry(main_frame, textvariable=self.accep_var, width=40)
-        self.accep_entry.pack(fill="x", pady=(0, 10))
-        self.accep_entry.insert(0, "Enter expected outcome...")
-        self.accep_entry.bind('<FocusIn>', lambda e: self._on_entry_focus_in(e, "Enter expected outcome..."))
-        self.accep_entry.bind('<FocusOut>', lambda e: self._on_entry_focus_out(e, "Enter expected outcome..."))
+        ttk.Label(main_frame, text="Step Acceptance - Enter expected outcome...:").pack(anchor="w", pady=(0, 5))
+        # Create a frame to hold the text widget and scrollbar
+        accep_frame = ttk.Frame(main_frame)
+        accep_frame.pack(fill="x", pady=(0, 10))
+        
+        # Create scrollbar for acceptance
+        accep_scrollbar = ttk.Scrollbar(accep_frame)
+        accep_scrollbar.pack(side="right", fill="y")
+        
+        # Create text widget with scrollbar
+        self.accep_text = Text(accep_frame, height=4, width=40, yscrollcommand=accep_scrollbar.set)
+        self.accep_text.pack(side="left", fill="x", expand=True)
+        
+        # Configure scrollbar to work with text widget
+        accep_scrollbar.config(command=self.accep_text.yview)
         
         # Button Frame
         button_frame = ttk.Frame(main_frame)
@@ -87,39 +99,22 @@ class ScreenshotDialog ():
         # Set focus to the dialog window itself instead of any entry
         self.dialog.focus_set()
         
-        # Configure entry widgets to show placeholder text in gray
-        self.imagName_entry.config(foreground='gray')
-        self.desc_entry.config(foreground='gray')
-        self.accep_entry.config(foreground='gray')
-        
         # Prevent closing the window with the X button
         self.dialog.protocol("WM_DELETE_WINDOW", self._on_cancel)
         
         # Bind keyboard shortcuts
-        self.dialog.bind('<Return>', lambda e: self._on_ok())
-        self.dialog.bind('<Escape>', lambda e: self._on_cancel())
-        
-    def _on_entry_focus_in(self, event, placeholder):
-        """Handle focus in event for entry widgets."""
-        if event.widget.get() == placeholder:
-            event.widget.delete(0, tk.END)
-            event.widget.config(foreground='black')  # Change text color to black
-            
-    def _on_entry_focus_out(self, event, placeholder):
-        """Handle focus out event for entry widgets."""
-        if not event.widget.get():
-            event.widget.insert(0, placeholder)
-            event.widget.config(foreground='gray')  # Change text color to gray
+        #self.dialog.bind('<Return>', lambda e: self._on_ok())
+        #self.dialog.bind('<Escape>', lambda e: self._on_cancel())
             
     def _on_ok(self):
         """Handle OK button click."""
-        # Store all parameters in result
-        image_name = self.desc_var.get() if self.accep_var.get() != "Enter name to the saved image ..." else "" 
-        step_desc = self.desc_var.get() if self.desc_var.get() != "Enter what this step does..." else ""
-        step_accep = self.accep_var.get() if self.accep_var.get() != "Enter expected outcome..." else ""
+        # Get text content
+        image_name = self.imagName_text.get("1.0", "end-1c")
+        step_desc = self.desc_text.get("1.0", "end-1c")
+        step_accep = self.accep_text.get("1.0", "end-1c")
         
         self.result = {
-            'image_name':image_name,
+            'image_name': image_name,
             'step_desc': step_desc,
             'step_accep': step_accep,
             'priority': self.priority_var.get()

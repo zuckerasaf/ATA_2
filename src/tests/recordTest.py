@@ -15,10 +15,11 @@ from src.utils.config import Config
 from src.utils.test import Test
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename
 from src.utils.event_mouse_keyboard import Event
-from src.utils.process_utils import is_already_running, register_cleanup
+from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
 from src.utils.app_lifecycle import restart_control_panel
 from src.gui.event_window import EventWindow
 from src.gui.screenshot_dialog import ScreenshotDialog
+from src.utils.starting_points import go_to_starting_point
 
 
 # Global lock file
@@ -56,34 +57,6 @@ class EventListener:
 
         )
         
-    def save_test(self):
-        """Save the test data with custom filename if provided."""
-        try:
-            if self.test_name:
-                # Get paths from config
-                paths_config = config.get('paths', {})
-                test_path = paths_config.get('test_path', "Test")
-                
-                # Create DB/Test directory structure if it doesn't exist
-                test_dir = os.path.join(test_path, self.test_name)
-                os.makedirs(test_dir, exist_ok=True)
-                
-                # Set custom filename
-                filename = f"{self.test_name}.json"
-                filepath = os.path.join(test_dir, filename)
-                
-                # Save with custom filename
-                with open(filepath, 'w') as f:
-                    json.dump(self.current_test.to_dict(), f, indent=4)
-                print(f"Test data saved to: {filepath}")
-                return filepath
-            else:
-                # Use default save method
-                return self.current_test.save_to_file()
-        except Exception as e:
-            print(f"Error saving test data: {e}")
-            raise
-
     def on_click(self, x, y, button, pressed):
         if not self.running:
             return False
@@ -167,7 +140,7 @@ class EventListener:
 
                 
                 if key.name == self.print_screen_key:
-                    event.event_type="keyboard - snapshot command"
+                    #event.event_type="keyboard - snapshot command"
                     self.save = False # stop the saving of the listener data while deal with the snapshot 
                     print("\nPrint screen key pressed...")
                     
@@ -184,7 +157,7 @@ class EventListener:
                             # Generate screenshot filename with test name
                             self.screenshot_counter += 1
                             screenshot_filename, screenshot_path = generate_screenshot_filename(
-                                self.test_name, self.screenshot_counter, dialog.result['image_name'])
+                                self.test_name, self.screenshot_counter, dialog.result['image_name'],"Recording","none")
                             
                             if screenshot_filename and screenshot_path:
                                 self.save = True # Resume saving events
@@ -201,7 +174,7 @@ class EventListener:
 
                 if key.name == self.quit_key:
                     #event.action=f"Key '{key.char}' pressed",
-                    event.event_type="keyboard  - quit and save command"
+                    #event.event_type="keyboard  - quit and save command"
                     print("\nStopping event listener...")
                     self.running = False
                     self.current_test.add_event(event)  # Add event to current test
@@ -212,31 +185,14 @@ class EventListener:
                         if event.screenshot and not event.image_data:
                             event._convert_screenshot_to_base64()
 
-                    # Save the test data
-                    try:
-                        filepath = self.save_test()
-                    except Exception as e:
-                        print(f"Error saving test data: {e}")
+                    # Save the test data using the imported save_test function
+                    filepath = save_test(self.current_test, self.test_name, "recording")
+                    if not filepath:
+                        print("Error saving test data")
                     
                     # Schedule window destruction and control panel restart in the main thread
-                    def cleanup_and_restart():
-                        # Delete the lock file to ensure clean restart
-                        lock_file = "cursor_listener.lock"
-                        try:
-                            if os.path.exists(lock_file):
-                                os.remove(lock_file)
-                                print(f"Lock file {lock_file} deleted successfully")
-                        except Exception as e:
-                            print(f"Error deleting lock file: {e}")
-                        
-                        # Destroy the event window
-                        self.event_window.destroy()
-                        time.sleep(0.2)
-                        # Restart the control panel
-                        restart_control_panel()
-                    
-                    self.event_window.after(0, cleanup_and_restart)
-                    return False  
+                    self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
+                    return False
             else:
                 self.save = True  
         if self.save == True:        

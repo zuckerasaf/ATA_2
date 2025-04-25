@@ -7,6 +7,7 @@ import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+import shutil
 
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -47,6 +48,7 @@ class ControlPanel:
         
         # Initialize data
         self.refresh_test_list()
+        self.refresh_result_list()
         
         # Bind window close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -140,7 +142,7 @@ class ControlPanel:
         
         ttk.Label(frame, textvariable=self.status_var).pack(pady=5)
         
-    def _populate_list(self, listbox, directory_path, file_pattern):
+    def _populate_list(self, listbox, directory_path, file_pattern,state):
         """
         Generic function to populate a listbox with files from a directory.
         
@@ -156,9 +158,15 @@ class ControlPanel:
         if os.path.exists(directory_path):
             # Create a list to store file info (name, creation time, and display name)
             file_info = []
-            
             for name in os.listdir(directory_path):
-                file_path = file_pattern(name)
+                if state == "test":
+                    file_path = file_pattern(name)
+                    display_name = name
+                else: #state == "result"    
+                    # Extract just the test name from the timestamped filename
+                    display_name = "Result_"+self._extract_test_name_from_timestamp(name)
+                    file_path = os.path.join(directory_path, name, f"{display_name}.json")
+
                 if os.path.exists(file_path):
                     # Get file creation time
                     creation_time = os.path.getctime(file_path)
@@ -168,7 +176,7 @@ class ControlPanel:
                     file_info.append({
                         'name': name,
                         'creation_time': creation_time,
-                        'display_name': f"{name} - {creation_date}"
+                        'display_name': f"{display_name} - {creation_date}"
                     })
             
             # Sort by creation time (newest first)
@@ -190,7 +198,8 @@ class ControlPanel:
         self._populate_list(
             self.test_listbox,
             test_dir,
-            lambda name: os.path.join(test_dir, name, f"{name}.json")
+            lambda name: os.path.join(test_dir, name, f"{name}.json"),
+            "test"
         )
         
     def refresh_result_list(self):
@@ -205,7 +214,8 @@ class ControlPanel:
         self._populate_list(
             self.result_listbox,
             result_dir,
-            lambda name: os.path.join(result_dir, name, f"{name}.json")
+            lambda name: os.path.join(result_dir, name, f"{name}.json"),
+            "result"
         )
         
     def _extract_name_from_display(self, display_text):
@@ -219,6 +229,24 @@ class ControlPanel:
             The original name without the date suffix
         """
         return display_text.split(" - ")[0]
+        
+    def _extract_test_name_from_timestamp(self, filename):
+        """
+        Extract the test name from a timestamped filename.
+        Example: '20250418_162642_test1.json' -> 'test1'
+        
+        Args:
+            filename: The timestamped filename
+            
+        Returns:
+            The test name without the timestamp prefix
+        """
+        # Split by underscore and take the last part before .json
+        parts = filename.split('_')
+        if len(parts) >= 3:  # Ensure we have timestamp parts and test name
+            test_name = parts[-1].replace('.json', '')
+            return test_name
+        return filename  # Return original if format doesn't match
         
     def start_recording(self):
         """Start recording a new test."""
@@ -266,14 +294,14 @@ class ControlPanel:
                 ):
                     return
             
-            # Create a new test with the specified parameters
-            test = Test(
-                config="",
-                comment1=test_data['purpose'],
-                comment2="",
-                accuracy_level=test_data['accuracy_level'],
-                starting_point=starting_point
-            )
+            # # Create a new test with the specified parameters
+            # test = Test(
+            #     config="",
+            #     comment1=test_data['purpose'],
+            #     comment2="",
+            #     accuracy_level=test_data['accuracy_level'],
+            #     starting_point=starting_point
+            # )
             
             # Hide the control panel window
             self.root.withdraw()
@@ -288,7 +316,8 @@ class ControlPanel:
             
             # Refresh test list after recording
             self.refresh_test_list()
-            self.status_var.set(f"Recording completed successfully: {test_name}")
+            # self.refresh_result_list()
+            # self.status_var.set(f"Recording completed successfully: {test_name}")
             
         except Exception as e:
             self.status_var.set(f"Error during recording: {str(e)}")
@@ -309,6 +338,8 @@ class ControlPanel:
         display_text = self.test_listbox.get(selection[0])
         test_name = self._extract_name_from_display(display_text)
         
+
+        
         try:
             self.status_var.set(f"Running test: {test_name}")
             self.root.update()
@@ -321,14 +352,30 @@ class ControlPanel:
             # Construct full path to test file
             test_file_path = os.path.join(db_path, test_path, test_name, f"{test_name}.json")
             
+            # Create timestamp for result directory
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            result_dir_name = f"{timestamp}_{test_name}"
+            
+            # Create the result directory structure with timestamp prefix
+            resu_path = paths_config.get('result_path', "Result")
+            resu_dir = os.path.join(db_path, resu_path, result_dir_name)
+            os.makedirs(resu_dir, exist_ok=True)
+            
+            # Copy the test file to the result directory
+            result_test_file = os.path.join(resu_dir, f"{test_name}.json")
+            shutil.copy2(test_file_path, result_test_file)
+            
             # Hide the control panel window
             self.root.withdraw()
             
-            start_runing(test_file_path)   
+            # Use the copied test file path for running the test
+            start_runing(result_test_file)   
                     
             # Show the control panel window again
             self.root.deiconify()
-            self.status_var.set(f"Test completed: {test_name}")
+            self.status_var.set(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
+            # Refresh the result list to show the new test result
+            self.refresh_result_list()
             
         except Exception as e:
             self.status_var.set(f"Error running test: {str(e)}")
