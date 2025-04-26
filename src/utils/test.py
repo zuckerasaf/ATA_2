@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from typing import List
 from src.utils.event_mouse_keyboard import Event
+from src.utils.config import Config
 
 class CompactJSONEncoder(json.JSONEncoder):
     """Custom JSON encoder that handles base64 image data in a compact way."""
@@ -50,8 +51,9 @@ class Test:
             raise ValueError("Accuracy level must be an integer between 1 and 10")
         self.accuracy_level = accuracy_level
         
-        # Validate and set starting point
-        valid_starting_points = ["none", "desktop", "point_A", "point_B", "point_C"]
+        # Read valid starting points from config.json
+        config = Config()
+        valid_starting_points = config.get('startingPoint', ["none", "desktop", "point_A", "point_B", "point_C"])
         if starting_point not in valid_starting_points:
             raise ValueError(f"Starting point must be one of: {valid_starting_points}")
         self.starting_point = starting_point
@@ -149,7 +151,9 @@ class Test:
         Raises:
             ValueError: If point is not a valid starting point
         """
-        valid_starting_points = ["none", "desktop", "point_A", "point_B", "point_C"]
+        # Read valid starting points from config.json
+        config = Config()
+        valid_starting_points = config.get('startingPoint', ["none", "desktop", "point_A", "point_B", "point_C"])
         if point not in valid_starting_points:
             raise ValueError(f"Starting point must be one of: {valid_starting_points}")
         self.starting_point = point

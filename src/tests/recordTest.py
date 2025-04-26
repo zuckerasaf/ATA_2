@@ -180,10 +180,10 @@ class EventListener:
                     self.current_test.add_event(event)  # Add event to current test
                     self.event_window.update_event(event) # Update the floating window
 
-                    # Convert any remaining screenshots to base64
-                    for event in self.current_test.events:
-                        if event.screenshot and not event.image_data:
-                            event._convert_screenshot_to_base64()
+                    # # Convert any remaining screenshots to base64
+                    # for event in self.current_test.events:
+                    #     if event.screenshot and not event.image_data:
+                    #         event._convert_screenshot_to_base64()
 
                     # Save the test data using the imported save_test function
                     filepath = save_test(self.current_test, self.test_name, "recording")

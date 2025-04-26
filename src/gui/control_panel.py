@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
 import shutil
+import subprocess
 
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -116,6 +117,7 @@ class ControlPanel:
         # Add buttons
         ttk.Button(frame, text="Record", command=self.start_recording).pack(pady=5)
         ttk.Button(frame, text="Run", command=self.run_test).pack(pady=5)
+        ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
         
     def create_result_list_frame(self):
@@ -142,7 +144,7 @@ class ControlPanel:
         
         ttk.Label(frame, textvariable=self.status_var).pack(pady=5)
         
-    def _populate_list(self, listbox, directory_path, file_pattern,state):
+    def _populate_list(self, listbox, directory_path, file_pattern, state):
         """
         Generic function to populate a listbox with files from a directory.
         
@@ -154,6 +156,9 @@ class ControlPanel:
         """
         # Clear the listbox
         listbox.delete(0, tk.END)
+        
+        if state == "result":
+            self.result_display_to_folder = {}  # Reset mapping for results
         
         if os.path.exists(directory_path):
             # Create a list to store file info (name, creation time, and display name)
@@ -178,6 +183,9 @@ class ControlPanel:
                         'creation_time': creation_time,
                         'display_name': f"{display_name} - {creation_date}"
                     })
+                    if state == "result":
+                        # Store mapping from display string to actual folder name
+                        self.result_display_to_folder[f"{display_name} - {creation_date}"] = name
             
             # Sort by creation time (newest first)
             file_info.sort(key=lambda x: x['creation_time'], reverse=True)
@@ -382,6 +390,81 @@ class ControlPanel:
             messagebox.showerror("Test Error", str(e))
             # Show the control panel window in case of error
             self.root.deiconify()
+
+    def _convert_display_to_timestamp(self, display_text, is_result=False):
+        """
+        Convert display format back to timestamp format.
+        For results: 'Result_9 - 2025-04-26 09:29:02' -> '20250426_092902_9'
+        For tests: 'test1 - 2025-04-26 09:29:02' -> 'test1'
+        
+        Args:
+            display_text: The text shown in the listbox (format: "name - date")
+            is_result: Boolean indicating if this is from the result list
+            
+        Returns:
+            The timestamped filename format for results, or original name for tests
+        """
+        try:
+            # Split the display text into name and date parts
+            name_part, date_part = display_text.split(" - ")
+            
+            # For test list, just return the name part
+            if is_result:                
+                # For result list, process the timestamp
+                # Extract the test number from the name part (remove "Result_" prefix)
+                test_name = name_part.replace("Result_", "")
+                
+                # Parse the date string
+                date_obj = datetime.strptime(date_part, '%Y-%m-%d %H:%M:%S')
+                
+                # Format the date into the timestamp format
+                timestamp = date_obj.strftime('%Y%m%d_%H%M%S')
+                
+                # Combine into the final format
+                return f"{timestamp}_{test_name}"
+            else :
+                # Split the display text into name and date parts
+                name_part, date_part = display_text.split(" - ")
+
+                # Combine into the final format
+                return f"{name_part}"
+
+            
+        except Exception as e:
+            print(f"Error converting display format: {e}")
+            return display_text  # Return original if conversion fails
+
+    def go_to_folder(self):
+        """Open the selected test or result folder in file explorer."""
+        try:
+            if self.test_listbox.curselection():
+                selected_item = self.test_listbox.get(self.test_listbox.curselection())
+                folder_name = self._convert_display_to_timestamp(selected_item, is_result=False)
+                test_path = self.config.get('paths', {}).get('test_path', "Test")
+                folder_path = os.path.join(test_path, folder_name)
+            elif self.result_listbox.curselection():
+                selected_item = self.result_listbox.get(self.result_listbox.curselection())
+                # Use the mapping to get the real folder name
+                folder_name = self.result_display_to_folder.get(selected_item, None)
+                if not folder_name:
+                    messagebox.showerror("Error", "Could not find the folder for the selected result.")
+                    return
+                result_path = self.config.get('paths', {}).get('result_path', "Result")
+                folder_path = os.path.join(result_path, folder_name)
+            else:
+                messagebox.showwarning("Warning", "Please select a test or result from the list")
+                return
+            if os.path.exists(folder_path):
+                if sys.platform == 'win32':
+                    os.startfile(folder_path)
+                elif sys.platform == 'darwin':  # macOS
+                    subprocess.run(['open', folder_path])
+                else:  # linux
+                    subprocess.run(['xdg-open', folder_path])
+            else:
+                messagebox.showerror("Error", f"Folder not found: {folder_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open folder: {str(e)}")
 
 def main():
     root = tk.Tk()

@@ -6,6 +6,8 @@ import os
 import sys
 import time
 import pyautogui
+import webbrowser
+from src.utils.config import Config
 
 
 def minimize_all_windows():
@@ -31,10 +33,26 @@ def go_to_starting_point(point_name):
         if point_name.lower() == "desktop":
             minimize_all_windows()
             return True
-        elif point_name.lower() == "point_a":
-            # TODO: Implement point A navigation
-            print("Point A navigation not yet implemented")
-            return False
+        elif point_name.lower() == "google_map":
+            minimize_all_windows()
+            # Open Google Maps in Chrome using the URL from config.json
+            config = Config()
+            url = config.get('google_map:', None)
+            if url:
+                # Try to open with Chrome specifically
+                chrome_path = None
+                # Try common Chrome paths (Windows example)
+                import shutil
+                chrome_path = shutil.which("chrome") or shutil.which("chrome.exe")
+                if chrome_path:
+                    webbrowser.get(f'"{chrome_path}" %s').open(url)
+                else:
+                    # Fallback: open with default browser
+                    webbrowser.open(url)
+                return True
+            else:
+                print("Google Maps URL not found in config.")
+                return False
         elif point_name.lower() == "point_b":
             # TODO: Implement point B navigation
             print("Point B navigation not yet implemented")

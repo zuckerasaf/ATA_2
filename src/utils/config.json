@@ -56,7 +56,8 @@
             "PSW_y": 10
         }
     },
-    "startingPoint": ["none", "desktop", "point_A", "point_B", "point_C"],
+    "startingPoint": ["none", "desktop", "google_map", "point_B", "point_C"],
+    "google_map:":"https://www.google.com/maps/@33.0858496,-96.7573504,13z?entry=ttu&g_ep=EgoyMDI1MDQyMy4wIKXMDSoASAFQAw%3D%3D",
     "Control_Panel": {
         "title": "Test Control Panel",
         "width": 1000,
@@ -89,5 +90,11 @@
         "db_path": "C:\\projectPython\\ATA_V2\\DB",
         "test_path": "C:\\projectPython\\ATA_V2\\DB\\Test",
         "result_path": "C:\\projectPython\\ATA_V2\\DB\\Result"
+    },
+    "Image_compare": {
+        "position_tolerance": 0,
+        "tolerance": 0,
+        "debug": true,
+        "threshold" : 0.8
     }
 } 

@@ -15,7 +15,7 @@ class Event:
                  action: str, priority: str = PRIORITY_MEDIUM, step_on: str = "",
                  time_from_last: int = 0, step_desc: str = "none", 
                  step_accep: str = "none", step_resau: str = "none",
-                 pic: str = "none", screenshot = None, image_data: str = None):
+                 pic: str = "none", screenshot = None, image_data: str = "none"):
         """
         Initialize a new Event instance.
         
@@ -33,7 +33,7 @@ class Event:
             step_resau (str): Actual result of the step
             pic (str): Path to associated picture
             screenshot: PIL Image object of the captured screen
-            image_data (str): Base64 encoded image data
+            image_data (str): Base64 encoded image data, defaults to "none"
         """
         self.counter = counter
         self.time = time
@@ -50,18 +50,18 @@ class Event:
         self.screenshot = screenshot
         self.image_data = image_data
         
-        # If we have a screenshot but no image_data, convert it
-        if screenshot and not image_data:
-            self._convert_screenshot_to_base64()
+    #     # If we have a screenshot but no image_data, convert it
+    #     if screenshot and not image_data:
+    #         self._convert_screenshot_to_base64()
     
-    def _convert_screenshot_to_base64(self):
-        """Convert PIL Image screenshot to base64 string."""
-        if self.screenshot:
-            # Convert PIL Image to bytes
-            buffered = BytesIO()
-            self.screenshot.save(buffered, format="JPEG")
-            # Convert bytes to base64 string
-            self.image_data = base64.b64encode(buffered.getvalue()).decode()
+    # def _convert_screenshot_to_base64(self):
+    #     """Convert PIL Image screenshot to base64 string."""
+    #     if self.screenshot:
+    #         # Convert PIL Image to bytes
+    #         buffered = BytesIO()
+    #         self.screenshot.save(buffered, format="JPEG")
+    #         # Convert bytes to base64 string
+    #         self.image_data = base64.b64encode(buffered.getvalue()).decode()
     
     def save_screenshot(self, filepath: str) -> None:
         """Save the screenshot to a file if it exists."""
@@ -69,7 +69,7 @@ class Event:
             self.screenshot.save(filepath, 'JPEG')
             self.pic = filepath  # Update the pic field with the saved file path
             # Also store the image data
-            self._convert_screenshot_to_base64()
+            # self._convert_screenshot_to_base64()
     
     def get_image_from_data(self):
         """Convert base64 image data back to PIL Image."""
@@ -106,8 +106,7 @@ class Event:
             'step_desc': self.step_desc,
             'step_accep': self.step_accep,
             'step_resau': self.step_resau,
-            'pic': self.pic,
-            'image_data': self.image_data  # Include the base64 image data
+            'pic': self.pic
         }
     
     @classmethod
@@ -125,6 +124,5 @@ class Event:
             step_desc=data['step_desc'],
             step_accep=data['step_accep'],
             step_resau=data['step_resau'],
-            pic=data['pic'],
-            image_data=data.get('image_data')  # Get image data if available
+            pic=data['pic']
         )
