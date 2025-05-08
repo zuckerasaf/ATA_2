@@ -9,6 +9,10 @@ import time
 from pynput import mouse, keyboard
 from datetime import datetime
 import threading
+import base64
+from PIL import Image
+import io
+
 
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -19,8 +23,9 @@ from src.utils.config import Config
 from src.gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
 from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
-from src.utils.picture_handle import capture_screen, generate_screenshot_filename
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename, compare_images
 from src.utils.starting_points import go_to_starting_point
+from src.utils.general_func import create_test_from_json
 
 # Global lock file
 lock_file = "cursor_listener.lock"
@@ -56,7 +61,9 @@ class TestRunner:
             config="nothing for now",
             comment1=f"Test: {test.comment1}",
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            starting_point=test.starting_point
+            starting_point=test.starting_point,
+            numOfSteps=0,
+            stepResult=[]
 
         )
 
@@ -172,9 +179,9 @@ class TestRunner:
             self.current_test.add_event(resevent)  # Add event to current test
             self.event_window.update_event(resevent) # Update the floating window
 
-            for resevent in self.current_test.events:
-                if resevent.screenshot and not resevent.image_data:
-                    resevent._convert_screenshot_to_base64()  
+            # for resevent in self.current_test.events:
+            #     if resevent.screenshot and not resevent.image_data:
+            #         resevent._convert_screenshot_to_base64()  
 
             # Save the test data using the imported save_test function
             filepath = save_test(self.current_test, self.test.comment1.split(": ")[1], "running",self.result_folder_path)
@@ -198,17 +205,22 @@ class TestRunner:
                 self.test
                 screenshot_filename, screenshot_path = generate_screenshot_filename(
                         self.test.comment1.split(": ")[1], self.screenshot_counter,os.path.basename(resevent.pic),"running",self.result_folder_path)
-                    
+                
                 if screenshot_filename and screenshot_path:
-                    self.save = True # Resume saving events
-                    # Update the event with the screenshot
+                    # Update the event with the screenshot and save it first
                     resevent.screenshot = screenshot
                     resevent.save_screenshot(screenshot_path)
-
                     
+                    # Now compare the images using the saved file paths
+                    match_percentage, result_path = compare_images(event.pic, screenshot_path, self.result_folder_path)
+                    resevent.step_resau = "match percentage is "+str(match_percentage)
+                    self.current_test.numOfSteps += 1
+                    self.current_test.stepResult.append([str(self.counter),str(match_percentage)])  
+                    self.current_test.comment2 = match_percentage
+                    self.save = True # Resume saving events    
                     if self.event_window:
                         self.event_window.update_event(resevent)
-            return
+            
         
         # Handle special keys
         special_key_map = {
@@ -278,19 +290,25 @@ class TestRunner:
                 if not self.running:
                     break
                     
-                # Update the floating window with current event
-                event_window.update_event(event)
+
                 
                 try:
-                    # Execute based on event type
-                    if event.event_type.startswith('mouse_'):
-                        self.execute_mouse_event(event)
-                    elif event.event_type == 'keyboard':
-                        self.execute_keyboard_event(event)
-                        
                     # Wait for the specified time between events
                     if event.time_from_last > 0:
                         time.sleep(event.time_from_last / 1000)  # Convert ms to seconds
+                    # Execute based on event type
+                    current_time = int(time.time() * 1000)
+                    if event.event_type.startswith('mouse_'):
+                        # print("execute mouse command time is {current_time}")
+                        self.execute_mouse_event(event)
+                        # Update the floating window with current event
+                        event_window.update_event(event)
+                    elif event.event_type == 'keyboard':
+                        # print("execute keyboard command time is {current_time}")
+                        self.execute_keyboard_event(event)
+                        # Update the floating window with current event
+                        event_window.update_event(event)
+                    
                         
                 except Exception as e:
                     print(f"Error executing event {event.counter}: {e}")
@@ -301,38 +319,7 @@ class TestRunner:
             if self.keyboard_listener:
                 self.keyboard_listener.stop()
 
-def create_test_from_json(filepath):
-    """Create a Test instance from a JSON file."""
-    try:
-        with open(filepath, 'r') as f:
-            data = json.load(f)
-            
-        # Create Test instance with data from JSON
-        test = Test(
-            config=data.get('config', ''),
-            comment1=data.get('comment1', ''),
-            comment2=data.get('comment2', ''),
-            accuracy_level=data.get('accuracy_level', '5'),
-            starting_point=data.get('starting_point', '')
-        )
-        
-        # Add events from JSON
-        for event_data in data.get('events', []):
-            # Convert dictionary to Event object using from_dict
-            event = Event.from_dict(event_data)
-            test.add_event(event)
-            
-        return test
-        
-    except FileNotFoundError:
-        print(f"Error: File not found at {filepath}")
-        return None
-    except json.JSONDecodeError:
-        print(f"Error: Invalid JSON format in {filepath}")
-        return None
-    except Exception as e:
-        print(f"Error loading test data: {e}")
-        return None
+
 
 def main(test_full_name=None):
 
@@ -347,7 +334,7 @@ def main(test_full_name=None):
     close_existing_mouse_threads()
     
     filename = test_full_name
-    result_folder_path = get_folder_path(test_full_name)
+    result_folder_path = os.path.dirname(test_full_name) #get_folder_path(test_full_name)
 
     print(f"the test to be run is {test_full_name}")
     print(f"test folder path is {result_folder_path}")

@@ -29,7 +29,7 @@ class CompactJSONEncoder(json.JSONEncoder):
             return super().encode(obj)
 
 class Test:
-    def __init__(self, config: str = "", comment1: str = "", comment2: str = "", accuracy_level: int = 5, starting_point: str = "none"):
+    def __init__(self, config: str = "", comment1: str = "", comment2: str = "", accuracy_level: int = 5, starting_point: str = "none", numOfSteps: int = 0, stepResult: list = None):
         """
         Initialize a new Test instance.
         
@@ -39,12 +39,16 @@ class Test:
             comment2 (str): Second comment for the test
             accuracy_level (int): Accuracy level between 1-10 (default: 5)
             starting_point (str): Starting point for the test (default: "none")
+            numOfSteps (int): Number of steps in the test (default: 0)
+            stepResult (list): List to store step results (default: empty list)
         """
         self.events: List[Event] = []
         self.config = config
         self.comment1 = comment1
         self.comment2 = comment2
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.numOfSteps = numOfSteps
+        self.stepResult = stepResult if stepResult is not None else []
         
         # Validate and set accuracy level
         if not isinstance(accuracy_level, int) or accuracy_level < 1 or accuracy_level > 10:
@@ -181,7 +185,9 @@ class Test:
             'comment2': self.comment2,
             'timestamp': self.timestamp,
             'accuracy_level': self.accuracy_level,
-            'starting_point': self.starting_point
+            'starting_point': self.starting_point,
+            'numOfSteps': self.numOfSteps,
+            'stepResult': self.stepResult
         }
     
     @classmethod
@@ -200,7 +206,9 @@ class Test:
             comment1=data.get('comment1', ''),
             comment2=data.get('comment2', ''),
             accuracy_level=data.get('accuracy_level', 5),
-            starting_point=data.get('starting_point', 'none')
+            starting_point=data.get('starting_point', 'none'),
+            numOfSteps=data.get('numOfSteps', 0),
+            stepResult=data.get('stepResult', [])
         )
         
         # Reconstruct events from dictionary data

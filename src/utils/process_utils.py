@@ -8,6 +8,7 @@ import time
 import json
 from src.utils.app_lifecycle import restart_control_panel
 
+
 def cleanup(lock_file):
     """
     Remove the lock file upon program exit.
@@ -96,17 +97,6 @@ def save_test(test, test_name=None, state="running",result_folder_path=None):
         paths_config = config.get('paths', {})
         
         if state == "running":
-            # # For running tests, save to the result directory
-            # result_path = paths_config.get('result_path', "Result")
-            # db_path = paths_config.get('db_path', os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "DB"))
-            
-            # # Create timestamp for result directory
-            # from datetime import datetime
-            # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            # result_dir_name = f"{timestamp}_{test_name}"
-            
-            # # Create the result directory structure with timestamp prefix
-            # result_dir = os.path.join(db_path, result_path, result_dir_name)
 
             result_dir = result_folder_path
             test_name="Result_"+test_name  
@@ -136,3 +126,6 @@ def save_test(test, test_name=None, state="running",result_folder_path=None):
     except Exception as e:
         print(f"Error saving test data: {e}")
         return None 
+
+
+

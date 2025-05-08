@@ -7,10 +7,10 @@ from tkinter import ttk, StringVar, Text
 from src.utils.config import Config
 
 class ScreenshotDialog ():
-    def __init__(self):
+    def __init__(self, screenshot_counter):
         self.result = None
         self.config = Config()
-        
+        self.screenshot_counter = screenshot_counter
         # Get dialog configuration
         dialog_config = self.config.get('Screenshot_Dialog', {})
         
@@ -53,6 +53,7 @@ class ScreenshotDialog ():
         # Image Name Section
         ttk.Label(main_frame, text="Enter name to the saved image ...:").pack(anchor="w", pady=(0, 5))
         self.imagName_text = Text(main_frame, height=1, width=40)
+        self.imagName_text.insert("1.0", f"Pic_{self.screenshot_counter:03d}")
         self.imagName_text.pack(fill="x", pady=(0, 10))
         
         # Step Description Section
@@ -67,6 +68,7 @@ class ScreenshotDialog ():
         
         # Create text widget with scrollbar
         self.desc_text = Text(desc_frame, height=4, width=40, yscrollcommand=desc_scrollbar.set)
+        self.desc_text.insert("1.0", f"Step {self.screenshot_counter:03d} - do something")
         self.desc_text.pack(side="left", fill="x", expand=True)
         
         # Configure scrollbar to work with text widget
@@ -84,6 +86,7 @@ class ScreenshotDialog ():
         
         # Create text widget with scrollbar
         self.accep_text = Text(accep_frame, height=4, width=40, yscrollcommand=accep_scrollbar.set)
+        self.accep_text.insert("1.0", f"Step {self.screenshot_counter:03d} - result is good")
         self.accep_text.pack(side="left", fill="x", expand=True)
         
         # Configure scrollbar to work with text widget

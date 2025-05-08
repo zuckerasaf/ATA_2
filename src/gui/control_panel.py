@@ -16,7 +16,7 @@ sys.path.insert(0, project_root)
 
 from src.tests.recordTest import main as start_recording
 from src.tests.runTest import main as start_runing
-from src.utils.test import Test
+from src.utils.general_func import create_test_from_json, display_test_data
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
 from src.utils.starting_points import go_to_starting_point
@@ -166,12 +166,16 @@ class ControlPanel:
             for name in os.listdir(directory_path):
                 if state == "test":
                     file_path = file_pattern(name)
-                    display_name = name
+                    test_summary = display_test_data(file_path)
+                    display_name = name + " - " + str(test_summary)
                 else: #state == "result"    
                     # Extract just the test name from the timestamped filename
                     display_name = "Result_"+self._extract_test_name_from_timestamp(name)
                     file_path = os.path.join(directory_path, name, f"{display_name}.json")
 
+                    test_summary = display_test_data(file_path)
+                    display_name = display_name + " - " + str(test_summary)
+                    
                 if os.path.exists(file_path):
                     # Get file creation time
                     creation_time = os.path.getctime(file_path)

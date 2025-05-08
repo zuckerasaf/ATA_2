@@ -87,7 +87,10 @@ class EventListener:
             step_desc="none",
             step_accep="none",
             step_resau="none",
-            pic="none"
+            pic_path="none",
+            screenshot_counter=0,
+            image_name="none",
+
         )
         
         if self.save == True:
@@ -135,7 +138,9 @@ class EventListener:
                     step_desc="none",
                     step_accep="none",
                     step_resau="none",
-                    pic="none"
+                    pic_path="none",
+                    screenshot_counter=0,
+                    image_name="none"
                 )
 
                 
@@ -145,14 +150,14 @@ class EventListener:
                     print("\nPrint screen key pressed...")
                     
                     # Create dialog and wait for it
-                    dialog = ScreenshotDialog()
+                    dialog = ScreenshotDialog(self.screenshot_counter)
                     dialog.dialog.wait_window()
                     time.sleep(0.1)  # 100ms delay for close the snapshot window 
                     # Only proceed if user clicked OK
                     if dialog.result:
                         #Add a small delay to allow the window to update
                         time.sleep(0.1)  # 100ms delay
-                        screenshot = capture_screen()
+                        screenshot = capture_screen() # capture the screen
                         if screenshot:
                             # Generate screenshot filename with test name
                             self.screenshot_counter += 1
@@ -168,6 +173,13 @@ class EventListener:
                                 event.step_desc = dialog.result['step_desc']
                                 event.step_accep = dialog.result['step_accep']
                                 event.priority = dialog.result['priority']
+                                event.pic_path = screenshot_path
+                                self.current_test.numOfSteps += 1
+                                self.current_test.stepResult.append([dialog.result['image_name'], "-"])
+                                event.screenshot_counter = self.screenshot_counter
+                                event.image_name = dialog.result['image_name']
+
+
                      
                     self.save = True
             

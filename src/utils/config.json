@@ -28,7 +28,7 @@
             "pause",
             "print_screen"
         ],
-        "print_screen_key": "f12"
+        "print_screen_key": "f2"
     },
     "mouse": {
         "track_press": true,

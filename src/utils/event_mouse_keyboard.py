@@ -14,8 +14,8 @@ class Event:
     def __init__(self, counter: int, time: int, position: tuple, event_type: str, 
                  action: str, priority: str = PRIORITY_MEDIUM, step_on: str = "",
                  time_from_last: int = 0, step_desc: str = "none", 
-                 step_accep: str = "none", step_resau: str = "none",
-                 pic: str = "none", screenshot = None, image_data: str = "none"):
+                 step_accep: str = "none", step_resau: str = "none", step_resau_num: int = 0,
+                 pic_path: str = "none", screenshot_counter: int = 0, image_name: str = "none"):
         """
         Initialize a new Event instance.
         
@@ -31,9 +31,10 @@ class Event:
             step_desc (str): Description of what this step does
             step_accep (str): Expected outcome of the step
             step_resau (str): Actual result of the step
-            pic (str): Path to associated picture
-            screenshot: PIL Image object of the captured screen
-            image_data (str): Base64 encoded image data, defaults to "none"
+            step_resau_num (int): Numeric result value
+            pic_path (str): Path to associated picture
+            screenshot_counter (int): Counter for screenshots
+            image_name (str): Name of the image
         """
         self.counter = counter
         self.time = time
@@ -46,9 +47,12 @@ class Event:
         self.step_desc = step_desc
         self.step_accep = step_accep
         self.step_resau = step_resau
-        self.pic = pic
-        self.screenshot = screenshot
-        self.image_data = image_data
+        self.step_resau_num = step_resau_num
+        self.pic_path = pic_path
+        self.screenshot_counter = screenshot_counter
+        self.image_name = image_name
+
+
         
     #     # If we have a screenshot but no image_data, convert it
     #     if screenshot and not image_data:
@@ -85,8 +89,8 @@ class Event:
                f"type='{self.event_type}', action='{self.action}', priority={self.priority}, " \
                f"step_on='{self.step_on}', time_from_last={self.time_from_last}, " \
                f"step_desc='{self.step_desc}', step_accep='{self.step_accep}', " \
-               f"step_resau='{self.step_resau}', pic='{self.pic}', " \
-               f"has_image={bool(self.image_data)})"
+               f"step_resau='{self.step_resau}', pic_path='{self.pic_path}', " \
+               f"screenshot_counter={self.screenshot_counter}, image_name='{self.image_name}')"
     
     def __repr__(self) -> str:
         """Detailed string representation of the Event."""
@@ -106,7 +110,10 @@ class Event:
             'step_desc': self.step_desc,
             'step_accep': self.step_accep,
             'step_resau': self.step_resau,
-            'pic': self.pic
+            'step_resau_num': self.step_resau_num,
+            'pic_path': self.pic_path,
+            'screenshot_counter': self.screenshot_counter,
+            'image_name': self.image_name
         }
     
     @classmethod
@@ -123,6 +130,9 @@ class Event:
             time_from_last=data['time_from_last'],
             step_desc=data['step_desc'],
             step_accep=data['step_accep'],
-            step_resau=data['step_resau'],
-            pic=data['pic']
+            step_resau=data.get('step_resau', 'none'),
+            step_resau_num=data.get('step_resau_num', 0),
+            pic_path=data.get('pic_path', 'none'),
+            screenshot_counter=data.get('screenshot_counter', 0),
+            image_name=data.get('image_name', 'none')
         )

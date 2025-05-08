@@ -58,11 +58,13 @@ def generate_screenshot_filename(test_name, counter, image_name,state,result_fol
             # Create full path in test directory
             test_dir = os.path.join(db_path, test_path, test_name)
              # Generate screenshot filename
-            screenshot_filename = f"{test_name}_{image_name}_screenshot_{counter:03d}.jpg"
+            #screenshot_filename = f"{test_name}_{image_name}_screenshot_{counter:03d}.jpg"
+            screenshot_filename = f"{test_name}_{image_name}_{counter:03d}.jpg"
         else:
              # Generate screenshot filename and path in result folder
             test_dir = result_folder_path
-            screenshot_filename=f"Result_{test_name}_screenshot_{counter:03d}.jpg"   
+            #screenshot_filename=f"Result_{test_name}_screenshot_{counter:03d}.jpg"   
+            screenshot_filename=f"{test_name}_{image_name}_Result_{counter:03d}.jpg"   
 
         screenshot_path = os.path.join(test_dir, screenshot_filename)
         
@@ -92,6 +94,8 @@ def compare_images(source, target, result_folder):
     tolerance = image_compare_config.get('tolerance', 0.95)
     position_tolerance = image_compare_config.get('position_tolerance', 10)
     debug = image_compare_config.get('debug', True)
+    source_name = os.path.basename(source).split(".")[0]
+    target_name = os.path.basename(target).split(".")[0]
 
 
    
@@ -119,12 +123,12 @@ def compare_images(source, target, result_folder):
         # Save grayscale images for debugging if requested
         if debug:
             # Save source grayscale image
-            source_gray_path = os.path.join(result_folder, "debug_source_gray.jpg")
+            source_gray_path = os.path.join(result_folder, source_name+"_gray.jpg")
             cv2.imwrite(source_gray_path, source_gray)
             print(f"Saved source grayscale image to: {source_gray_path}")
             
             # Save target grayscale image
-            target_gray_path = os.path.join(result_folder, "debug_target_gray.jpg")
+            target_gray_path = os.path.join(result_folder, target_name+"_gray.jpg")
             cv2.imwrite(target_gray_path, target_gray)
             print(f"Saved target grayscale image to: {target_gray_path}")
         
@@ -141,7 +145,7 @@ def compare_images(source, target, result_folder):
             print(f"Total pixels in image: {total_pixels}")
             print(f"Number of non-zero pixels (differences): {non_zero_pixels}")
             print(f"Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
-            diff_path = os.path.join(result_folder, "debug_diff.jpg")
+            diff_path = os.path.join(result_folder,target_name+"_diff.jpg")
             cv2.imwrite(diff_path, diff)
             print(f"Saved difference image to: {diff_path}")
         
@@ -209,7 +213,7 @@ def compare_images(source, target, result_folder):
         
         # Save threshold image for debugging if requested
         if debug:
-            thresh_path = os.path.join(result_folder, "debug_thresh.jpg")
+            thresh_path = os.path.join(result_folder, target_name+"_thresh.jpg")
             non_zero_pixels = cv2.countNonZero(thresh)
             print(f"Number of non-zero pixels (differences) with {tolerance}: {non_zero_pixels}")
             print(f"Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
@@ -233,7 +237,8 @@ def compare_images(source, target, result_folder):
         print(f"Match percentage: {match_percentage}")
         
         # Generate result filename
-        result_dif_filename = "diff_"+ os.path.basename(target)
+        #result_dif_filename = "diff_"+ os.path.basename(target).split(".")[0]+"_"+os.path.basename(source).split(".")[0]+".jpg"
+        result_dif_filename = target_name+"diff_.jpg"
         result_dif_path = os.path.join(result_folder, result_dif_filename)
         
         # Save result image

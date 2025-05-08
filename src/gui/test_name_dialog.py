@@ -5,6 +5,7 @@ Dialog for entering test name and starting point.
 import tkinter as tk
 from tkinter import ttk, StringVar, messagebox
 from src.utils.config import Config
+from src.utils.general_func import generate_random_word
 
 class TestNameDialog:
     def __init__(self):
@@ -30,12 +31,14 @@ class TestNameDialog:
         ttk.Label(main_frame, text="Test Name:").pack(anchor="w", pady=(0, 5))
         self.name_var = tk.StringVar()
         self.name_entry = ttk.Entry(main_frame, textvariable=self.name_var, width=40)
+        self.name_entry.insert(0, generate_random_word())
         self.name_entry.pack(fill="x", pady=(0, 10))
         
         # Test Purpose Section
         ttk.Label(main_frame, text="Test Purpose:").pack(anchor="w", pady=(0, 5))
         self.purpose_var = tk.StringVar()
         self.purpose_entry = ttk.Entry(main_frame, textvariable=self.purpose_var, width=40)
+        self.purpose_entry.insert(0, "the test purpose is " + generate_random_word())
         self.purpose_entry.pack(fill="x", pady=(0, 10))
         
         # Accuracy Level Section
