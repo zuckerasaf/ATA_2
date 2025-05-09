@@ -97,56 +97,93 @@ class TestRunner:
             
     def execute_mouse_event(self, event):
         """Execute a mouse event."""
-
-        self.counter += 1
-        current_time = int(time.time() * 1000)
-        time_diff = current_time - self.last_event_time
-        time_total = current_time - self.start_time
-        # duplicatethe 
-        resevent = Event(
-            counter=self.counter,
-            time=time_total,  # Total time since start
-            position=(event.position[0], event.position[1]),
-            event_type=event.event_type,
-            action=event.action,
-            priority=event.priority,
-            step_on=event.step_on,
-            time_from_last=time_diff,
-            step_desc=event.step_desc,
-            step_accep=event.step_accep,
-            step_resau=event.step_resau,
-            pic_path=event.pic_path,
-            step_resau_num=event.step_resau_num,
-            image_name=event.image_name
-        )
-
-        # Move mouse to position
-        self.mouse_controller.position = event.position
-
-
-        # Handle different mouse button types
-        button_map = {
-            'mouse_left': mouse.Button.left,
-            'mouse_right': mouse.Button.right,
-            'mouse_middle': mouse.Button.middle
-        }
-        
-        if event.event_type in button_map:
-            button = button_map[resevent.event_type]
+        try:
+            self.counter += 1
+            current_time = int(time.time() * 1000)
+            time_diff = current_time - self.last_event_time
+            time_total = current_time - self.start_time
             
-            # Check if it's a press or release event
-            if "pressed" in event.action:
-                self.mouse_controller.press(button)
-            elif "released" in event.action:
-                self.mouse_controller.release(button)
-        
-        if self.save == True:
-            # Add event to current test
-            self.current_test.add_event(resevent)
+            resevent = Event(
+                counter=self.counter,
+                time=time_total,  # Total time since start
+                position=(event.position[0], event.position[1]),
+                event_type=event.event_type,
+                action=event.action,
+                priority=event.priority,
+                step_on=event.step_on,
+                time_from_last=time_diff,
+                step_desc=event.step_desc,
+                step_accep=event.step_accep,
+                step_resau=event.step_resau,
+                pic_path=event.pic_path,
+                step_resau_num=event.step_resau_num,
+                image_name=event.image_name
+            )
+
+            # Handle different mouse button types
+            button_map = {
+                'mouse_left': mouse.Button.left,
+                'mouse_right': mouse.Button.right,
+                'mouse_middle': mouse.Button.middle
+            }
             
-            # Update the floating window
-            self.event_window.update_event(resevent)
-            self.last_event_time = current_time     
+            if event.event_type in button_map:
+                button = button_map[resevent.event_type]
+                
+                # Check if it's a press or release event
+                if "pressed" in event.action:
+                    # Move mouse to position first
+                    self.mouse_controller.position = event.position
+                    # Add a small delay to ensure the mouse has moved
+                    time.sleep(0.05)
+                    self.mouse_controller.press(button)
+                    
+                    # If this is a drag operation, wait for the next event
+                    if "drag" in event.action.lower():
+                        # Store the start position and time
+                        drag_start_pos = event.position
+                        drag_start_time = current_time
+                        
+                        # Wait for the next event to get the end position
+                        next_event = None
+                        for next_evt in self.test.events[self.counter:]:
+                            if (next_evt.event_type == event.event_type and 
+                                "released" in next_evt.action and 
+                                "drag" in next_evt.action.lower()):
+                                next_event = next_evt
+                                break
+                        
+                        if next_event:
+                            # Calculate the drag duration
+                            drag_duration = next_event.time - event.time
+                            
+                            # Move mouse to end position
+                            self.mouse_controller.position = next_event.position
+                            # Add a small delay to ensure the mouse has moved
+                            time.sleep(0.05)
+                            self.mouse_controller.release(button)
+                            
+                            # Update the event with drag information
+                            resevent.step_desc = f"Drag from {drag_start_pos} to {next_event.position}"
+                            resevent.step_resau = f"Drag duration: {drag_duration}ms"
+                            
+                elif "released" in event.action:
+                    # For non-drag releases, just move and release
+                    self.mouse_controller.position = event.position
+                    time.sleep(0.05)
+                    self.mouse_controller.release(button)
+            
+            if self.save == True:
+                # Add event to current test
+                self.current_test.add_event(resevent)
+                
+                # Update the floating window
+                if hasattr(self, 'event_window') and self.event_window and self.event_window.winfo_exists():
+                    self.event_window.update_event(resevent)
+                self.last_event_time = current_time
+                
+        except Exception as e:
+            print(f"Error executing mouse event: {e}")
 
     def execute_keyboard_event(self, event):
         """Execute a keyboard event."""

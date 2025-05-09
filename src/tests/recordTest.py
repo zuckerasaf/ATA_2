@@ -48,6 +48,8 @@ class EventListener:
         self.print_screen_key = config.get_print_screen_key()
         self.test_name = test_name
         self.dialog_open = False  # Flag to track if dialog is open
+        self.last_press_position = None  # Track last press position
+        self.last_press_time = None  # Track last press time
         
         # Create a new test instance
         self.current_test = Test(
@@ -56,7 +58,6 @@ class EventListener:
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             starting_point=starting_point,
             total_time_in_screenshot_dialog=0
-
         )
         
     def on_click(self, x, y, button, pressed):
@@ -69,13 +70,7 @@ class EventListener:
         if not pressed and not config.should_track_mouse_release():
             return True
             
-        # self.counter += 1
-        # current_time = int(time.time() * 1000)
-        # #print(f"current_time: {current_time}")
-        # time_diff = current_time - self.last_event_time
-        # #print(f"time_diff: {time_diff} , current_time: {current_time} , last_event_time: {self.last_event_time}")
-        # time_total = current_time - self.start_time
-        # #print(f"time_total: {time_total} , current_time: {current_time} , start_time: {self.start_time}")
+
         
         self.counter += 1
         current_time = int(time.time() * 1000)
@@ -83,16 +78,35 @@ class EventListener:
         neto_time = time_total - self.current_test.total_time_in_screenshot_dialog
         time_diff = neto_time - self.last_event_time
 
+        # Determine if this is a drag operation
+        is_drag = False
+        if pressed:
+            self.last_press_position = (x, y)
+            self.last_press_time = current_time
+        elif self.last_press_position is not None:
+            # Calculate distance moved
+            dx = x - self.last_press_position[0]
+            dy = y - self.last_press_position[1]
+            distance = (dx * dx + dy * dy) ** 0.5  # Euclidean distance
+            
+            # If moved more than 5 pixels, consider it a drag
+            if distance > 5:
+                is_drag = True
+            self.last_press_position = None
+            self.last_press_time = None
 
-
-
-        # Different action text for press and release
-        action_text = f"Mouse {button.name} pressed" if pressed else f"Mouse {button.name} released"
+        # Different action text for press and release, including drag information
+        if pressed:
+            action_text = f"Mouse {button.name} pressed"
+        else:
+            action_text = f"Mouse {button.name} released"
+            if is_drag:
+                action_text = f"Mouse {button.name} drag released"
         
         event = Event(
             counter=self.counter,
             time=time_total,  # Total time since start
-            neto_time=neto_time ,
+            neto_time=neto_time,
             position=(x, y),
             event_type=f"mouse_{button.name}",
             action=action_text,
@@ -104,17 +118,16 @@ class EventListener:
             step_resau="none",
             pic_path="none",
             screenshot_counter=0,
-            image_name="none",
-
+            image_name="none"
         )
-        #print(f"neto_time: {event.neto_time} , current_time: {current_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
+
         if self.save == True:
             # Add event to current test
             self.current_test.add_event(event)
             
             # Update the floating window
             self.event_window.update_event(event)
-            self.last_event_time =neto_time
+            self.last_event_time = neto_time
  
 
     def on_press(self, key):
