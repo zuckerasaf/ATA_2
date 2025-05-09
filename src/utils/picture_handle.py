@@ -59,12 +59,12 @@ def generate_screenshot_filename(test_name, counter, image_name,state,result_fol
             test_dir = os.path.join(db_path, test_path, test_name)
              # Generate screenshot filename
             #screenshot_filename = f"{test_name}_{image_name}_screenshot_{counter:03d}.jpg"
-            screenshot_filename = f"{test_name}_{image_name}_{counter:03d}.jpg"
+            screenshot_filename = f"{test_name}_{image_name}.jpg"
         else:
              # Generate screenshot filename and path in result folder
             test_dir = result_folder_path
-            #screenshot_filename=f"Result_{test_name}_screenshot_{counter:03d}.jpg"   
-            screenshot_filename=f"{test_name}_{image_name}_Result_{counter:03d}.jpg"   
+              
+            screenshot_filename = f"{image_name.split('.')[0]}_Result.jpg"   
 
         screenshot_path = os.path.join(test_dir, screenshot_filename)
         
@@ -149,66 +149,7 @@ def compare_images(source, target, result_folder):
             cv2.imwrite(diff_path, diff)
             print(f"Saved difference image to: {diff_path}")
         
-        # # Apply position tolerance if specified
-        # if position_tolerance > 0:
-        #     # Create a copy of the difference image
-        #     diff_with_tolerance = diff.copy()
-            
-        #     # Get image dimensions
-        #     height, width = diff.shape
-            
-        #     # For each pixel in the difference image
-        #     for y in range(height):
-        #         for x in range(width):
-        #             # If this pixel has a difference
-        #             if diff[y, x] > tolerance:
-        #                 # Check surrounding pixels within the tolerance radius
-        #                 match_found = False
-                        
-        #                 # Define search boundaries
-        #                 y_start = max(0, y - position_tolerance)
-        #                 y_end = min(height, y + position_tolerance + 1)
-        #                 x_start = max(0, x - position_tolerance)
-        #                 x_end = min(width, x + position_tolerance + 1)
-                        
-        #                 # Search for a matching pixel in the neighborhood
-        #                 for ny in range(y_start, y_end):
-        #                     for nx in range(x_start, x_end):
-        #                         # Skip the original pixel
-        #                         if ny == y and nx == x:
-        #                             continue
-                                    
-        #                         # Calculate the difference at this position
-        #                         pixel_diff = abs(int(source_gray[y, x]) - int(target_gray[ny, nx]))
-                                
-        #                         # If we found a match within tolerance
-        #                         if pixel_diff <= tolerance:
-        #                             match_found = True
-        #                             break
-                            
-        #                     if match_found:
-        #                         break
-                        
-        #                 # If a match was found, set the difference to 0
-        #                 if match_found:
-        #                     diff_with_tolerance[y, x] = 0
-            
-        #     # Use the new difference image with position tolerance
-        #     diff = diff_with_tolerance
-            
-            
-            
-        #     # Save difference with tolerance image for debugging if requested
-        #     if debug:
-        #         # Calculate and print pixel statistics after position tolerance
-        #         non_zero_pixels_after_tolerance = cv2.countNonZero(diff)
-        #         print(f"Number of non-zero pixels after position tolerance: {non_zero_pixels_after_tolerance}")
-        #         print(f"Percentage of different pixels after tolerance: {(non_zero_pixels_after_tolerance/total_pixels)*100:.2f}%")
-        #         diff_tolerance_path = os.path.join(result_folder, "debug_diff_with_tolerance.jpg")
-        #         cv2.imwrite(diff_tolerance_path, diff)
-        #         print(f"Saved difference with tolerance image to: {diff_tolerance_path}")
-        
-        # Apply threshold based on tolerance
+
         _, thresh = cv2.threshold(diff, tolerance, 255, cv2.THRESH_BINARY)
         
         # Save threshold image for debugging if requested
@@ -244,7 +185,7 @@ def compare_images(source, target, result_folder):
         # Save result image
         cv2.imwrite(result_dif_path, result)
         
-        return match_percentage, result_dif_path
+        return int(match_percentage), result_dif_path
         
     except Exception as e:
         print(f"Error comparing images: {e}")

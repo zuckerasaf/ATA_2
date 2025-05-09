@@ -115,7 +115,9 @@ class TestRunner:
             step_desc=event.step_desc,
             step_accep=event.step_accep,
             step_resau=event.step_resau,
-            pic=event.pic
+            pic_path=event.pic_path,
+            step_resau_num=event.step_resau_num,
+            image_name=event.image_name
         )
 
         # Move mouse to position
@@ -166,7 +168,9 @@ class TestRunner:
             step_desc=event.step_desc,
             step_accep=event.step_accep,
             step_resau=event.step_resau,
-            pic=event.pic
+            pic_path=event.pic_path,
+            step_resau_num=event.step_resau_num,
+            image_name=event.image_name
         )
 
         # Extract the key from the action text
@@ -203,8 +207,9 @@ class TestRunner:
             if screenshot:
                 self.screenshot_counter += 1
                 self.test
+                
                 screenshot_filename, screenshot_path = generate_screenshot_filename(
-                        self.test.comment1.split(": ")[1], self.screenshot_counter,os.path.basename(resevent.pic),"running",self.result_folder_path)
+                        self.test.comment1.split(": ")[1], self.screenshot_counter,os.path.basename(resevent.pic_path),"running",self.result_folder_path)
                 
                 if screenshot_filename and screenshot_path:
                     # Update the event with the screenshot and save it first
@@ -212,10 +217,10 @@ class TestRunner:
                     resevent.save_screenshot(screenshot_path)
                     
                     # Now compare the images using the saved file paths
-                    match_percentage, result_path = compare_images(event.pic, screenshot_path, self.result_folder_path)
+                    match_percentage, result_path = compare_images(event.pic_path, screenshot_path, self.result_folder_path)
                     resevent.step_resau = "match percentage is "+str(match_percentage)
                     self.current_test.numOfSteps += 1
-                    self.current_test.stepResult.append([str(self.counter),str(match_percentage)])  
+                    self.current_test.stepResult.append([str(resevent.image_name),str(match_percentage)])  
                     self.current_test.comment2 = match_percentage
                     self.save = True # Resume saving events    
                     if self.event_window:
