@@ -32,7 +32,9 @@
     },
     "mouse": {
         "track_press": true,
-        "track_release": true
+        "track_release": true,
+        "track_drag": true,
+        "track_drag_threshold": 10
     },
     "Event_Monitor_window": {
         "title": "Event Monitor",

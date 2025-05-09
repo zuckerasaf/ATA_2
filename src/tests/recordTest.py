@@ -50,6 +50,8 @@ class EventListener:
         self.dialog_open = False  # Flag to track if dialog is open
         self.last_press_position = None  # Track last press position
         self.last_press_time = None  # Track last press time
+        self.drag_positions = []  # Track positions during drag
+        self.drag_times = []  # Track times during drag
         
         # Create a new test instance
         self.current_test = Test(
@@ -60,6 +62,13 @@ class EventListener:
             total_time_in_screenshot_dialog=0
         )
         
+    def on_move(self, x, y):
+        """Track mouse movement during drag operations."""
+        if self.last_press_position is not None:
+            current_time = int(time.time() * 1000)
+            self.drag_positions.append((x, y))
+            self.drag_times.append(current_time)
+
     def on_click(self, x, y, button, pressed):
         if not self.running:
             return False
@@ -70,8 +79,6 @@ class EventListener:
         if not pressed and not config.should_track_mouse_release():
             return True
             
-
-        
         self.counter += 1
         current_time = int(time.time() * 1000)
         time_total = current_time - self.start_time
@@ -83,6 +90,8 @@ class EventListener:
         if pressed:
             self.last_press_position = (x, y)
             self.last_press_time = current_time
+            self.drag_positions = [(x, y)]  # Initialize drag positions
+            self.drag_times = [current_time]  # Initialize drag times
         elif self.last_press_position is not None:
             # Calculate distance moved
             dx = x - self.last_press_position[0]
@@ -90,8 +99,11 @@ class EventListener:
             distance = (dx * dx + dy * dy) ** 0.5  # Euclidean distance
             
             # If moved more than 5 pixels, consider it a drag
-            if distance > 5:
+            if distance > config.get_track_drag_threshold():
                 is_drag = True
+                # Add final position and time
+                self.drag_positions.append((x, y))
+                self.drag_times.append(current_time)
             self.last_press_position = None
             self.last_press_time = None
 
@@ -121,6 +133,14 @@ class EventListener:
             image_name="none"
         )
 
+        # Add drag movement data if this is a drag release
+        if not pressed and is_drag and len(self.drag_positions) > 1:
+            event.step_desc = "Drag movement"
+            event.step_resau = json.dumps({
+                'positions': self.drag_positions,
+                'times': self.drag_times
+            })
+
         if self.save == True:
             # Add event to current test
             self.current_test.add_event(event)
@@ -132,12 +152,7 @@ class EventListener:
 
     def on_press(self, key):
 
-        # self.counter += 1
-        # current_time = int(time.time() * 1000)
-        # time_total = current_time - self.start_time - self.current_test.total_time_in_screenshot_dialog
-        # time_diff = time_total - self.last_event_time - self.current_test.total_time_in_screenshot_dialog
-        # print(f"time_total: {time_total} , current_time: {current_time} , start_time: {self.start_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
-        # print(f"time_diff: {time_diff} , current_time: {current_time} , last_event_time: {self.last_event_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
+        
         self.counter += 1
         current_time = int(time.time() * 1000)
         time_total = current_time - self.start_time
@@ -276,7 +291,8 @@ def main(test_name=None, starting_point="none"):
     
     # Start the mouse listener
     mouse_listener = mouse.Listener(
-        on_click=listener.on_click
+        on_click=listener.on_click,
+        on_move=listener.on_move  # Add mouse movement tracking
     )
     mouse_listener.name = "MouseListener"
     mouse_listener.start()

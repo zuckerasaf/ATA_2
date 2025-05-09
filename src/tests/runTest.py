@@ -95,6 +95,12 @@ class TestRunner:
             else:
                 pass
             
+    def peek_next_event(self, current_index):
+        """Look at the next event without consuming it."""
+        if current_index + 1 < len(self.test.events):
+            return self.test.events[current_index + 1]
+        return None
+
     def execute_mouse_event(self, event):
         """Execute a mouse event."""
         try:
@@ -135,42 +141,52 @@ class TestRunner:
                     # Move mouse to position first
                     self.mouse_controller.position = event.position
                     # Add a small delay to ensure the mouse has moved
-                    time.sleep(0.05)
+                    time.sleep(0.1)  # Increased delay for more stability
                     self.mouse_controller.press(button)
                     
-                    # If this is a drag operation, wait for the next event
-                    if "drag" in event.action.lower():
+                    # Look at the next event
+                    next_event = self.peek_next_event(self.counter - 1)
+                    # If this is a drag operation, look at the next event
+                    if next_event and "drag" in next_event.action.lower():
                         # Store the start position and time
                         drag_start_pos = event.position
                         drag_start_time = current_time
                         
-                        # Wait for the next event to get the end position
-                        next_event = None
-                        for next_evt in self.test.events[self.counter:]:
-                            if (next_evt.event_type == event.event_type and 
-                                "released" in next_evt.action and 
-                                "drag" in next_evt.action.lower()):
-                                next_event = next_evt
-                                break
-                        
-                        if next_event:
-                            # Calculate the drag duration
-                            drag_duration = next_event.time - event.time
+                        if next_event.event_type == event.event_type and "released" in next_event.action:
+                            try:
+                                # Try to get recorded movement data
+                                movement_data = json.loads(next_event.step_resau)
+                                positions = movement_data['positions']
+                                times = movement_data['times']
+                                
+                                # Keep the button pressed while moving
+                                self.mouse_controller.press(button)
+                                
+                                # Replay the exact movement
+                                for i in range(1, len(positions)):
+                                    # Calculate time to wait based on recorded timing
+                                    wait_time = (times[i] - times[i-1]) / 1000.0  # Convert to seconds
+                                    time.sleep(wait_time)
+                                    
+                                    # Move to the recorded position while keeping button pressed
+                                    self.mouse_controller.position = positions[i]
+                                
+                            except (json.JSONDecodeError, KeyError, TypeError):
+                                # Fallback to simple movement if no recorded data
+                                self.mouse_controller.position = next_event.position
+                                time.sleep(0.1)
                             
-                            # Move mouse to end position
-                            self.mouse_controller.position = next_event.position
-                            # Add a small delay to ensure the mouse has moved
-                            time.sleep(0.05)
+                            # Release the button at the end
                             self.mouse_controller.release(button)
                             
                             # Update the event with drag information
                             resevent.step_desc = f"Drag from {drag_start_pos} to {next_event.position}"
-                            resevent.step_resau = f"Drag duration: {drag_duration}ms"
+                            resevent.step_resau = f"Drag duration: {next_event.time - event.time}ms"
                             
                 elif "released" in event.action:
                     # For non-drag releases, just move and release
                     self.mouse_controller.position = event.position
-                    time.sleep(0.05)
+                    time.sleep(0.1)  # Increased delay for more stability
                     self.mouse_controller.release(button)
             
             if self.save == True:

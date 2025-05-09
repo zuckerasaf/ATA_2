@@ -130,3 +130,7 @@ class Config:
                 'y': 200
             }
         }) 
+    
+    def get_track_drag_threshold(self) -> int:
+        """Get the track drag threshold."""
+        return self.get('mouse.track_drag_threshold', 5)
