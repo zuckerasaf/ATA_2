@@ -29,7 +29,7 @@ class CompactJSONEncoder(json.JSONEncoder):
             return super().encode(obj)
 
 class Test:
-    def __init__(self, config: str = "", comment1: str = "", comment2: str = "", accuracy_level: int = 5, starting_point: str = "none", numOfSteps: int = 0, stepResult: list = None):
+    def __init__(self, config: str = "", comment1: str = "", comment2: str = "", accuracy_level: int = 5, starting_point: str = "none", numOfSteps: int = 0, stepResult: list = None, total_time_in_screenshot_dialog: int = 0):
         """
         Initialize a new Test instance.
         
@@ -49,6 +49,7 @@ class Test:
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.numOfSteps = numOfSteps
         self.stepResult = stepResult if stepResult is not None else []
+        self.total_time_in_screenshot_dialog = total_time_in_screenshot_dialog
         
         # Validate and set accuracy level
         if not isinstance(accuracy_level, int) or accuracy_level < 1 or accuracy_level > 10:
@@ -187,7 +188,8 @@ class Test:
             'accuracy_level': self.accuracy_level,
             'starting_point': self.starting_point,
             'numOfSteps': self.numOfSteps,
-            'stepResult': self.stepResult
+            'stepResult': self.stepResult,
+            'total_time_in_screenshot_dialog': self.total_time_in_screenshot_dialog
         }
     
     @classmethod
@@ -208,7 +210,8 @@ class Test:
             accuracy_level=data.get('accuracy_level', 5),
             starting_point=data.get('starting_point', 'none'),
             numOfSteps=data.get('numOfSteps', 0),
-            stepResult=data.get('stepResult', [])
+            stepResult=data.get('stepResult', []),
+            total_time_in_screenshot_dialog=data.get('total_time_in_screenshot_dialog', 0)
         )
         
         # Reconstruct events from dictionary data

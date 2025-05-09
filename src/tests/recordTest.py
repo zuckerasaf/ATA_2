@@ -39,7 +39,8 @@ class EventListener:
         self.counter = 0
         self.screenshot_counter = 0
         self.start_time = int(time.time() * 1000)
-        self.last_event_time = self.start_time
+        self.last_event_time = 0
+        self.neto_time = 0
         self.running = True
         self.save = True  # Global save flag with default True
         self.event_window = event_window
@@ -53,7 +54,8 @@ class EventListener:
             config="nothing for now",
             comment1=f"Test: {test_name}" if test_name else "Test started",
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            starting_point=starting_point
+            starting_point=starting_point,
+            total_time_in_screenshot_dialog=0
 
         )
         
@@ -67,17 +69,30 @@ class EventListener:
         if not pressed and not config.should_track_mouse_release():
             return True
             
+        # self.counter += 1
+        # current_time = int(time.time() * 1000)
+        # #print(f"current_time: {current_time}")
+        # time_diff = current_time - self.last_event_time
+        # #print(f"time_diff: {time_diff} , current_time: {current_time} , last_event_time: {self.last_event_time}")
+        # time_total = current_time - self.start_time
+        # #print(f"time_total: {time_total} , current_time: {current_time} , start_time: {self.start_time}")
+        
         self.counter += 1
         current_time = int(time.time() * 1000)
-        time_diff = current_time - self.last_event_time
         time_total = current_time - self.start_time
-        
+        neto_time = time_total - self.current_test.total_time_in_screenshot_dialog
+        time_diff = neto_time - self.last_event_time
+
+
+
+
         # Different action text for press and release
         action_text = f"Mouse {button.name} pressed" if pressed else f"Mouse {button.name} released"
         
         event = Event(
             counter=self.counter,
             time=time_total,  # Total time since start
+            neto_time=neto_time ,
             position=(x, y),
             event_type=f"mouse_{button.name}",
             action=action_text,
@@ -92,27 +107,35 @@ class EventListener:
             image_name="none",
 
         )
-        
+        #print(f"neto_time: {event.neto_time} , current_time: {current_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
         if self.save == True:
             # Add event to current test
             self.current_test.add_event(event)
             
             # Update the floating window
             self.event_window.update_event(event)
-            self.last_event_time = current_time
+            self.last_event_time =neto_time
+ 
 
     def on_press(self, key):
+
+        # self.counter += 1
+        # current_time = int(time.time() * 1000)
+        # time_total = current_time - self.start_time - self.current_test.total_time_in_screenshot_dialog
+        # time_diff = time_total - self.last_event_time - self.current_test.total_time_in_screenshot_dialog
+        # print(f"time_total: {time_total} , current_time: {current_time} , start_time: {self.start_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
+        # print(f"time_diff: {time_diff} , current_time: {current_time} , last_event_time: {self.last_event_time} , total_time_in_screenshot_dialog: {self.current_test.total_time_in_screenshot_dialog}")
+        self.counter += 1
+        current_time = int(time.time() * 1000)
+        time_total = current_time - self.start_time
+        neto_time = time_total - self.current_test.total_time_in_screenshot_dialog
+        time_diff = neto_time - self.last_event_time
+
         try: # the "try" part deal with all the NOT speaceial keys tha one that got valid {key.char}
-            # Create common event data
-            self.counter += 1
-            current_time = int(time.time() * 1000)
-            time_diff = current_time - self.last_event_time
-            time_total = current_time - self.start_time
-            
-            # Create base event
-            event = Event(
+           event = Event(
                 counter=self.counter,
                 time=time_total,
+                neto_time=neto_time,
                 position=(0, 0),
                 action=f"Key '{key.char}' pressed",
                 event_type="keyboard",
@@ -129,6 +152,7 @@ class EventListener:
                 event = Event(
                     counter=self.counter,
                     time=time_total,
+                    neto_time=neto_time,
                     position=(0, 0),
                     event_type="keyboard",
                     action=f"Special key '{key.name}' pressed",
@@ -149,9 +173,17 @@ class EventListener:
                     self.save = False # stop the saving of the listener data while deal with the snapshot 
                     print("\nPrint screen key pressed...")
                     
+                    # Start timing the dialog
+                    dialog_start_time = int(time.time() * 1000)
+                    
                     # Create dialog and wait for it
                     dialog = ScreenshotDialog(self.screenshot_counter)
                     dialog.dialog.wait_window()
+                    
+                    # Calculate time spent in dialog
+                    dialog_end_time = int(time.time() * 1000)
+                    time_in_dialog = dialog_end_time - dialog_start_time
+                    
                     time.sleep(0.1)  # 100ms delay for close the snapshot window 
                     # Only proceed if user clicked OK
                     if dialog.result:
@@ -174,28 +206,23 @@ class EventListener:
                                 event.step_accep = dialog.result['step_accep']
                                 event.priority = dialog.result['priority']
                                 event.pic_path = screenshot_path
+                                event.time_in_screenshot_dialog = time_in_dialog  # Store the time spent in dialog
                                 self.current_test.numOfSteps += 1
                                 self.current_test.stepResult.append([dialog.result['image_name'], "-"])
                                 event.screenshot_counter = self.screenshot_counter
                                 event.image_name = dialog.result['image_name']
-
+                                self.current_test.total_time_in_screenshot_dialog += time_in_dialog
 
                      
                     self.save = True
             
 
                 if key.name == self.quit_key:
-                    #event.action=f"Key '{key.char}' pressed",
-                    #event.event_type="keyboard  - quit and save command"
+
                     print("\nStopping event listener...")
                     self.running = False
                     self.current_test.add_event(event)  # Add event to current test
                     self.event_window.update_event(event) # Update the floating window
-
-                    # # Convert any remaining screenshots to base64
-                    # for event in self.current_test.events:
-                    #     if event.screenshot and not event.image_data:
-                    #         event._convert_screenshot_to_base64()
 
                     # Save the test data using the imported save_test function
                     filepath = save_test(self.current_test, self.test_name, "recording")
@@ -214,7 +241,7 @@ class EventListener:
             # Update the floating window
             self.event_window.update_event(event)
             
-        self.last_event_time = current_time
+        self.last_event_time = neto_time
 
 def main(test_name=None, starting_point="none"):
     """Main function to start the event listener."""

@@ -66,10 +66,10 @@ class ControlPanel:
                         pid = int(f.read().strip())
                     # On Windows, we can use taskkill to force terminate the process
                     os.system(f'taskkill /F /PID {pid}')
-                    messagebox.showinfo(
-                        "Process Cleanup", 
-                        "The system detected that it didn't close properly last time. It will be closed properly now."
-                    )
+                    # messagebox.showinfo(
+                    #     "Process Cleanup", 
+                    #     "The system detected that it didn't close properly last time. It will be closed properly now."
+                    # )
                 except:
                     pass
                 # Remove the lock file
@@ -83,7 +83,7 @@ class ControlPanel:
             self.root.update()
             
             # Give a small delay to ensure status is updated
-            self.root.after(500)
+            # self.root.after(500)
             
         except Exception as e:
             print(f"Error during shutdown: {e}")
@@ -410,7 +410,7 @@ class ControlPanel:
         """
         try:
             # Split the display text into name and date parts
-            name_part, date_part = display_text.split(" - ")
+            name_part, stepResult, date_part = display_text.split(" - ")
             
             # For test list, just return the name part
             if is_result:                
@@ -427,10 +427,7 @@ class ControlPanel:
                 # Combine into the final format
                 return f"{timestamp}_{test_name}"
             else :
-                # Split the display text into name and date parts
-                name_part, date_part = display_text.split(" - ")
 
-                # Combine into the final format
                 return f"{name_part}"
 
             

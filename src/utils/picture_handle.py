@@ -118,7 +118,7 @@ def compare_images(source, target, result_folder):
         source_gray = cv2.cvtColor(source_img, cv2.COLOR_BGR2GRAY)
         target_gray = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
 
-        found, offset_x, offset_y, match_confidence = find_image_offset(source_gray, target_gray, result_folder)
+        found, offset_x, offset_y, match_confidence = find_image_offset(source_gray, target_gray, result_folder, debug, target_name)
         
         # Save grayscale images for debugging if requested
         if debug:
@@ -191,7 +191,7 @@ def compare_images(source, target, result_folder):
         print(f"Error comparing images: {e}")
         return 0, None
 
-def find_image_offset(source_gray, target_gray, result_folder=None, debug=False):
+def find_image_offset(source_gray, target_gray, result_folder=None, debug=False, target_name=None):
     """
     Find if target image exists within source image and calculate its offset.
     
@@ -248,7 +248,7 @@ def find_image_offset(source_gray, target_gray, result_folder=None, debug=False)
                 cv2.putText(debug_img, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 
                 # Save debug visualization
-                debug_path = os.path.join(result_folder, "debug_match.jpg")
+                debug_path = os.path.join(result_folder, target_name +"_debug_match.jpg")
                 cv2.imwrite(debug_path, debug_img)
                 print(f"Saved match visualization to: {debug_path}")
             
