@@ -13,7 +13,7 @@ from datetime import datetime
 from pynput import mouse, keyboard
 from src.utils.config import Config
 from src.utils.test import Test
-from src.utils.picture_handle import capture_screen, generate_screenshot_filename
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename, save_screenshot
 from src.utils.event_mouse_keyboard import Event
 from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
 from src.utils.app_lifecycle import restart_control_panel
@@ -214,10 +214,15 @@ class EventListener:
                     
                     time.sleep(0.1)  # 100ms delay for close the snapshot window 
                     # Only proceed if user clicked OK
+                    event.pic_width = dialog.result['ps_width']
+                    event.pic_height = dialog.result['ps_height']
+                    event.pic_x = dialog.result['ps_x']
+                    event.pic_y = dialog.result['ps_y']
+
                     if dialog.result:
                         #Add a small delay to allow the window to update
                         time.sleep(0.1)  # 100ms delay
-                        screenshot = capture_screen() # capture the screen
+                        screenshot = capture_screen(event.pic_x, event.pic_y, event.pic_width, event.pic_height) # capture the screen
                         if screenshot:
                             # Generate screenshot filename with test name
                             self.screenshot_counter += 1
@@ -227,13 +232,12 @@ class EventListener:
                             if screenshot_filename and screenshot_path:
                                 self.save = True # Resume saving events
                                 # Store screenshot in event and save it
-                                event.screenshot = screenshot
-                                event.save_screenshot(screenshot_path)
+                               
                                 # Use dialog results
                                 event.step_desc = dialog.result['step_desc']
                                 event.step_accep = dialog.result['step_accep']
                                 event.priority = dialog.result['priority']
-                                event.pic_path = screenshot_path
+                                event.pic_path =  save_screenshot(screenshot, screenshot_path)
                                 event.time_in_screenshot_dialog = time_in_dialog  # Store the time spent in dialog
                                 self.current_test.numOfSteps += 1
                                 self.current_test.stepResult.append([dialog.result['image_name'], "-"])

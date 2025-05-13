@@ -81,7 +81,7 @@
     "Screenshot_Dialog": {
         "title": "Screenshot Configuration",
         "width": 400,
-        "height": 400,
+        "height": 500,
         "position": {
             "x": 200,
             "y": 200
@@ -96,7 +96,7 @@
     "Image_compare": {
         "position_tolerance": 0,
         "tolerance": 0,
-        "debug": true,
+        "debug": false,
         "threshold" : 0.8
     }
 } 

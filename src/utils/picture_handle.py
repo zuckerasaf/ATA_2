@@ -14,7 +14,7 @@ config = Config()
 # Define project root path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
-def capture_screen():
+def capture_screen(x, y, width, height):
     """
     Capture the screen based on Print Screen window configuration.
     
@@ -22,9 +22,9 @@ def capture_screen():
         PIL.Image: The captured screenshot, or None if capture fails
     """
     try:
-        # Get Print Screen window configuration
-        width, height = config.get_Print_Screen_window_size()
-        x, y = config.get_Print_Screen_window_position()
+        # # Get Print Screen window configuration
+        # width, height = config.get_Print_Screen_window_size()
+        # x, y = config.get_Print_Screen_window_position()
         
         # Capture the screen with configured dimensions and position
         screenshot = ImageGrab.grab(bbox=(x, y, x + width, y + height))
@@ -266,3 +266,8 @@ def find_image_offset(source_gray, target_gray, result_folder=None, debug=False,
         print(f"Error finding image offset: {e}")
         return False, 0, 0, 0.0
 
+def save_screenshot(screenshot, filepath: str) -> None:
+        """Save the screenshot to a file if it exists."""
+        if screenshot:
+            screenshot.save(filepath, 'JPEG')
+            return filepath  # Update the pic_path field with the saved file path

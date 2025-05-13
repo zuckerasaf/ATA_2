@@ -2,8 +2,7 @@
 Event class for storing mouse and keyboard events.
 """
 
-import base64
-from io import BytesIO
+from PIL import Image
 
 class Event:
     # Priority levels
@@ -15,7 +14,8 @@ class Event:
                  action: str, neto_time: int = 0, priority: str = PRIORITY_MEDIUM, step_on: str = "",
                  time_from_last: int = 0, time_in_screenshot_dialog: int = 0, step_desc: str = "none", 
                  step_accep: str = "none", step_resau: str = "none", step_resau_num: int = 0,
-                 pic_path: str = "none", screenshot_counter: int = 0, image_name: str = "none"):
+                 pic_path: str = "none", screenshot_counter: int = 0, image_name: str = "none",
+                 pic_width: int = 0, pic_height: int = 0, pic_x: int = 0, pic_y: int = 0):
         """
         Initialize a new Event instance.
         
@@ -38,7 +38,10 @@ class Event:
             pic_path (str): Path to associated picture
             screenshot_counter (int): Counter for screenshots
             image_name (str): Name of the image
-            
+            pic_width (int): Width of the picture in pixels
+            pic_height (int): Height of the picture in pixels
+            pic_x (int): X coordinate of the picture
+            pic_y (int): Y coordinate of the picture
         """
         self.counter = counter
         self.time = time
@@ -57,38 +60,13 @@ class Event:
         self.pic_path = pic_path
         self.screenshot_counter = screenshot_counter
         self.image_name = image_name
+        self.pic_width = pic_width
+        self.pic_height = pic_height
+        self.pic_x = pic_x
+        self.pic_y = pic_y
+        self.screenshot = None  # Store the screenshot image
 
 
-        
-    #     # If we have a screenshot but no image_data, convert it
-    #     if screenshot and not image_data:
-    #         self._convert_screenshot_to_base64()
-    
-    # def _convert_screenshot_to_base64(self):
-    #     """Convert PIL Image screenshot to base64 string."""
-    #     if self.screenshot:
-    #         # Convert PIL Image to bytes
-    #         buffered = BytesIO()
-    #         self.screenshot.save(buffered, format="JPEG")
-    #         # Convert bytes to base64 string
-    #         self.image_data = base64.b64encode(buffered.getvalue()).decode()
-    
-    def save_screenshot(self, filepath: str) -> None:
-        """Save the screenshot to a file if it exists."""
-        if self.screenshot:
-            self.screenshot.save(filepath, 'JPEG')
-            self.pic = filepath  # Update the pic field with the saved file path
-            # Also store the image data
-            # self._convert_screenshot_to_base64()
-    
-    def get_image_from_data(self):
-        """Convert base64 image data back to PIL Image."""
-        if self.image_data:
-            from PIL import Image
-            image_bytes = base64.b64decode(self.image_data)
-            return Image.open(BytesIO(image_bytes))
-        return None
-    
     def __str__(self) -> str:
         """String representation of the Event."""
         return f"Event(counter={self.counter}, time={self.time}, neto_time={self.neto_time}, position={self.position}, " \
@@ -97,7 +75,9 @@ class Event:
                f"time_in_screenshot_dialog={self.time_in_screenshot_dialog}, " \
                f"step_desc='{self.step_desc}', step_accep='{self.step_accep}', " \
                f"step_resau='{self.step_resau}', pic_path='{self.pic_path}', " \
-               f"screenshot_counter={self.screenshot_counter}, image_name='{self.image_name}')"
+               f"screenshot_counter={self.screenshot_counter}, image_name='{self.image_name}', " \
+               f"pic_width={self.pic_width}, pic_height={self.pic_height}, " \
+               f"pic_x={self.pic_x}, pic_y={self.pic_y})"
     
     def __repr__(self) -> str:
         """Detailed string representation of the Event."""
@@ -122,7 +102,11 @@ class Event:
             'step_resau_num': self.step_resau_num,
             'pic_path': self.pic_path,
             'screenshot_counter': self.screenshot_counter,
-            'image_name': self.image_name
+            'image_name': self.image_name,
+            'pic_width': self.pic_width,
+            'pic_height': self.pic_height,
+            'pic_x': self.pic_x,
+            'pic_y': self.pic_y
         }
     
     @classmethod
@@ -145,5 +129,9 @@ class Event:
             step_resau_num=data.get('step_resau_num', 0),
             pic_path=data.get('pic_path', 'none'),
             screenshot_counter=data.get('screenshot_counter', 0),
-            image_name=data.get('image_name', 'none')
+            image_name=data.get('image_name', 'none'),
+            pic_width=data.get('pic_width', 0),
+            pic_height=data.get('pic_height', 0),
+            pic_x=data.get('pic_x', 0),
+            pic_y=data.get('pic_y', 0)
         )

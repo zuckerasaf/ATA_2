@@ -94,7 +94,7 @@ class TestNameDialog:
     def update_accuracy_label(self, *args):
         """Update the accuracy level label when the slider changes."""
         self.accuracy_label.config(text=str(self.accuracy_var.get()))
-        
+    
     def _on_ok(self):
         """Handle OK button click."""
         name = self.name_var.get().strip()
@@ -127,7 +127,7 @@ class TestNameDialog:
         }
         print(f"Dialog result: {self.result}")  # Debug print
         self.dialog.destroy()
-        
+    
     def _on_cancel(self):
         """Handle Cancel button click."""
         self.dialog.destroy()

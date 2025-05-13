@@ -42,9 +42,9 @@ class ControlPanel:
         self.root.grid_columnconfigure(2, weight=1)  # Right list
         
         # Create main frames
-        self.create_test_list_frame()
+        self.create_list_frame(self.root, "List of Tests", 0, "test_listbox")
         self.create_control_buttons_frame()
-        self.create_result_list_frame()
+        self.create_list_frame(self.root, "List of Results", 2, "result_listbox")
         self.create_status_bar()
         
         # Initialize data
@@ -95,20 +95,42 @@ class ControlPanel:
         # Quit the application
         self.root.quit()
             
-    def create_test_list_frame(self):
-        """Create the left frame containing the list of tests."""
-        frame = ttk.LabelFrame(self.root, text="List of Tests")
-        frame.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+    def create_list_frame(self, parent, title, column, listbox_var_name):
+        """
+        Create a generic list frame with scrollbars.
         
-        # Create listbox with scrollbar
-        self.test_listbox = tk.Listbox(frame)
-        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=self.test_listbox.yview)
-        self.test_listbox.configure(yscrollcommand=scrollbar.set)
+        Args:
+            parent: The parent widget
+            title: The title for the LabelFrame
+            column: The column number for grid placement
+            listbox_var_name: The name of the instance variable to store the listbox
+        """
+        frame = ttk.LabelFrame(parent, text=title)
+        frame.grid(row=0, column=column, padx=5, pady=5, sticky="nsew")
         
-        # Pack listbox and scrollbar
-        self.test_listbox.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        # Create inner frame for listbox and scrollbars
+        inner_frame = ttk.Frame(frame)
+        inner_frame.pack(fill="both", expand=True)
         
+        # Create listbox
+        listbox = tk.Listbox(inner_frame)
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(inner_frame, orient="vertical", command=listbox.yview)
+        listbox.configure(yscrollcommand=v_scrollbar.set)
+        # Horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(inner_frame, orient="horizontal", command=listbox.xview)
+        listbox.configure(xscrollcommand=h_scrollbar.set)
+        
+        # Pack scrollbars and listbox
+        v_scrollbar.pack(side="right", fill="y")
+        h_scrollbar.pack(side="bottom", fill="x")
+        listbox.pack(side="left", fill="both", expand=True)
+        
+        # Store the listbox as an instance variable
+        setattr(self, listbox_var_name, listbox)
+        
+        return frame
+
     def create_control_buttons_frame(self):
         """Create the center frame containing control buttons."""
         frame = ttk.Frame(self.root)
@@ -119,20 +141,6 @@ class ControlPanel:
         ttk.Button(frame, text="Run", command=self.run_test).pack(pady=5)
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
-        
-    def create_result_list_frame(self):
-        """Create the right frame containing the list of results."""
-        frame = ttk.LabelFrame(self.root, text="List of Results")
-        frame.grid(row=0, column=2, padx=5, pady=5, sticky="nsew")
-        
-        # Create listbox with scrollbar
-        self.result_listbox = tk.Listbox(frame)
-        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=self.result_listbox.yview)
-        self.result_listbox.configure(yscrollcommand=scrollbar.set)
-        
-        # Pack listbox and scrollbar
-        self.result_listbox.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
         
     def create_status_bar(self):
         """Create the status bar at the bottom."""

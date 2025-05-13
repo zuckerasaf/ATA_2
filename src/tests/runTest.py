@@ -23,7 +23,7 @@ from src.utils.config import Config
 from src.gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
 from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
-from src.utils.picture_handle import capture_screen, generate_screenshot_filename, compare_images
+from src.utils.picture_handle import capture_screen, generate_screenshot_filename, compare_images, save_screenshot
 from src.utils.starting_points import go_to_starting_point
 from src.utils.general_func import create_test_from_json
 
@@ -223,7 +223,11 @@ class TestRunner:
             step_resau=event.step_resau,
             pic_path=event.pic_path,
             step_resau_num=event.step_resau_num,
-            image_name=event.image_name
+            image_name=event.image_name,
+            pic_width=event.pic_width,
+            pic_height=event.pic_height,
+            pic_x=event.pic_x,
+            pic_y=event.pic_y
         )
 
         # Extract the key from the action text
@@ -256,7 +260,7 @@ class TestRunner:
             self.save = False # stop the saving of the listener data while deal with the snapshot 
             # Add a small delay to allow the window to update
             time.sleep(0.1)  # 100ms delay
-            screenshot = capture_screen()
+            screenshot = capture_screen(resevent.pic_x,resevent.pic_y,resevent.pic_width,resevent.pic_height)
             if screenshot:
                 self.screenshot_counter += 1
                 self.test
@@ -266,8 +270,9 @@ class TestRunner:
                 
                 if screenshot_filename and screenshot_path:
                     # Update the event with the screenshot and save it first
-                    resevent.screenshot = screenshot
-                    resevent.save_screenshot(screenshot_path)
+                    #resevent.screenshot = screenshot
+                    
+                    resevent.pic_path = save_screenshot(screenshot, screenshot_path)
                     
                     # Now compare the images using the saved file paths
                     match_percentage, result_path = compare_images(event.pic_path, screenshot_path, self.result_folder_path)
