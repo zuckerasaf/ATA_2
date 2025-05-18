@@ -12,6 +12,7 @@ import threading
 import base64
 from PIL import Image
 import io
+import queue  # Add queue import
 
 
 # Add project root to Python path
@@ -39,7 +40,7 @@ def close_existing_mouse_threads():
             thread.join()
 
 class TestRunner:
-    def __init__(self, test,result_folder_path):
+    def __init__(self, test, result_folder_path):
         self.counter = 0
         self.screenshot_counter = 0
         self.start_time = int(time.time() * 1000)
@@ -55,6 +56,8 @@ class TestRunner:
         self.event_window = None
         self.screenshot_counter = 0
         self.result_folder_path = result_folder_path
+        self.test_completed = False  # Add flag for test completion
+        self.completion_queue = queue.Queue()  # Add queue for completion signal
 
         # Create a new test instance for the running one 
         self.current_test = Test(
@@ -76,9 +79,6 @@ class TestRunner:
                     self.keyboard_listener.stop()
                 if self.event_window:
                     self.event_window.after(0, self.event_window.destroy)
-                
-                # Use the imported cleanup_and_restart function
-                self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
                 return False
         except AttributeError:
             if key.name == self.quit_key:
@@ -88,9 +88,6 @@ class TestRunner:
                     self.keyboard_listener.stop()
                 if self.event_window:
                     self.event_window.after(0, self.event_window.destroy)
-                
-                # Use the imported cleanup_and_restart function
-                self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
                 return False
             else:
                 pass
@@ -203,12 +200,11 @@ class TestRunner:
 
     def execute_keyboard_event(self, event):
         """Execute a keyboard event."""
-
         self.counter += 1
         current_time = int(time.time() * 1000)
         time_diff = current_time - self.last_event_time
         time_total = current_time - self.start_time
-        # duplicatethe 
+        
         resevent = Event(
             counter=self.counter,
             time=time_total,  # Total time since start
@@ -235,25 +231,20 @@ class TestRunner:
         
         # Check if this is the quit key
         if key_text == self.quit_key:
-            print("\nStopping test execution...")
+            print("\n Stopping test execution as quit key reached ...")
             self.running = False
             self.current_test.add_event(resevent)  # Add event to current test
             self.event_window.update_event(resevent) # Update the floating window
-
-            # for resevent in self.current_test.events:
-            #     if resevent.screenshot and not resevent.image_data:
-            #         resevent._convert_screenshot_to_base64()  
 
             # Save the test data using the imported save_test function
             filepath = save_test(self.current_test, self.test.comment1.split(": ")[1], "running",self.result_folder_path)
             if not filepath:
                 print("Error saving test data")
 
-            # Schedule window destruction and control panel restart in the main thread
-            self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
+            # Signal completion through queue
+            self.completion_queue.put(True)
             return False
-            
-            
+
         # If this is a print screen event, capture the screen
         if key_text == self.print_screen_key:
             print("\nPrint screen key pressed...")
@@ -347,14 +338,11 @@ class TestRunner:
         # Start keyboard listener
         self.keyboard_listener = keyboard.Listener(on_press=self.on_press)
         self.keyboard_listener.start()
-        
         try:
             for event in self.test.events:
                 if not self.running:
                     break
                     
-
-                
                 try:
                     # Wait for the specified time between events
                     if event.time_from_last > 0:
@@ -362,16 +350,13 @@ class TestRunner:
                     # Execute based on event type
                     current_time = int(time.time() * 1000)
                     if event.event_type.startswith('mouse_'):
-                        # print("execute mouse command time is {current_time}")
                         self.execute_mouse_event(event)
                         # Update the floating window with current event
                         event_window.update_event(event)
                     elif event.event_type == 'keyboard':
-                        # print("execute keyboard command time is {current_time}")
-                        self.execute_keyboard_event(event)
                         # Update the floating window with current event
                         event_window.update_event(event)
-                    
+                        self.execute_keyboard_event(event)
                         
                 except Exception as e:
                     print(f"Error executing event {event.counter}: {e}")
@@ -381,15 +366,23 @@ class TestRunner:
         finally:
             if self.keyboard_listener:
                 self.keyboard_listener.stop()
+            # Put completion signal in queue
+            self.completion_queue.put(True)
+            print("Test execution completed, sent completion signal")
 
-
-
-def main(test_full_name=None):
-
+def main(test_full_name=None, callback=None):
     # Check if another instance is already running
-    if is_already_running(lock_file):
-        sys.exit(1)
-
+    # if is_already_running(lock_file):
+    #     print("Another instance is already running, terminating it...")
+    #     # Register cleanup function to terminate the running instance
+    #     register_cleanup(lock_file)
+    #     # Wait a moment for cleanup to complete
+    #     time.sleep(0.5)
+    #     # Try again after cleanup
+    #     if is_already_running(lock_file):
+    #         print("Failed to terminate running instance")
+    #         return False
+    
     # Register cleanup function
     register_cleanup(lock_file)
     
@@ -397,7 +390,7 @@ def main(test_full_name=None):
     close_existing_mouse_threads()
     
     filename = test_full_name
-    result_folder_path = os.path.dirname(test_full_name) #get_folder_path(test_full_name)
+    result_folder_path = os.path.dirname(test_full_name)
 
     print(f"the test to be run is {test_full_name}")
     print(f"test folder path is {result_folder_path}")
@@ -412,36 +405,64 @@ def main(test_full_name=None):
         print(f"Comment 2: {test.comment2}")
         print(f"Number of events: {len(test.events)}")
         
-        # Create and show the event window
-        event_window = EventWindow()
+        # Extract test name from the full path
+        test_name = os.path.basename(os.path.dirname(filename))
+        
+        # Create and show the event window with test name
+        event_window = EventWindow(test_name=test_name)
 
         go_to_starting_point(test.starting_point)
         
-        # Create and run the test
-        runner = TestRunner(test,result_folder_path)
-        
         print(f"\nStarting test execution...")
         print(f"Press '{config.get_keyboard_quit_key()}' to stop at any time")
+        
+        # Create and run the test
+        runner = TestRunner(test, result_folder_path)
+        
+        def on_test_complete():
+            print("Test completed, calling callback...")
+            if callback:
+                callback()
+            # Schedule window destruction in the main thread
+            event_window.after(100, event_window.destroy)
         
         # Start test execution in a separate thread
         import threading
         test_thread = threading.Thread(target=runner.run_test, args=(event_window,))
         test_thread.start()
         
+        # Set up a periodic check for test completion
+        def check_test_completion():
+            #print("Checking test completion...")
+            try:
+                # Check if there's a completion signal in the queue
+                if not runner.completion_queue.empty():
+                    #print("Test is completed, calling callback...")
+                    on_test_complete()
+                else:
+                  #  print("Test still running, will check again...")
+                    event_window.after(100, check_test_completion)  # Check again in 100ms
+            except Exception as e:
+                print(f"Error checking completion: {e}")
+                # Don't schedule another check if there was an error
+                on_test_complete()
+        
+        # Start checking for test completion immediately
+        check_test_completion()
+        
         try:
             # Run tkinter main loop
             event_window.mainloop()
+            return True
         except KeyboardInterrupt:
             print("\nStopping test execution...")
             runner.running = False
-        finally:
-            try:
-                event_window.destroy()
-            except:
-                pass
-            print("Test execution completed.")
+            print(f"except KeyboardInterrupt runner.running is {runner.running}")
+            on_test_complete()
+            return False
     else:
         print("Failed to create test.")
+        return False
 
 if __name__ == "__main__":
     main() 

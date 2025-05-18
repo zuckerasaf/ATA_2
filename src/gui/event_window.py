@@ -7,14 +7,15 @@ from tkinter import ttk
 from src.utils.config import Config
 
 class EventWindow(tk.Tk):
-    def __init__(self):
+    def __init__(self, test_name=None):
         super().__init__()
         
         # Get configuration
         config = Config()
         
         # Configure window
-        self.title(config.get_Event_Monitor_window_title())
+        base_title = config.get_Event_Monitor_window_title()
+        self.title(f"{base_title} - {test_name}" if test_name else base_title)
         self.attributes('-alpha', config.get_Event_Monitor_window_opacity())  # Set transparency
         self.attributes('-topmost', True)  # Always on top
         

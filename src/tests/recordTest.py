@@ -277,9 +277,9 @@ class EventListener:
 
 def main(test_name=None, starting_point="none"):
     """Main function to start the event listener."""
-    # Check if another instance is already running
-    if is_already_running(lock_file):
-        sys.exit(1)
+    # # Check if another instance is already running
+    # if is_already_running(lock_file):
+    #     sys.exit(1)
         
     # Register cleanup function
     register_cleanup(lock_file)
@@ -287,11 +287,11 @@ def main(test_name=None, starting_point="none"):
     # Close any existing mouse listener threads
     close_existing_mouse_threads()
     
-    # Create the floating window
-    event_window = EventWindow()
+    # Create the floating window with test name
+    event_window = EventWindow(test_name=test_name)
     
     # Create the event listener
-    listener = EventListener(event_window, test_name,starting_point)
+    listener = EventListener(event_window, test_name, starting_point)
     
     # Start the mouse listener
     mouse_listener = mouse.Listener(

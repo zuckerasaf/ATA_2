@@ -6,6 +6,7 @@ import os
 import atexit
 import time
 import json
+import psutil
 from src.utils.app_lifecycle import restart_control_panel
 
 
@@ -23,19 +24,69 @@ def cleanup(lock_file):
     except Exception as e:
         print(f"Error removing lock file: {e}")
 
+def terminate_running_instance(lock_file):
+    """
+    Terminate the running instance of the program.
+    
+    Args:
+        lock_file: Path to the lock file containing the PID
+    """
+    try:
+        if os.path.exists(lock_file):
+            # Read the PID from the lock file
+            with open(lock_file, 'r') as f:
+                pid = int(f.read().strip())
+            
+            # Try to terminate the process
+            try:
+                process = psutil.Process(pid)
+                # Check if this is our own process
+                if process.pid == os.getpid():
+                    print("This is our own process, not terminating")
+                    return False
+                    
+                # Try graceful termination first
+                process.terminate()
+                # Wait for the process to terminate
+                process.wait(timeout=3)
+                print(f"Terminated process with PID {pid}")
+                return True
+            except psutil.NoSuchProcess:
+                print(f"Process {pid} no longer exists")
+                return True
+            except psutil.TimeoutExpired:
+                print(f"Process {pid} did not terminate in time")
+                return False
+    except Exception as e:
+        print(f"Error terminating process: {e}")
+        return False
+
 def is_already_running(lock_file):
     """
     Check if another instance of the program is already running.
+    If found, attempt to terminate it.
     
     Args:
         lock_file: Path to the lock file to check
         
     Returns:
-        bool: True if another instance is running, False otherwise
+        bool: True if another instance is running and couldn't be terminated, False otherwise
     """
     try:
         if os.path.exists(lock_file):
             print("Another instance is already running!")
+            # Try to terminate the running instance
+            if terminate_running_instance(lock_file):
+                # Wait a moment for cleanup
+                time.sleep(0.5)
+                # If lock file still exists, return True
+                if os.path.exists(lock_file):
+                    print("Failed to terminate running instance")
+                    return True
+                # If lock file is gone, create new one and return False
+                with open(lock_file, 'w') as f:
+                    f.write(str(os.getpid()))
+                return False
             return True
         else:
             # Create the lock file

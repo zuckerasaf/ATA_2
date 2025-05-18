@@ -8,6 +8,7 @@ import sounddevice as sd
 import numpy as np
 import wave
 import tempfile
+import shutil
 
 
 # Add project root to Python path
@@ -16,6 +17,7 @@ sys.path.insert(0, project_root)
 
 from src.utils.test import Test
 from src.utils.event_mouse_keyboard import Event
+from src.utils.config import Config
 
 def speech_to_text(duration=5, sample_rate=16000, model_size="base"):
     """
@@ -115,5 +117,66 @@ def create_test_from_json(filepath):
     except Exception as e:
         print(f"Error loading test data: {e}")
         return None
+    
+def update_images_to_test(result_folder_path):
+    """
+    Copy all image files from a result folder to the corresponding test folder.
+    Only copies files ending with _Result.jpg and renames them by removing _Result.
+    
+    Args:
+        result_folder_path: Path to the result folder (e.g., 'DB/Result/20250517_224058_paint')
+    """
+    try:
+        # Get the result folder name
+        result_folder_name = os.path.basename(result_folder_path)
+        
+        # Extract test name by removing timestamp (format: YYYYMMDD_HHMMSS_testname)
+        parts = result_folder_name.split('_')
+        if len(parts) >= 3:
+            test_name = '_'.join(parts[2:])  # Join remaining parts in case test name contains underscores
+        else:
+            print(f"Invalid result folder name format: {result_folder_name}")
+            return False
+            
+        # Get paths from config
+        config = Config()
+        paths_config = config.get('paths', {})
+        db_path = paths_config.get('db_path', os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "DB"))
+        test_path = paths_config.get('test_path', "Test")
+        
+        # Construct test folder path
+        test_folder_path = os.path.join(db_path, test_path, test_name)
+        
+        # # Create test folder if it doesn't exist
+        # os.makedirs(test_folder_path, exist_ok=True)
+        
+        # Find all _Result.jpg files
+        result_files = [f for f in os.listdir(result_folder_path) if f.endswith('_Result.jpg')]
+        
+        if not result_files:
+            print(f"No _Result.jpg files found in {result_folder_path}")
+            return False
+            
+        # Copy and rename files
+        copied_files = []
+        for file in result_files:
+            # Create new filename by removing _Result
+            new_filename = file.replace('_Result.jpg', '.jpg')
+            src_file = os.path.join(result_folder_path, file)
+            dst_file = os.path.join(test_folder_path, new_filename)
+            shutil.copy2(src_file, dst_file)
+            copied_files.append(new_filename)
+                
+        if copied_files:
+            print(f"Successfully copied {len(copied_files)} images to {test_folder_path}")
+            print("Copied files:", copied_files)
+            return True
+        else:
+            print(f"No _Result.jpg files found in {result_folder_path}")
+            return False
+            
+    except Exception as e:
+        print(f"Error copying images: {e}")
+        return False
     
     

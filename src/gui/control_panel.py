@@ -16,7 +16,7 @@ sys.path.insert(0, project_root)
 
 from src.tests.recordTest import main as start_recording
 from src.tests.runTest import main as start_runing
-from src.utils.general_func import create_test_from_json, display_test_data
+from src.utils.general_func import create_test_from_json, display_test_data, update_images_to_test
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
 from src.utils.starting_points import go_to_starting_point
@@ -89,7 +89,9 @@ class ControlPanel:
             print(f"Error during shutdown: {e}")
             # Don't re-raise the exception, just log it
             # This allows the application to continue even if there's an error
-            
+    def update_images_to_test(self):
+        pass    
+    
     def on_closing(self):
         self.killOldListener()
         # Quit the application
@@ -112,8 +114,8 @@ class ControlPanel:
         inner_frame = ttk.Frame(frame)
         inner_frame.pack(fill="both", expand=True)
         
-        # Create listbox
-        listbox = tk.Listbox(inner_frame)
+        # Create listbox with multiple selection
+        listbox = tk.Listbox(inner_frame, selectmode=tk.EXTENDED)  # Enable multiple selection
         # Vertical scrollbar
         v_scrollbar = ttk.Scrollbar(inner_frame, orient="vertical", command=listbox.yview)
         listbox.configure(yscrollcommand=v_scrollbar.set)
@@ -140,6 +142,7 @@ class ControlPanel:
         ttk.Button(frame, text="Record", command=self.start_recording).pack(pady=5)
         ttk.Button(frame, text="Run", command=self.run_test).pack(pady=5)
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
+        ttk.Button(frame, text="Update Images", command=self.update_images).pack(pady=5)
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
         
     def create_status_bar(self):
@@ -313,31 +316,24 @@ class ControlPanel:
                     f"A test named '{test_name}' already exists. Do you want to overwrite it?"
                 ):
                     return
-            
-            # # Create a new test with the specified parameters
-            # test = Test(
-            #     config="",
-            #     comment1=test_data['purpose'],
-            #     comment2="",
-            #     accuracy_level=test_data['accuracy_level'],
-            #     starting_point=starting_point
-            # )
-            
+
             # Hide the control panel window
             self.root.withdraw()
 
-            go_to_starting_point(starting_point)
-            
-            # Start recording with the specified test name and starting point
-            start_recording(test_name, starting_point)
-            
-            # Show the control panel window again (in case the recording was cancelled)
-            self.root.deiconify()
+            try:
+                go_to_starting_point(starting_point)
+                
+                # Start recording with the specified test name and starting point
+                start_recording(test_name, starting_point)
+            except Exception as e:
+                print(f"Error during recording: {e}")
+                raise e
+            finally:
+                # Always show the control panel window again
+                self.root.deiconify()
             
             # Refresh test list after recording
             self.refresh_test_list()
-            # self.refresh_result_list()
-            # self.status_var.set(f"Recording completed successfully: {test_name}")
             
         except Exception as e:
             self.status_var.set(f"Error during recording: {str(e)}")
@@ -346,22 +342,24 @@ class ControlPanel:
             self.root.deiconify()
             
     def run_test(self):
-        """Run the selected test."""
+        """Run the selected tests."""
         self.killOldListener()
 
-        selection = self.test_listbox.curselection()
-        if not selection:
-            messagebox.showwarning("No Test Selected", "Please select a test to run.")
+        selections = self.test_listbox.curselection()
+        if not selections:
+            messagebox.showwarning("No Test Selected", "Please select at least one test to run.")
             return
             
-        # Get the full display text and extract just the test name
-        display_text = self.test_listbox.get(selection[0])
-        test_name = self._extract_name_from_display(display_text)
-        
-
+        # Get all selected test names
+        test_names = []
+        for selection in selections:
+            display_text = self.test_listbox.get(selection)
+            test_name = self._extract_name_from_display(display_text)
+            test_names.append(test_name)
         
         try:
-            self.status_var.set(f"Running test: {test_name}")
+            print(f"Running {len(test_names)} tests... {test_names}")
+            self.status_var.set(f"Running {len(test_names)} tests...")
             self.root.update()
             
             # Get paths from config
@@ -369,33 +367,60 @@ class ControlPanel:
             db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
             test_path = paths_config.get('test_path', "Test")
             
-            # Construct full path to test file
-            test_file_path = os.path.join(db_path, test_path, test_name, f"{test_name}.json")
+            # Create a queue for test completion
+            import queue
+            test_completion_queue = queue.Queue()
             
-            # Create timestamp for result directory
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            result_dir_name = f"{timestamp}_{test_name}"
+            def run_next_test(test_index=0):
+                if test_index >= len(test_names):
+                    # All tests are done
+                    if len(test_names) > 1:
+                        messagebox.showinfo("Test Sequence Complete", f"All {len(test_names)} tests have been completed.")
+                    return
+                
+                test_name = test_names[test_index]
+                # Construct full path to test file
+                test_file_path = os.path.join(db_path, test_path, test_name, f"{test_name}.json")
+                
+                # Create timestamp for result directory
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                result_dir_name = f"{timestamp}_{test_name}"
+                
+                # Create the result directory structure with timestamp prefix
+                resu_path = paths_config.get('result_path', "Result")
+                resu_dir = os.path.join(db_path, resu_path, result_dir_name)
+                os.makedirs(resu_dir, exist_ok=True)
+                
+                # Copy the test file to the result directory
+                result_test_file = os.path.join(resu_dir, f"{test_name}.json")
+                shutil.copy2(test_file_path, result_test_file)
+                
+                # Hide the control panel window
+                self.root.withdraw()
+                
+                def test_completed_callback():
+                    # Show the control panel window again
+                    self.root.deiconify()
+                    # Update status
+                    self.status_var.set(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
+                    print(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
+                    self.root.update()
+                    # Refresh the result list
+                    self.refresh_result_list()
+                    # Signal completion and run next test
+                    test_completion_queue.put(True)
+                    self.root.after(100, lambda: run_next_test(test_index + 1))
+                
+                # Use the copied test file path for running the test with callback
+                success = start_runing(result_test_file, callback=test_completed_callback)
+                if not success:
+                    # If test failed to start, show control panel and continue with next test
+                    self.root.deiconify()
+                    self.status_var.set(f"Test failed to start: {test_name}")
+                    self.root.after(100, lambda: run_next_test(test_index + 1))
             
-            # Create the result directory structure with timestamp prefix
-            resu_path = paths_config.get('result_path', "Result")
-            resu_dir = os.path.join(db_path, resu_path, result_dir_name)
-            os.makedirs(resu_dir, exist_ok=True)
-            
-            # Copy the test file to the result directory
-            result_test_file = os.path.join(resu_dir, f"{test_name}.json")
-            shutil.copy2(test_file_path, result_test_file)
-            
-            # Hide the control panel window
-            self.root.withdraw()
-            
-            # Use the copied test file path for running the test
-            start_runing(result_test_file)   
-                    
-            # Show the control panel window again
-            self.root.deiconify()
-            self.status_var.set(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
-            # Refresh the result list to show the new test result
-            self.refresh_result_list()
+            # Start the first test
+            run_next_test(0)
             
         except Exception as e:
             self.status_var.set(f"Error running test: {str(e)}")
@@ -446,13 +471,24 @@ class ControlPanel:
     def go_to_folder(self):
         """Open the selected test or result folder in file explorer."""
         try:
-            if self.test_listbox.curselection():
-                selected_item = self.test_listbox.get(self.test_listbox.curselection())
+            test_selections = self.test_listbox.curselection()
+            result_selections = self.result_listbox.curselection()
+            
+            # Check for multiple selections
+            if len(test_selections) > 1:
+                messagebox.showwarning("Multiple Selections", "Please select only one test to open its folder.")
+                return
+            if len(result_selections) > 1:
+                messagebox.showwarning("Multiple Selections", "Please select only one result to open its folder.")
+                return
+            
+            if test_selections:
+                selected_item = self.test_listbox.get(test_selections[0])
                 folder_name = self._convert_display_to_timestamp(selected_item, is_result=False)
                 test_path = self.config.get('paths', {}).get('test_path', "Test")
                 folder_path = os.path.join(test_path, folder_name)
-            elif self.result_listbox.curselection():
-                selected_item = self.result_listbox.get(self.result_listbox.curselection())
+            elif result_selections:
+                selected_item = self.result_listbox.get(result_selections[0])
                 # Use the mapping to get the real folder name
                 folder_name = self.result_display_to_folder.get(selected_item, None)
                 if not folder_name:
@@ -474,6 +510,43 @@ class ControlPanel:
                 messagebox.showerror("Error", f"Folder not found: {folder_path}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder: {str(e)}")
+
+    def update_images(self):
+        """Copy images from selected result folder to corresponding test folder."""
+        selections = self.result_listbox.curselection()
+        if not selections:
+            messagebox.showwarning("No Result Selected", "Please select a result folder to update images from.")
+            return
+            
+        # Get the selected result folder name
+        selected_item = self.result_listbox.get(selections[0])
+        folder_name = self.result_display_to_folder.get(selected_item, None)
+        if not folder_name:
+            messagebox.showerror("Error", "Could not find the folder for the selected result.")
+            return
+            
+        # Get paths from config
+        paths_config = self.config.get('paths', {})
+        db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
+        result_path = paths_config.get('result_path', "Result")
+        
+        # Construct full path to result folder
+        result_folder_path = os.path.join(db_path, result_path, folder_name)
+        
+        # Show confirmation dialog
+        if not messagebox.askyesno(
+            "Confirm Image Update",
+            "This will copy all _Result.jpg files from the result folder to the test folder.\n"
+            "Existing images in the test folder will be overwritten.\n\n"
+            "Do you want to continue?"
+        ):
+            return
+        
+        # Call the update function
+        if update_images_to_test(result_folder_path):
+            messagebox.showinfo("Success", "Images updated successfully!")
+        else:
+            messagebox.showerror("Error", "Failed to update images.")
 
 def main():
     root = tk.Tk()
