@@ -19,6 +19,7 @@ class ScreenshotDialog ():
         self.current_rect = None
         self.selection_canvas = None
         self.mouse_listener = None
+        self.overlay_window = None
         
         # Get dialog configuration
         dialog_config = self.config.get('Screenshot_Dialog', {})
@@ -43,7 +44,8 @@ class ScreenshotDialog ():
         y = dialog_config.get('position', {}).get('y', 200)
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
         
-        # Make dialog modal
+        # Make dialog modal and always on top
+        self.dialog.attributes('-topmost', True)
         self.dialog.focus_force()
         self.dialog.grab_set()
         
@@ -161,6 +163,59 @@ class ScreenshotDialog ():
         # Prevent closing the window with the X button
         self.dialog.protocol("WM_DELETE_WINDOW", self._on_cancel)
 
+    def _create_overlay_window(self, x, y, width, height):
+        """
+        Create a transparent overlay window showing the selected area.
+        
+        Args:
+            x: X position of the rectangle
+            y: Y position of the rectangle
+            width: Width of the rectangle
+            height: Height of the rectangle
+        """
+        try:
+            # Create a new toplevel window
+            self.overlay_window = tk.Toplevel()
+            self.overlay_window.attributes('-alpha', 0.3)  # Make window semi-transparent
+            self.overlay_window.attributes('-topmost', True)  # Keep window on top
+            self.overlay_window.overrideredirect(True)  # Remove window decorations
+            
+            # Set window size and position
+            self.overlay_window.geometry(f"{width}x{height}+{x}+{y}")
+            
+            # Create canvas to draw rectangle
+            canvas = tk.Canvas(self.overlay_window, width=width, height=height, 
+                             highlightthickness=0, bg='blue')
+            canvas.pack(fill='both', expand=True)
+            
+            # Draw rectangle
+            canvas.create_rectangle(0, 0, width, height, outline='red', width=2)
+            
+            # Add text showing dimensions
+            canvas.create_text(width//2, height//2, 
+                             text=f"Width: {width}\nHeight: {height}\nX: {x}\nY: {y}",
+                             fill='white', font=('Arial', 12, 'bold'))
+            
+            # Make window visible
+            self.overlay_window.deiconify()
+            
+            # Ensure the main dialog stays on top
+            self.dialog.lift()
+            self.dialog.attributes('-topmost', True)
+            self.dialog.after(100, lambda: self.dialog.attributes('-topmost', False))
+            
+        except Exception as e:
+            print(f"Error creating overlay window: {e}")
+            if self.overlay_window:
+                self.overlay_window.destroy()
+                self.overlay_window = None
+
+    def _remove_overlay_window(self):
+        """Remove the overlay window if it exists."""
+        if self.overlay_window:
+            self.overlay_window.destroy()
+            self.overlay_window = None
+
     def _start_area_selection(self):
         """Start the area selection process."""
         # Initialize selection state
@@ -209,6 +264,9 @@ class ScreenshotDialog ():
             self.ps_width_var.set(str(width))
             self.ps_height_var.set(str(height))
             
+            # Create overlay window
+            self._create_overlay_window(self.start_x, self.start_y, width, height)
+            
             # Clear instruction label and reset button state
             self.instruction_label.config(text="")
             self.select_area_button.configure(style='TButton')  # Return button to normal state
@@ -227,6 +285,7 @@ class ScreenshotDialog ():
         self.ps_height_var.set(str(self.default_ps_height))
         self.ps_x_var.set(str(self.default_ps_x))
         self.ps_y_var.set(str(self.default_ps_y))
+        self._remove_overlay_window()  # Remove overlay when resetting
             
     def _on_ok(self):
         """Handle OK button click."""
@@ -261,6 +320,9 @@ class ScreenshotDialog ():
         print(f"Acceptance: {self.result['step_accep']}")
         print(f"Print Screen Window: {ps_width}x{ps_height} at ({ps_x},{ps_y})")
         
+        # Remove overlay window
+        self._remove_overlay_window()
+        
         # Release grab and destroy window
         self.dialog.grab_release()
         self.dialog.destroy()
@@ -269,6 +331,8 @@ class ScreenshotDialog ():
         """Handle Cancel button click."""
         print("\nDialog cancelled")
         self.result = None
+        # Remove overlay window
+        self._remove_overlay_window()
         # Release grab and destroy window
         self.dialog.grab_release()
         self.dialog.destroy() 

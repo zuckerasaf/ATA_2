@@ -81,7 +81,7 @@
     "Screenshot_Dialog": {
         "title": "Screenshot Configuration",
         "width": 400,
-        "height": 500,
+        "height": 550,
         "position": {
             "x": 200,
             "y": 200
@@ -98,5 +98,7 @@
         "tolerance": 0,
         "debug": false,
         "threshold" : 0.8
-    }
+    },
+    "minmumMatchPresent": 80,
+    "majorFuckup": 0
 } 
