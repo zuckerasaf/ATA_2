@@ -5,6 +5,7 @@ Floating window for displaying event data.
 import tkinter as tk
 from tkinter import ttk
 from src.utils.config import Config
+from src.utils.process_utils import terminate_running_instance, close_existing_mouse_threads
 
 class EventWindow(tk.Tk):
     def __init__(self, test_name=None):
@@ -44,6 +45,9 @@ class EventWindow(tk.Tk):
         self.x = 0
         self.y = 0
         
+        # Set up window close handler
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
     def start_move(self, event):
         """Start window dragging."""
         self.x = event.x
@@ -60,4 +64,22 @@ class EventWindow(tk.Tk):
     def update_event(self, event):
         """Update the displayed event data."""
         text = f"Event #{event.counter} | Position: {event.position} | Type: {event.event_type} | Action: {event.action} | Time: {event.time}ms"
-        self.event_label.config(text=text) 
+        self.event_label.config(text=text)
+        
+    def on_closing(self):
+        """Handle window closing."""
+        try:
+            # Close any existing mouse listener threads
+            close_existing_mouse_threads()
+            
+            # Terminate running instance using process_utils
+            terminate_running_instance("cursor_listener.lock")
+            
+            # Destroy the window
+            self.quit()  # Stop the mainloop
+            self.destroy()  # Destroy the window
+            
+        except Exception as e:
+            print(f"Error during window closing: {e}")
+            self.quit()
+            self.destroy() 

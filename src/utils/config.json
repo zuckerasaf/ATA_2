@@ -99,6 +99,9 @@
         "debug": false,
         "threshold" : 0.8
     },
-    "minmumMatchPresent": 80,
-    "majorFuckup": 0
+    "minmumMatchPresent_high": 80,
+    "minmumMatchPresent_medium": 50,
+    "minmumMatchPresent_low": 30,
+    "majorFuckup": 0,
+    "multiWindow": true
 } 

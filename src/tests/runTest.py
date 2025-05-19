@@ -23,7 +23,7 @@ from src.utils.test import Test
 from src.utils.config import Config
 from src.gui.event_window import EventWindow
 from src.utils.event_mouse_keyboard import Event
-from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
+from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test, close_existing_mouse_threads
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename, compare_images, save_screenshot
 from src.utils.starting_points import go_to_starting_point
 from src.utils.general_func import create_test_from_json
@@ -32,12 +32,12 @@ from src.utils.general_func import create_test_from_json
 lock_file = "cursor_listener.lock"
 config = Config()
 
-def close_existing_mouse_threads():
-    """Close any existing mouse listener threads."""
-    for thread in threading.enumerate():
-        if thread.name == "MouseListener":
-            thread._stop()
-            thread.join()
+# def close_existing_mouse_threads():
+#     """Close any existing mouse listener threads."""
+#     for thread in threading.enumerate():
+#         if thread.name == "MouseListener":
+#             thread._stop()
+#             thread.join()
 
 class TestRunner:
     def __init__(self, test, result_folder_path):
@@ -268,6 +268,28 @@ class TestRunner:
                     # Now compare the images using the saved file paths
                     match_percentage, result_path = compare_images(event.pic_path, screenshot_path, self.result_folder_path)
                     resevent.step_resau = "match percentage is "+str(match_percentage)
+
+                    if resevent.priority == "high":
+                        match_percentage_ref = config.get("minmumMatchPresent_high")
+                    elif resevent.priority == "medium":
+                        match_percentage_ref = config.get("minmumMatchPresent_medium")
+                    else:
+                        match_percentage_ref = config.get("minmumMatchPresent_low")
+
+                    if match_percentage < match_percentage_ref:
+                        print(f"Match percentage is less than {config.get('minmumMatchPresent')}, ending test...")
+                        # Save the test data using the imported save_test function
+                        filepath = save_test(self.current_test, self.test.comment1.split(": ")[1] , "running",self.result_folder_path)
+                        if not filepath:
+                            print("Error saving test data")
+
+                        # Signal completion through queue
+                        self.completion_queue.put(True)
+                        self.running = False
+                        self.current_test.add_event(resevent)  # Add event to current test
+                        self.event_window.update_event(resevent) # Update the floating window
+                    
+
                     self.current_test.numOfSteps += 1
                     self.current_test.stepResult.append([str(resevent.image_name),str(match_percentage)])  
                     self.current_test.comment2 = match_percentage

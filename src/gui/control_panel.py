@@ -317,8 +317,9 @@ class ControlPanel:
                 ):
                     return
 
-            # Hide the control panel window
-            self.root.withdraw()
+            # Hide the control panel window in case of multiWindow is false
+            if self.config.get("multiWindow") == False:
+                self.root.withdraw()
 
             try:
                 go_to_starting_point(starting_point)
@@ -329,8 +330,9 @@ class ControlPanel:
                 print(f"Error during recording: {e}")
                 raise e
             finally:
-                # Always show the control panel window again
-                self.root.deiconify()
+                # show the control panel window again in case of multiWindow is false
+                if self.config.get("multiWindow") == False:
+                    self.root.deiconify()
             
             # Refresh test list after recording
             self.refresh_test_list()
@@ -395,8 +397,9 @@ class ControlPanel:
                 result_test_file = os.path.join(resu_dir, f"{test_name}.json")
                 shutil.copy2(test_file_path, result_test_file)
                 
-                # Hide the control panel window
-                self.root.withdraw()
+                # Hide the control panel window in case of multiWindow is false
+                if self.config.get("multiWindow") == False:
+                    self.root.withdraw()
                 
                 def test_completed_callback():
                     # Show the control panel window again
@@ -415,7 +418,8 @@ class ControlPanel:
                 success = start_runing(result_test_file, callback=test_completed_callback)
                 if not success:
                     # If test failed to start, show control panel and continue with next test
-                    self.root.deiconify()
+                    if self.config.get("multiWindow") == False:
+                        self.root.deiconify()
                     self.status_var.set(f"Test failed to start: {test_name}")
                     self.root.after(100, lambda: run_next_test(test_index + 1))
             
@@ -533,10 +537,17 @@ class ControlPanel:
         # Construct full path to result folder
         result_folder_path = os.path.join(db_path, result_path, folder_name)
         
+        # Extract test name from folder name
+        parts = folder_name.split('_')
+        if len(parts) >= 3:
+            test_name = '_'.join(parts[2:])  # Join remaining parts in case test name contains underscores
+        else:
+            test_name = folder_name
+            
         # Show confirmation dialog
         if not messagebox.askyesno(
             "Confirm Image Update",
-            "This will copy all _Result.jpg files from the result folder to the test folder.\n"
+            f"This will copy all _Result.jpg files from the result folder to the test folder '{test_name}'.\n"
             "Existing images in the test folder will be overwritten.\n\n"
             "Do you want to continue?"
         ):

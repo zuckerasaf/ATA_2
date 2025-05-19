@@ -7,7 +7,9 @@ import atexit
 import time
 import json
 import psutil
+import threading
 from src.utils.app_lifecycle import restart_control_panel
+from tkinter import  messagebox
 
 
 def cleanup(lock_file):
@@ -40,16 +42,17 @@ def terminate_running_instance(lock_file):
             # Try to terminate the process
             try:
                 process = psutil.Process(pid)
-                # Check if this is our own process
-                if process.pid == os.getpid():
-                    print("This is our own process, not terminating")
-                    return False
-                    
-                # Try graceful termination first
+
+                messagebox.showinfo(
+                    "Application Stopped",
+                    "The application has been stopped.\nAll running processes have been terminated."
+                )
+                 # Try graceful termination first
                 process.terminate()
                 # Wait for the process to terminate
                 process.wait(timeout=3)
                 print(f"Terminated process with PID {pid}")
+                            # Show message to user            
                 return True
             except psutil.NoSuchProcess:
                 print(f"Process {pid} no longer exists")
@@ -180,3 +183,9 @@ def save_test(test, test_name=None, state="running",result_folder_path=None):
 
 
 
+def close_existing_mouse_threads():
+    """Close any existing mouse listener threads."""
+    for thread in threading.enumerate():
+        if thread.name == "MouseListener":
+            thread._stop()
+            thread.join()

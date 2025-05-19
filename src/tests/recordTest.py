@@ -15,7 +15,7 @@ from src.utils.config import Config
 from src.utils.test import Test
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename, save_screenshot
 from src.utils.event_mouse_keyboard import Event
-from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test
+from src.utils.process_utils import is_already_running, register_cleanup, cleanup_and_restart, save_test, close_existing_mouse_threads
 from src.utils.app_lifecycle import restart_control_panel
 from src.gui.event_window import EventWindow
 from src.gui.screenshot_dialog import ScreenshotDialog
@@ -26,12 +26,12 @@ from src.utils.starting_points import go_to_starting_point
 lock_file = "cursor_listener.lock"
 config = Config()
 
-def close_existing_mouse_threads():
-    """Close any existing mouse listener threads."""
-    for thread in threading.enumerate():
-        if thread.name == "MouseListener":
-            thread._stop()
-            thread.join()
+# def close_existing_mouse_threads():
+#     """Close any existing mouse listener threads."""
+#     for thread in threading.enumerate():
+#         if thread.name == "MouseListener":
+#             thread._stop()
+#             thread.join()
 
 
 class EventListener:
