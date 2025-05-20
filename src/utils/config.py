@@ -134,3 +134,11 @@ class Config:
     def get_track_drag_threshold(self) -> int:
         """Get the track drag threshold."""
         return self.get('mouse.track_drag_threshold', 5)
+    
+    def should_track_mouse_scroll(self):
+        """Check if mouse scroll events should be tracked."""
+        return self.get('track_mouse_scroll', True)  # Default to True if not specified
+    
+    def get_scroll_sensitivity(self) -> float:
+        """Get the mouse scroll sensitivity factor."""
+        return self.get('mouse.scroll_sensitivity', 0.1)  # Default to 0.1 if not specified

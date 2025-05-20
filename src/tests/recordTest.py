@@ -275,6 +275,49 @@ class EventListener:
             
         self.last_event_time = neto_time
 
+    def on_scroll(self, x, y, dx, dy):
+        """Handle mouse scroll events."""
+        if not self.running:
+            return False
+            
+        if not config.should_track_mouse_scroll():
+            return True
+            
+        self.counter += 1
+        current_time = int(time.time() * 1000)
+        time_total = current_time - self.start_time
+        neto_time = time_total - self.current_test.total_time_in_screenshot_dialog
+        time_diff = neto_time - self.last_event_time
+
+        # Determine scroll direction
+        direction = "up" if dy > 0 else "down"
+        
+        event = Event(
+            counter=self.counter,
+            time=time_total,
+            neto_time=neto_time,
+            position=(x, y),
+            event_type="mouse_scroll",
+            action=f"Mouse scroll {direction}",
+            priority=config.get_event_priority(),
+            step_on=f"{config.get_step_prefix()} {self.counter}",
+            time_from_last=time_diff,
+            step_desc=f"Scroll {direction} at position ({x}, {y})",
+            step_accep="none",
+            step_resau=f"Scroll amount: {abs(dy)}",
+            pic_path="none",
+            screenshot_counter=0,
+            image_name="none"
+        )
+
+        if self.save == True:
+            # Add event to current test
+            self.current_test.add_event(event)
+            
+            # Update the floating window
+            self.event_window.update_event(event)
+            self.last_event_time = neto_time
+
 def main(test_name=None, starting_point="none"):
     """Main function to start the event listener."""
     # # Check if another instance is already running
@@ -296,7 +339,8 @@ def main(test_name=None, starting_point="none"):
     # Start the mouse listener
     mouse_listener = mouse.Listener(
         on_click=listener.on_click,
-        on_move=listener.on_move  # Add mouse movement tracking
+        on_move=listener.on_move,  # Add mouse movement tracking
+        on_scroll=listener.on_scroll  # Add scroll tracking
     )
     mouse_listener.name = "MouseListener"
     mouse_listener.start()

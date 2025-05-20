@@ -34,7 +34,8 @@
         "track_press": true,
         "track_release": true,
         "track_drag": true,
-        "track_drag_threshold": 10
+        "track_drag_threshold": 10,
+        "scroll_sensitivity": 1.0
     },
     "Event_Monitor_window": {
         "title": "Event Monitor",
@@ -96,7 +97,7 @@
     "Image_compare": {
         "position_tolerance": 0,
         "tolerance": 0,
-        "debug": false,
+        "debug": true,
         "threshold" : 0.8
     },
     "minmumMatchPresent_high": 80,

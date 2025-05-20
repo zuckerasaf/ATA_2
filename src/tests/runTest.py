@@ -98,6 +98,29 @@ class TestRunner:
             return self.test.events[current_index + 1]
         return None
 
+    def _create_event(self, event, time_total, time_diff):
+        """Helper function to create an Event object."""
+        return Event(
+            counter=self.counter,
+            time=time_total,  # Total time since start
+            position=(event.position[0], event.position[1]),
+            event_type=event.type if hasattr(event, 'type') else event.event_type,
+            action=event.action,
+            priority=event.priority,
+            step_on=event.step_on,
+            time_from_last=time_diff,
+            step_desc=event.step_desc,
+            step_accep=event.step_accep,
+            step_resau=event.step_resau,
+            pic_path=event.pic_path,
+            step_resau_num=event.step_resau_num,
+            image_name=event.image_name,
+            pic_width=event.pic_width if hasattr(event, 'pic_width') else 0,
+            pic_height=event.pic_height if hasattr(event, 'pic_height') else 0,
+            pic_x=event.pic_x if hasattr(event, 'pic_x') else 0,
+            pic_y=event.pic_y if hasattr(event, 'pic_y') else 0
+        )
+
     def execute_mouse_event(self, event):
         """Execute a mouse event."""
         try:
@@ -106,22 +129,7 @@ class TestRunner:
             time_diff = current_time - self.last_event_time
             time_total = current_time - self.start_time
             
-            resevent = Event(
-                counter=self.counter,
-                time=time_total,  # Total time since start
-                position=(event.position[0], event.position[1]),
-                event_type=event.event_type,
-                action=event.action,
-                priority=event.priority,
-                step_on=event.step_on,
-                time_from_last=time_diff,
-                step_desc=event.step_desc,
-                step_accep=event.step_accep,
-                step_resau=event.step_resau,
-                pic_path=event.pic_path,
-                step_resau_num=event.step_resau_num,
-                image_name=event.image_name
-            )
+            resevent = self._create_event(event, time_total, time_diff)
 
             # Handle different mouse button types
             button_map = {
@@ -205,26 +213,7 @@ class TestRunner:
         time_diff = current_time - self.last_event_time
         time_total = current_time - self.start_time
         
-        resevent = Event(
-            counter=self.counter,
-            time=time_total,  # Total time since start
-            position=(event.position[0], event.position[1]),
-            event_type=event.event_type,
-            action=event.action,
-            priority=event.priority,
-            step_on=event.step_on,
-            time_from_last=time_diff,
-            step_desc=event.step_desc,
-            step_accep=event.step_accep,
-            step_resau=event.step_resau,
-            pic_path=event.pic_path,
-            step_resau_num=event.step_resau_num,
-            image_name=event.image_name,
-            pic_width=event.pic_width,
-            pic_height=event.pic_height,
-            pic_x=event.pic_x,
-            pic_y=event.pic_y
-        )
+        resevent = self._create_event(event, time_total, time_diff)
 
         # Extract the key from the action text
         key_text = resevent.action.split("'")[1]  # Get the key between single quotes
@@ -275,9 +264,16 @@ class TestRunner:
                         match_percentage_ref = config.get("minmumMatchPresent_medium")
                     else:
                         match_percentage_ref = config.get("minmumMatchPresent_low")
+                   
+                    self.current_test.numOfSteps += 1
+                    self.current_test.stepResult.append([str(resevent.image_name),str(match_percentage)])  
+                    self.current_test.comment2 = match_percentage
+                    self.save = True # Resume saving events    
+                    if self.event_window:
+                        self.event_window.update_event(resevent)
 
                     if match_percentage < match_percentage_ref:
-                        print(f"Match percentage is less than {config.get('minmumMatchPresent')}, ending test...")
+                        print(f"Match percentage is less than {config.get('match_percentage_ref')}, ending test...")
                         # Save the test data using the imported save_test function
                         filepath = save_test(self.current_test, self.test.comment1.split(": ")[1] , "running",self.result_folder_path)
                         if not filepath:
@@ -288,14 +284,6 @@ class TestRunner:
                         self.running = False
                         self.current_test.add_event(resevent)  # Add event to current test
                         self.event_window.update_event(resevent) # Update the floating window
-                    
-
-                    self.current_test.numOfSteps += 1
-                    self.current_test.stepResult.append([str(resevent.image_name),str(match_percentage)])  
-                    self.current_test.comment2 = match_percentage
-                    self.save = True # Resume saving events    
-                    if self.event_window:
-                        self.event_window.update_event(resevent)
             
         
         # Handle special keys
@@ -354,6 +342,44 @@ class TestRunner:
             self.event_window.update_event(resevent)
             self.last_event_time = current_time
 
+    def execute_mouse_scroll(self, event):
+        """Execute a mouse scroll event."""
+        try:
+            self.counter += 1
+            current_time = int(time.time() * 1000)
+            time_diff = current_time - self.last_event_time
+            time_total = current_time - self.start_time
+            
+            resevent = self._create_event(event, time_total, time_diff)
+
+            # Extract scroll direction and amount from the event
+            scroll_info = event.step_resau.split(": ")[1] if event.step_resau else "0"
+            scroll_amount = int(scroll_info)
+            
+            # Determine scroll direction
+            direction = -1 if "down" in event.action.lower() else 1
+            
+            # Get scroll sensitivity from config
+            sensitivity = config.get_scroll_sensitivity()
+            
+            # Apply sensitivity to scroll amount
+            scaled_amount = scroll_amount * sensitivity
+            
+            # Perform the scroll with scaled amount
+            self.mouse_controller.scroll(0, direction * scaled_amount)
+            
+            if self.save == True:
+                # Add event to current test
+                self.current_test.add_event(resevent)
+                
+                # Update the floating window
+                if hasattr(self, 'event_window') and self.event_window and self.event_window.winfo_exists():
+                    self.event_window.update_event(resevent)
+                self.last_event_time = current_time
+                
+        except Exception as e:
+            print(f"Error executing mouse scroll event: {e}")
+
     def run_test(self, event_window):
         """Execute all events in the test."""
         self.event_window = event_window  # Store the event window reference
@@ -371,7 +397,11 @@ class TestRunner:
                         time.sleep(event.time_from_last / 1000)  # Convert ms to seconds
                     # Execute based on event type
                     current_time = int(time.time() * 1000)
-                    if event.event_type.startswith('mouse_'):
+                    if event.event_type == 'mouse_scroll':
+                        self.execute_mouse_scroll(event)
+                        
+                        event_window.update_event(event)
+                    elif event.event_type.startswith('mouse_'):
                         self.execute_mouse_event(event)
                         # Update the floating window with current event
                         event_window.update_event(event)
@@ -379,6 +409,7 @@ class TestRunner:
                         # Update the floating window with current event
                         event_window.update_event(event)
                         self.execute_keyboard_event(event)
+
                         
                 except Exception as e:
                     print(f"Error executing event {event.counter}: {e}")
