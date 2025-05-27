@@ -8,6 +8,32 @@ from src.utils.config import Config
 from src.utils.general_func import generate_random_word
 
 class TestNameDialog:
+    """
+    Dialog for entering a new test's metadata, including name, purpose, accuracy level, and starting point.
+
+    This dialog is used in the Control Panel to prompt the user for information when creating a new test.
+    It provides fields for the test name, test purpose, accuracy level (with a slider), and starting point (from a list).
+    The dialog validates the test name and returns the collected data as a dictionary when the user confirms.
+
+    Attributes
+    ----------
+    result : dict or None
+        The result dictionary containing the test parameters if the user pressed OK, or None if cancelled.
+    config : Config
+        The configuration object used to retrieve dialog and starting point options.
+    dialog : tk.Toplevel
+        The Tkinter toplevel window for the dialog.
+
+    Methods
+    -------
+    update_accuracy_label(*args)
+        Update the accuracy level label when the slider changes.
+    _on_ok()
+        Handle the OK button click, validate input, and store the result.
+    _on_cancel()
+        Handle the Cancel button click and close the dialog.
+    """
+
     def __init__(self):
         self.result = None
         self.config = Config()

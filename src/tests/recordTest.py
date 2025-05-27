@@ -1,5 +1,19 @@
 """
 Test recording module for capturing mouse and keyboard events.
+
+This module provides functionality to record mouse and keyboard events during test execution.
+It includes an EventListener class that captures mouse movements, clicks, keyboard presses, and scroll events,
+and updates a floating event window with the recorded events.
+
+Classes
+-------
+EventListener
+    A class that listens for mouse and keyboard events and records them for test execution.
+
+Functions
+---------
+main(test_name=None, starting_point="none")
+    Main function to start the test recording process.
 """
 
 import os
@@ -35,7 +49,74 @@ config = Config()
 
 
 class EventListener:
-    def __init__(self, event_window, test_name=None,starting_point="none"):
+    """
+    A class that listens for mouse and keyboard events and records them for test execution.
+
+    This class captures mouse movements, clicks, keyboard presses, and scroll events,
+    and updates a floating event window with the recorded events.
+
+    Attributes
+    ----------
+    counter : int
+        Counter for the number of events recorded.
+    screenshot_counter : int
+        Counter for the number of screenshots taken.
+    start_time : int
+        The start time of the recording in milliseconds.
+    last_event_time : int
+        The time of the last recorded event in milliseconds.
+    neto_time : int
+        The net time elapsed since the start of the recording, excluding time spent in the screenshot dialog.
+    running : bool
+        Flag indicating whether the event listener is running.
+    save : bool
+        Flag indicating whether to save the recorded events.
+    event_window : EventWindow
+        The floating window that displays the recorded events.
+    quit_key : str
+        The key used to quit the recording.
+    print_screen_key : str
+        The key used to take a screenshot.
+    test_name : str, optional
+        The name of the test being recorded.
+    dialog_open : bool
+        Flag indicating whether a dialog is open.
+    last_press_position : tuple, optional
+        The last position where a mouse button was pressed.
+    last_press_time : int, optional
+        The time when the last mouse button was pressed.
+    drag_positions : list
+        List of positions recorded during a drag operation.
+    drag_times : list
+        List of times recorded during a drag operation.
+    current_test : Test
+        The current test instance being recorded.
+
+    Methods
+    -------
+    on_move(x, y)
+        Track mouse movement during drag operations.
+    on_click(x, y, button, pressed)
+        Handle mouse click events, including drag operations.
+    on_press(key)
+        Handle keyboard press events.
+    on_scroll(x, y, dx, dy)
+        Handle mouse scroll events.
+    """
+
+    def __init__(self, event_window, test_name=None, starting_point="none"):
+        """
+        Initialize the EventListener with the given event window and test name.
+
+        Parameters
+        ----------
+        event_window : EventWindow
+            The floating window that displays the recorded events.
+        test_name : str, optional
+            The name of the test being recorded.
+        starting_point : str, optional
+            The starting point for the test recording.
+        """
         self.counter = 0
         self.screenshot_counter = 0
         self.start_time = int(time.time() * 1000)
@@ -63,13 +144,41 @@ class EventListener:
         )
         
     def on_move(self, x, y):
-        """Track mouse movement during drag operations."""
+        """
+        Track mouse movement during drag operations.
+
+        Parameters
+        ----------
+        x : int
+            The x-coordinate of the mouse.
+        y : int
+            The y-coordinate of the mouse.
+        """
         if self.last_press_position is not None:
             current_time = int(time.time() * 1000)
             self.drag_positions.append((x, y))
             self.drag_times.append(current_time)
 
     def on_click(self, x, y, button, pressed):
+        """
+        Handle mouse click events, including drag operations.
+
+        Parameters
+        ----------
+        x : int
+            The x-coordinate of the mouse.
+        y : int
+            The y-coordinate of the mouse.
+        button : Button
+            The mouse button that was clicked.
+        pressed : bool
+            Whether the button was pressed or released.
+
+        Returns
+        -------
+        bool
+            True if the event should be tracked, False otherwise.
+        """
         if not self.running:
             return False
             
@@ -151,8 +260,19 @@ class EventListener:
  
 
     def on_press(self, key):
+        """
+        Handle keyboard press events.
 
-        
+        Parameters
+        ----------
+        key : Key
+            The key that was pressed.
+
+        Returns
+        -------
+        bool
+            True if the event should be tracked, False otherwise.
+        """
         self.counter += 1
         current_time = int(time.time() * 1000)
         time_total = current_time - self.start_time
@@ -276,7 +396,25 @@ class EventListener:
         self.last_event_time = neto_time
 
     def on_scroll(self, x, y, dx, dy):
-        """Handle mouse scroll events."""
+        """
+        Handle mouse scroll events.
+
+        Parameters
+        ----------
+        x : int
+            The x-coordinate of the mouse.
+        y : int
+            The y-coordinate of the mouse.
+        dx : int
+            The horizontal scroll amount.
+        dy : int
+            The vertical scroll amount.
+
+        Returns
+        -------
+        bool
+            True if the event should be tracked, False otherwise.
+        """
         if not self.running:
             return False
             
@@ -319,7 +457,20 @@ class EventListener:
             self.last_event_time = neto_time
 
 def main(test_name=None, starting_point="none"):
-    """Main function to start the event listener."""
+    """
+    Main function to start the test recording process.
+
+    Parameters
+    ----------
+    test_name : str, optional
+        The name of the test being recorded.
+    starting_point : str, optional
+        The starting point for the test recording.
+
+    Returns
+    -------
+    None
+    """
     # # Check if another instance is already running
     # if is_already_running(lock_file):
     #     sys.exit(1)

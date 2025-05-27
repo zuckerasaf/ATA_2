@@ -1,5 +1,13 @@
 """
 Floating window for displaying event data.
+
+This module provides a floating window to display event data during test execution.
+It includes an EventWindow class that updates the displayed event information and handles window dragging.
+
+Classes
+-------
+EventWindow
+    A class that creates a floating window to display event data.
 """
 
 import tkinter as tk
@@ -7,8 +15,46 @@ from tkinter import ttk
 from src.utils.config import Config
 from src.utils.process_utils import terminate_running_instance, close_existing_mouse_threads
 
+
 class EventWindow(tk.Tk):
+    """
+    A class that creates a floating window to display event data.
+
+    This class initializes a Tkinter window that displays event data and allows for window dragging.
+    It updates the displayed event information and handles window closing.
+
+    Attributes
+    ----------
+    frame : ttk.Frame
+        The main frame of the window.
+    event_label : ttk.Label
+        The label that displays the event data.
+    x : int
+        The initial x-coordinate for window dragging.
+    y : int
+        The initial y-coordinate for window dragging.
+
+    Methods
+    -------
+    start_move(event)
+        Start window dragging.
+    on_move(event)
+        Handle window dragging.
+    update_event(event)
+        Update the displayed event data.
+    on_closing()
+        Handle window closing.
+    """
+
     def __init__(self, test_name=None):
+        """
+        Initialize the EventWindow with the given test name.
+
+        Parameters
+        ----------
+        test_name : str, optional
+            The name of the test being executed.
+        """
         super().__init__()
         
         # Get configuration
@@ -49,12 +95,26 @@ class EventWindow(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         
     def start_move(self, event):
-        """Start window dragging."""
+        """
+        Start window dragging.
+
+        Parameters
+        ----------
+        event : tk.Event
+            The event that triggered the start of dragging.
+        """
         self.x = event.x
         self.y = event.y
         
     def on_move(self, event):
-        """Handle window dragging."""
+        """
+        Handle window dragging.
+
+        Parameters
+        ----------
+        event : tk.Event
+            The event that triggered the dragging.
+        """
         deltax = event.x - self.x
         deltay = event.y - self.y
         x = self.winfo_x() + deltax
@@ -62,12 +122,24 @@ class EventWindow(tk.Tk):
         self.geometry(f"+{x}+{y}")
         
     def update_event(self, event):
-        """Update the displayed event data."""
+        """
+        Update the displayed event data.
+
+        Parameters
+        ----------
+        event : Event
+            The event data to display.
+        """
         text = f"Event #{event.counter} | Position: {event.position} | Type: {event.event_type} | Action: {event.action} | Time: {event.time}ms"
         self.event_label.config(text=text)
         
     def on_closing(self):
-        """Handle window closing."""
+        """
+        Handle window closing.
+
+        This function closes any existing mouse listener threads, terminates the running instance,
+        and destroys the window.
+        """
         try:
             # Close any existing mouse listener threads
             close_existing_mouse_threads()

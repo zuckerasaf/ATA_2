@@ -1,5 +1,13 @@
 """
 Dialog for configuring screenshot event data.
+
+This module provides a dialog for configuring screenshot event data, including priority, image name,
+Print Screen window configuration, step description, and step acceptance criteria.
+
+Classes
+-------
+ScreenshotDialog
+    A class that creates a dialog for configuring screenshot event data.
 """
 
 import tkinter as tk
@@ -8,8 +16,64 @@ from src.utils.config import Config
 from PIL import ImageGrab, Image, ImageTk
 from pynput import mouse
 
-class ScreenshotDialog ():
+
+class ScreenshotDialog:
+    """
+    A class that creates a dialog for configuring screenshot event data.
+
+    This class initializes a Tkinter dialog that allows users to configure various aspects of a screenshot event,
+    including priority, image name, Print Screen window configuration, step description, and step acceptance criteria.
+
+    Attributes
+    ----------
+    result : dict or None
+        The result dictionary containing the dialog data if the user pressed OK, or None if cancelled.
+    config : Config
+        The configuration object used to retrieve dialog and Print Screen window options.
+    screenshot_counter : int
+        The counter for the number of screenshots taken.
+    selection_state : str
+        The current state of the area selection process.
+    start_x : int or None
+        The x-coordinate of the first click during area selection.
+    start_y : int or None
+        The y-coordinate of the first click during area selection.
+    current_rect : tuple or None
+        The current rectangle coordinates during area selection.
+    selection_canvas : tk.Canvas or None
+        The canvas used for area selection.
+    mouse_listener : mouse.Listener or None
+        The mouse listener for area selection.
+    overlay_window : tk.Toplevel or None
+        The overlay window showing the selected area.
+
+    Methods
+    -------
+    _create_overlay_window(x, y, width, height)
+        Create a transparent overlay window showing the selected area.
+    _remove_overlay_window()
+        Remove the overlay window if it exists.
+    _start_area_selection()
+        Start the area selection process.
+    _on_click(x, y, button, pressed)
+        Handle mouse click event.
+    _reset_ps_values()
+        Reset Print Screen window values to defaults.
+    _on_ok()
+        Handle OK button click.
+    _on_cancel()
+        Handle Cancel button click.
+    """
+
     def __init__(self, screenshot_counter):
+        """
+        Initialize the ScreenshotDialog with the given screenshot counter.
+
+        Parameters
+        ----------
+        screenshot_counter : int
+            The counter for the number of screenshots taken.
+        """
         self.result = None
         self.config = Config()
         self.screenshot_counter = screenshot_counter
@@ -166,12 +230,17 @@ class ScreenshotDialog ():
     def _create_overlay_window(self, x, y, width, height):
         """
         Create a transparent overlay window showing the selected area.
-        
-        Args:
-            x: X position of the rectangle
-            y: Y position of the rectangle
-            width: Width of the rectangle
-            height: Height of the rectangle
+
+        Parameters
+        ----------
+        x : int
+            X position of the rectangle.
+        y : int
+            Y position of the rectangle.
+        width : int
+            Width of the rectangle.
+        height : int
+            Height of the rectangle.
         """
         try:
             # Create a new toplevel window
@@ -211,13 +280,20 @@ class ScreenshotDialog ():
                 self.overlay_window = None
 
     def _remove_overlay_window(self):
-        """Remove the overlay window if it exists."""
+        """
+        Remove the overlay window if it exists.
+        """
         if self.overlay_window:
             self.overlay_window.destroy()
             self.overlay_window = None
 
     def _start_area_selection(self):
-        """Start the area selection process."""
+        """
+        Start the area selection process.
+
+        This function initializes the area selection process, updates the button state and instruction label,
+        and starts the mouse listener for capturing clicks.
+        """
         # Initialize selection state
         self.selection_state = "waiting_first_click"
         self.start_x = None
@@ -232,7 +308,20 @@ class ScreenshotDialog ():
         self.mouse_listener.start()
 
     def _on_click(self, x, y, button, pressed):
-        """Handle mouse click event."""
+        """
+        Handle mouse click event.
+
+        Parameters
+        ----------
+        x : int
+            The x-coordinate of the mouse click.
+        y : int
+            The y-coordinate of the mouse click.
+        button : Button
+            The mouse button that was clicked.
+        pressed : bool
+            Whether the button was pressed or released.
+        """
         if not pressed:  # Only handle button release
             return
             
@@ -280,7 +369,11 @@ class ScreenshotDialog ():
             self.start_y = None
 
     def _reset_ps_values(self):
-        """Reset Print Screen window values to defaults"""
+        """
+        Reset Print Screen window values to defaults.
+
+        This function resets the Print Screen window values to their default values and removes the overlay window.
+        """
         self.ps_width_var.set(str(self.default_ps_width))
         self.ps_height_var.set(str(self.default_ps_height))
         self.ps_x_var.set(str(self.default_ps_x))
@@ -288,7 +381,12 @@ class ScreenshotDialog ():
         self._remove_overlay_window()  # Remove overlay when resetting
             
     def _on_ok(self):
-        """Handle OK button click."""
+        """
+        Handle OK button click.
+
+        This function collects the dialog data, validates the Print Screen window values,
+        and stores the result in the result dictionary.
+        """
         # Get text content
         image_name = self.imagName_text.get("1.0", "end-1c")
         step_desc = self.desc_text.get("1.0", "end-1c")
@@ -328,7 +426,11 @@ class ScreenshotDialog ():
         self.dialog.destroy()
         
     def _on_cancel(self):
-        """Handle Cancel button click."""
+        """
+        Handle Cancel button click.
+
+        This function sets the result to None, removes the overlay window, and destroys the dialog.
+        """
         print("\nDialog cancelled")
         self.result = None
         # Remove overlay window

@@ -1,5 +1,7 @@
 """
 Control Panel UI for test recording and execution.
+
+This module provides the main GUI for managing test cases, running tests, updating images, and viewing results.
 """
 
 import os
@@ -10,7 +12,7 @@ from datetime import datetime
 import shutil
 import subprocess
 
-# Add project root to Python path
+# Add project root to Python path for module imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, project_root)
 
@@ -21,13 +23,33 @@ from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
 from src.utils.starting_points import go_to_starting_point
 
-
 class ControlPanel:
+    """
+    Main class for the ATA Control Panel GUI.
+
+    Handles the creation and management of the test and result lists, control buttons, status bar,
+    and all user interactions for recording and running tests.
+
+    This class now supports a singleton pattern: if an instance is already open, you can call
+    ControlPanel.bring_to_front_and_refresh() to bring the window to the front and refresh the lists.
+    """
+
+    _instance = None  # Class variable to track the open instance
+
     def __init__(self, root):
+        """
+        Initialize the ControlPanel.
+
+        Args:
+            root (tk.Tk): The root Tkinter window.
+        """
+        # Singleton pattern: store the instance
+        ControlPanel._instance = self
+
         self.root = root
         self.config = Config()
         
-        # Get control panel configuration
+        # Get control panel configuration from config file
         panel_config = self.config.get_Control_Panel_config()
         
         # Set window title and size
@@ -41,115 +63,98 @@ class ControlPanel:
         self.root.grid_columnconfigure(1, weight=0)  # Center buttons
         self.root.grid_columnconfigure(2, weight=1)  # Right list
         
-        # Create main frames
+        # Create main frames for test list, control buttons, result list, and status bar
         self.create_list_frame(self.root, "List of Tests", 0, "test_listbox")
         self.create_control_buttons_frame()
         self.create_list_frame(self.root, "List of Results", 2, "result_listbox")
         self.create_status_bar()
         
-        # Initialize data
+        # Initialize data in the lists
         self.refresh_test_list()
         self.refresh_result_list()
         
-        # Bind window close event
+        # Bind window close event to custom handler
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
     def killOldListener(self):
-        """Handle window closing event."""
+        """
+        Kill any old mouse listener process and remove the lock file if it exists.
+        This prevents multiple listeners from running at the same time.
+        """
         try:
-            # Check for cursor_listener.lock file
             lock_file = "cursor_listener.lock"
             if os.path.exists(lock_file):
-                # Try to read the PID from the lock file
                 try:
                     with open(lock_file, 'r') as f:
                         pid = int(f.read().strip())
-                    # On Windows, we can use taskkill to force terminate the process
                     os.system(f'taskkill /F /PID {pid}')
-                    # messagebox.showinfo(
-                    #     "Process Cleanup", 
-                    #     "The system detected that it didn't close properly last time. It will be closed properly now."
-                    # )
                 except:
                     pass
-                # Remove the lock file
                 try:
                     os.remove(lock_file)
                 except:
                     pass
-            
-            # Update status
             self.status_var.set("Terminating all listeners and closing application...")
             self.root.update()
-            
-            # Give a small delay to ensure status is updated
-            # self.root.after(500)
-            
         except Exception as e:
             print(f"Error during shutdown: {e}")
-            # Don't re-raise the exception, just log it
-            # This allows the application to continue even if there's an error
-    def update_images_to_test(self):
-        pass    
-    
+
     def on_closing(self):
+        """
+        Handle the window close event.
+        Ensures all listeners are killed and the application exits cleanly.
+        """
         self.killOldListener()
-        # Quit the application
+        # Clear the singleton instance on close
+        ControlPanel._instance = None
         self.root.quit()
-            
+
     def create_list_frame(self, parent, title, column, listbox_var_name):
         """
         Create a generic list frame with scrollbars.
-        
+
         Args:
             parent: The parent widget
             title: The title for the LabelFrame
             column: The column number for grid placement
             listbox_var_name: The name of the instance variable to store the listbox
+
+        Returns:
+            The created frame.
         """
         frame = ttk.LabelFrame(parent, text=title)
         frame.grid(row=0, column=column, padx=5, pady=5, sticky="nsew")
-        
-        # Create inner frame for listbox and scrollbars
         inner_frame = ttk.Frame(frame)
         inner_frame.pack(fill="both", expand=True)
-        
-        # Create listbox with multiple selection
-        listbox = tk.Listbox(inner_frame, selectmode=tk.EXTENDED)  # Enable multiple selection
-        # Vertical scrollbar
+        listbox = tk.Listbox(inner_frame, selectmode=tk.EXTENDED)
         v_scrollbar = ttk.Scrollbar(inner_frame, orient="vertical", command=listbox.yview)
         listbox.configure(yscrollcommand=v_scrollbar.set)
-        # Horizontal scrollbar
         h_scrollbar = ttk.Scrollbar(inner_frame, orient="horizontal", command=listbox.xview)
         listbox.configure(xscrollcommand=h_scrollbar.set)
-        
-        # Pack scrollbars and listbox
         v_scrollbar.pack(side="right", fill="y")
         h_scrollbar.pack(side="bottom", fill="x")
         listbox.pack(side="left", fill="both", expand=True)
-        
-        # Store the listbox as an instance variable
         setattr(self, listbox_var_name, listbox)
-        
         return frame
 
     def create_control_buttons_frame(self):
-        """Create the center frame containing control buttons."""
+        """
+        Create the center frame containing control buttons for recording, running, updating, and closing.
+        """
         frame = ttk.Frame(self.root)
         frame.grid(row=0, column=1, padx=5, pady=5, sticky="ns")
-        
-        # Add buttons
         ttk.Button(frame, text="Record", command=self.start_recording).pack(pady=5)
         ttk.Button(frame, text="Run", command=self.run_test).pack(pady=5)
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Update Images", command=self.update_images).pack(pady=5)
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
-        
+
     def create_status_bar(self):
-        """Create the status bar at the bottom."""
+        """
+        Create the status bar at the bottom of the window to show the status of the last run.
+        """
         self.status_var = tk.StringVar()
         self.status_var.set("Ready")
-        
         frame = ttk.LabelFrame(self.root, text="Status of the Last Run")
         frame.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky="ew")
         
@@ -323,7 +328,8 @@ class ControlPanel:
 
             try:
                 go_to_starting_point(starting_point)
-                
+                # Now close the Control Panel window
+                self.root.destroy()
                 # Start recording with the specified test name and starting point
                 start_recording(test_name, starting_point)
             except Exception as e:
@@ -559,10 +565,29 @@ class ControlPanel:
         else:
             messagebox.showerror("Error", "Failed to update images.")
 
+    @classmethod
+    def bring_to_front_and_refresh(cls):
+        """
+        If the ControlPanel is already open, bring its window to the front and refresh the lists.
+        """
+        if cls._instance is not None:
+            try:
+                cls._instance.root.deiconify()
+                cls._instance.root.lift()
+                cls._instance.root.focus_force()
+                cls._instance.refresh_test_list()
+                cls._instance.refresh_result_list()
+            except Exception as e:
+                print(f"Error bringing ControlPanel to front: {e}")
+
 def main():
-    root = tk.Tk()
-    app = ControlPanel(root)
-    root.mainloop()
+    # If already open, just bring to front and refresh
+    if ControlPanel._instance is not None:
+        ControlPanel.bring_to_front_and_refresh()
+    else:
+        root = tk.Tk()
+        app = ControlPanel(root)
+        root.mainloop()
 
 if __name__ == "__main__":
     main() 

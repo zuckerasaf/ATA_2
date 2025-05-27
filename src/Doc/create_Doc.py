@@ -1,3 +1,14 @@
+"""
+Document generation utilities for test results.
+
+This module provides functionality to generate Word (.docx) documents from JSON test data, including step tables and images.
+
+Functions
+---------
+create_doc_from_json(json_path, pictures=True, Type="ATP", Regular_doc_path=True)
+    Generate a Word document from a JSON test result file, including step tables and images.
+"""
+
 import json
 import os
 from docx import Document
@@ -8,7 +19,29 @@ from datetime import datetime
 
 # Path to your JSON file
 #json_path = r"DB\Test\map scroll slow\map scroll slow.json"
-def create_doc_from_json(json_path, pictures=True, Type="ATP"):
+def create_doc_from_json(json_path, pictures=True, Type="ATP", Regular_doc_path=True):
+    """
+    Generate a Word document from a JSON test result file.
+
+    This function loads test data from a JSON file and generates a Word (.docx) document summarizing the test,
+    including a summary table of steps and optionally embedding images for each step.
+
+    Parameters
+    ----------
+    json_path : str
+        Path to the JSON file containing test data.
+    pictures : bool, optional
+        Whether to include images in the document (default: True).
+    Type : str, optional
+        Document type, e.g., "ATP" or "ATR" (default: "ATP").
+    Regular_doc_path : bool, optional
+        Whether to use the regular document path naming (default: True).
+
+    Returns
+    -------
+    None
+        The function saves the generated document to disk; it does not return a value.
+    """
     # Load JSON data
     with open(json_path, "r") as f:
         data = json.load(f)
@@ -55,6 +88,7 @@ def create_doc_from_json(json_path, pictures=True, Type="ATP"):
             row.cells[idx].width = width
 
     def set_table_borders(table):
+        """Add borders to the summary table."""
         tbl = table._tbl
         tblPr = tbl.tblPr
         borders = OxmlElement('w:tblBorders')
@@ -128,6 +162,7 @@ def create_doc_from_json(json_path, pictures=True, Type="ATP"):
                         doc.add_paragraph(f"Could not add image: {pic_path} ({e})")
 
     def add_page_number(paragraph):
+        """Add a page number field to the given paragraph."""
         run = paragraph.add_run()
         fldChar1 = OxmlElement('w:fldChar')
         fldChar1.set(qn('w:fldCharType'), 'begin')
@@ -153,10 +188,17 @@ def create_doc_from_json(json_path, pictures=True, Type="ATP"):
     add_page_number(footer_paragraph)
     footer_paragraph.add_run(f" | Date: {datetime.now().strftime('%Y-%m-%d')}")
 
-    doc.save(f"{Type}_{os.path.basename(json_path)}.docx")
-    print("Word document created: TestReport.docx")
+    if Regular_doc_path == True:
+        base = os.path.splitext(os.path.basename(json_path))[0]
+        doc_path = os.path.join(os.path.dirname(json_path), f"{base}.docx")
+    else:
+        base = os.path.splitext(os.path.basename(json_path))[0]
+        doc_path = os.path.join(os.path.dirname(json_path), f"{base}.docx")
 
-    pass  # (replace with the actual function code)
+    #doc.save(f"{Type}_{os.path.basename(json_path)}.docx")
+    doc.save(doc_path)
+    print(f"Word document created: {doc_path}")
+
 
 if __name__ == "__main__":
     # Example usage
