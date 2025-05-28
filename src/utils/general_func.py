@@ -1,3 +1,23 @@
+"""
+General utility functions for test automation.
+
+This module provides helper functions for speech-to-text, random word generation, test data loading,
+summary display, and image management for test automation workflows.
+
+Functions
+---------
+speech_to_text(duration=5, sample_rate=16000, model_size="base")
+    Record from microphone and convert speech to text using Whisper.
+generate_random_word()
+    Generate a random 5-letter word.
+display_test_data(file_path)
+    Display a summary of test data from a JSON file.
+create_test_from_json(filepath)
+    Create a Test instance from a JSON file.
+update_images_to_test(result_folder_path)
+    Copy all _Result.jpg images from a result folder to the corresponding test folder.
+"""
+
 import json
 import os
 import sys
@@ -23,13 +43,19 @@ def speech_to_text(duration=5, sample_rate=16000, model_size="base"):
     """
     Record from microphone and convert speech to text using Whisper.
     
-    Args:
-        duration (int): Recording duration in seconds
-        sample_rate (int): Audio sample rate
-        model_size (str): Size of the model to use (tiny, base, small, medium, large)
+    Parameters
+    ----------
+    duration : int, optional
+        Recording duration in seconds (default: 5).
+    sample_rate : int, optional
+        Audio sample rate (default: 16000).
+    model_size : str, optional
+        Size of the Whisper model to use (default: "base").
         
-    Returns:
-        str: Transcribed text
+    Returns
+    -------
+    str or None
+        Transcribed text if successful, otherwise None.
     """
     try:
         print(f"Recording for {duration} seconds...")
@@ -60,11 +86,31 @@ def speech_to_text(duration=5, sample_rate=16000, model_size="base"):
         return None
 
 def generate_random_word():
-    """Generate a random 5-letter word."""
+    """
+    Generate a random 5-letter word.
+    
+    Returns
+    -------
+    str
+        A random 5-letter lowercase word.
+    """
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for _ in range(5))
 
 def display_test_data(file_path):
+    """
+    Display a summary of test data from a JSON file.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the test JSON file.
+        
+    Returns
+    -------
+    list
+        A list of [step name, result] pairs summarizing the test steps.
+    """
     test_summary = []
     test = create_test_from_json(file_path)
     
@@ -84,7 +130,19 @@ def display_test_data(file_path):
 
 
 def create_test_from_json(filepath):
-    """Create a Test instance from a JSON file."""
+    """
+    Create a Test instance from a JSON file.
+    
+    Parameters
+    ----------
+    filepath : str
+        Path to the test JSON file.
+        
+    Returns
+    -------
+    Test or None
+        The Test object if loaded successfully, otherwise None.
+    """
     try:
         with open(filepath, 'r') as f:
             data = json.load(f)
@@ -120,11 +178,18 @@ def create_test_from_json(filepath):
     
 def update_images_to_test(result_folder_path):
     """
-    Copy all image files from a result folder to the corresponding test folder.
+    Copy all _Result.jpg images from a result folder to the corresponding test folder.
     Only copies files ending with _Result.jpg and renames them by removing _Result.
     
-    Args:
-        result_folder_path: Path to the result folder (e.g., 'DB/Result/20250517_224058_paint')
+    Parameters
+    ----------
+    result_folder_path : str
+        Path to the result folder (e.g., 'DB/Result/20250517_224058_paint').
+        
+    Returns
+    -------
+    bool
+        True if images were copied successfully, False otherwise.
     """
     try:
         # Get the result folder name

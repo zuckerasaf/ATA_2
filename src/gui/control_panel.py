@@ -107,7 +107,8 @@ class ControlPanel:
         self.killOldListener()
         # Clear the singleton instance on close
         ControlPanel._instance = None
-        self.root.quit()
+        
+        self.root.destroy()
 
     def create_list_frame(self, parent, title, column, listbox_var_name):
         """

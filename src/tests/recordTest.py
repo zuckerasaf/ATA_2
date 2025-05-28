@@ -460,16 +460,20 @@ def main(test_name=None, starting_point="none"):
     """
     Main function to start the test recording process.
 
+    This function initializes the event window and event listener, starts mouse and keyboard listeners,
+    and runs the main event loop for recording test events. It is the entry point for running a test recording session.
+
     Parameters
     ----------
     test_name : str, optional
-        The name of the test being recorded.
+        The name of the test being recorded. If None, a default name is used.
     starting_point : str, optional
-        The starting point for the test recording.
+        The starting point for the test recording. Defaults to "none".
 
     Returns
     -------
-    None
+    Test
+        The Test object containing all recorded events and metadata.
     """
     # # Check if another instance is already running
     # if is_already_running(lock_file):
