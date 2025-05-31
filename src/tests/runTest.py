@@ -41,10 +41,13 @@ from src.utils.process_utils import is_already_running, register_cleanup, cleanu
 from src.utils.picture_handle import capture_screen, generate_screenshot_filename, compare_images, save_screenshot
 from src.utils.starting_points import go_to_starting_point
 from src.utils.general_func import create_test_from_json
+from src.utils.run_log import RunLog
 
 # Global lock file
 lock_file = "cursor_listener.lock"
 config = Config()
+run_log = RunLog()
+
 
 # def close_existing_mouse_threads():
 #     """Close any existing mouse listener threads."""
@@ -373,6 +376,8 @@ class TestRunner:
             if not filepath:
                 print("Error saving test data")
 
+            run_log.add("stop test " + self.test.comment1.split(": ")[1], level="INFO")
+             
             # Signal completion through queue
             self.completion_queue.put(True)
             return False
@@ -415,6 +420,9 @@ class TestRunner:
                     if self.event_window:
                         self.event_window.update_event(resevent)
 
+                    run_log.add("screenshot has been taken for -" + os.path.basename(resevent.pic_path) + " the match percentage is " + str(match_percentage), level="INFO")
+                    run_log.add(os.path.basename(resevent.pic_path) + " full path is:  " + str(resevent.pic_path), level="IMAGE")
+                    
                     if match_percentage < match_percentage_ref:
                         print(f"Match percentage is less than {config.get('match_percentage_ref')}, ending test...")
                         # Save the test data using the imported save_test function
@@ -427,7 +435,7 @@ class TestRunner:
                         self.running = False
                         self.current_test.add_event(resevent)  # Add event to current test
                         self.event_window.update_event(resevent) # Update the floating window
-            
+                        run_log.add("the "  + os.path.basename(resevent.pic_path)+   " gain match precentage of bellow the cretira -> " + str(match_percentage_ref) + "<- Test Stopped -> " , level="WARNING")
         
         # Handle special keys
         special_key_map = {
@@ -578,6 +586,7 @@ class TestRunner:
                 self.keyboard_listener.stop()
             # Put completion signal in queue
             self.completion_queue.put(True)
+             
             print("Test execution completed, sent completion signal")
 
 def main(test_full_name=None, callback=None):
@@ -638,9 +647,13 @@ def main(test_full_name=None, callback=None):
         
         # Create and show the event window with test name
         event_window = EventWindow(test_name=test_name)
+        run_log.clear()
+        run_log.add(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", level="INFO")
+        run_log.add("start test " + test_name, level="INFO")
 
         go_to_starting_point(test.starting_point)
-        
+        run_log.add("go to starting point " + test.starting_point, level="INFO")
+
         print(f"\nStarting test execution...")
         print(f"Press '{config.get_keyboard_quit_key()}' to stop at any time")
         
@@ -649,6 +662,9 @@ def main(test_full_name=None, callback=None):
         
         def on_test_complete():
             print("Test completed, calling callback...")
+            run_log.add("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", level="INFO")
+            run_log.add("", level="INFO")
+            run_log.save_to_file()
             if callback:
                 callback()
             # Schedule window destruction in the main thread

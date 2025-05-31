@@ -34,12 +34,13 @@ from src.utils.app_lifecycle import restart_control_panel
 from src.gui.event_window import EventWindow
 from src.gui.screenshot_dialog import ScreenshotDialog
 from src.utils.starting_points import go_to_starting_point
+from src.utils.run_log import RunLog
 
 
 # Global lock file
 lock_file = "cursor_listener.lock"
 config = Config()
-
+run_log = RunLog()
 # def close_existing_mouse_threads():
 #     """Close any existing mouse listener threads."""
 #     for thread in threading.enumerate():
@@ -365,6 +366,9 @@ class EventListener:
                                 event.image_name = dialog.result['image_name']
                                 self.current_test.total_time_in_screenshot_dialog += time_in_dialog
 
+                                run_log.add("screenshot taken with name " + dialog.result['image_name'], level="INFO")
+
+
                      
                     self.save = True
             
@@ -381,6 +385,8 @@ class EventListener:
                     if not filepath:
                         print("Error saving test data")
                     
+                    run_log.add("stop recording test " + self.test_name, level="INFO")
+                    run_log.save_to_file()
                     # Schedule window destruction and control panel restart in the main thread
                     self.event_window.after(0, lambda: cleanup_and_restart(self.event_window))
                     return False
@@ -478,7 +484,8 @@ def main(test_name=None, starting_point="none"):
     # # Check if another instance is already running
     # if is_already_running(lock_file):
     #     sys.exit(1)
-        
+    run_log.add("*************************************", level="INFO")
+    run_log.add("start recording test " + test_name)    
     # Register cleanup function
     register_cleanup(lock_file)
     

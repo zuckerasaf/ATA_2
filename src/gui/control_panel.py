@@ -22,7 +22,10 @@ from src.utils.general_func import create_test_from_json, display_test_data, upd
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
 from src.utils.starting_points import go_to_starting_point
+from src.utils.run_log import RunLog
 
+
+run_log = RunLog()
 class ControlPanel:
     """
     Main class for the ATA Control Panel GUI.
@@ -69,9 +72,10 @@ class ControlPanel:
         self.create_list_frame(self.root, "List of Results", 2, "result_listbox")
         self.create_status_bar()
         
-        # Initialize data in the lists
+        # Initialize data in the lists and run log status
         self.refresh_test_list()
         self.refresh_result_list()
+        self.refresh_run_log_status()
         
         # Bind window close event to custom handler
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -94,7 +98,7 @@ class ControlPanel:
                     os.remove(lock_file)
                 except:
                     pass
-            self.status_var.set("Terminating all listeners and closing application...")
+            #self.status_var.set("Terminating all listeners and closing application...")
             self.root.update()
         except Exception as e:
             print(f"Error during shutdown: {e}")
@@ -149,18 +153,47 @@ class ControlPanel:
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Update Images", command=self.update_images).pack(pady=5)
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
+        ttk.Button(frame, text="Clear Log", command=self.clear_log).pack(pady=5, side="bottom")
 
     def create_status_bar(self):
         """
-        Create the status bar at the bottom of the window to show the status of the last run.
+        Create the status bar at the bottom of the window to show the status of the last run,
+        with vertical and horizontal scrollbars.
         """
-        self.status_var = tk.StringVar()
-        self.status_var.set("Ready")
         frame = ttk.LabelFrame(self.root, text="Status of the Last Run")
         frame.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky="ew")
-        
-        ttk.Label(frame, textvariable=self.status_var).pack(pady=5)
-        
+
+        # Inner frame for text and vertical scrollbar
+        inner_frame = ttk.Frame(frame)
+        inner_frame.pack(fill="both", expand=True)
+
+        # Text widget
+        self.status_text = tk.Text(inner_frame, height=20, wrap="none")
+        self.status_text.pack(side="left", fill="both", expand=True)
+
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(inner_frame, orient="vertical", command=self.status_text.yview)
+        self.status_text.configure(yscrollcommand=v_scrollbar.set)
+        v_scrollbar.pack(side="right", fill="y")
+
+        # Horizontal scrollbar (pack it to the bottom of the outer frame)
+        h_scrollbar = ttk.Scrollbar(frame, orient="horizontal", command=self.status_text.xview)
+        self.status_text.configure(xscrollcommand=h_scrollbar.set)
+        h_scrollbar.pack(side="bottom", fill="x")
+
+        # Optionally, set initial text
+        self.status_text.insert("1.0", "Ready")
+        self.status_text.config(state="disabled")
+
+    def set_status(self, message):
+        """
+        Set the status message in the status bar.
+        """
+        self.status_text.config(state="normal")
+        self.status_text.delete("1.0", tk.END)
+        self.status_text.insert("1.0", message)
+        self.status_text.config(state="disabled")
+
     def _populate_list(self, listbox, directory_path, file_pattern, state):
         """
         Generic function to populate a listbox with files from a directory.
@@ -300,7 +333,7 @@ class ControlPanel:
             
             print(f"Starting recording with test name: {test_name}")  # Debug print
             
-            self.status_var.set(f"Recording new test: {test_name}")
+            self.set_status(f"Recording new test: {test_name}")
             self.root.update()
             
             # Get paths from config
@@ -331,6 +364,7 @@ class ControlPanel:
                 go_to_starting_point(starting_point)
                 # Now close the Control Panel window
                 self.root.destroy()
+                #run_log.clear()
                 # Start recording with the specified test name and starting point
                 start_recording(test_name, starting_point)
             except Exception as e:
@@ -341,11 +375,18 @@ class ControlPanel:
                 if self.config.get("multiWindow") == False:
                     self.root.deiconify()
             
-            # Refresh test list after recording
-            self.refresh_test_list()
+            # # Refresh test list after recording
+            # self.refresh_test_list()
+
+            try:
+                root = tk.Tk()
+                app = ControlPanel(root)
+                root.mainloop()
+            except Exception as e:
+                print(f"Fatal error creating control panel: {e}")
             
         except Exception as e:
-            self.status_var.set(f"Error during recording: {str(e)}")
+            self.set_status(f"Error during recording: {str(e)}")
             messagebox.showerror("Recording Error", str(e))
             # Show the control panel window in case of error
             self.root.deiconify()
@@ -368,7 +409,7 @@ class ControlPanel:
         
         try:
             print(f"Running {len(test_names)} tests... {test_names}")
-            self.status_var.set(f"Running {len(test_names)} tests...")
+            #self.status_var.set(f"Running {len(test_names)} tests...")
             self.root.update()
             
             # Get paths from config
@@ -382,6 +423,7 @@ class ControlPanel:
             
             def run_next_test(test_index=0):
                 if test_index >= len(test_names):
+                    self.refresh_run_log_status()
                     # All tests are done
                     if len(test_names) > 1:
                         messagebox.showinfo("Test Sequence Complete", f"All {len(test_names)} tests have been completed.")
@@ -412,7 +454,7 @@ class ControlPanel:
                     # Show the control panel window again
                     self.root.deiconify()
                     # Update status
-                    self.status_var.set(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
+                    #self.status_var.set(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
                     print(f"Test completed: {test_name} (Result saved in: {result_dir_name})")
                     self.root.update()
                     # Refresh the result list
@@ -427,14 +469,14 @@ class ControlPanel:
                     # If test failed to start, show control panel and continue with next test
                     if self.config.get("multiWindow") == False:
                         self.root.deiconify()
-                    self.status_var.set(f"Test failed to start: {test_name}")
+                    self.set_status(f"Test failed to start: {test_name}")
                     self.root.after(100, lambda: run_next_test(test_index + 1))
             
             # Start the first test
             run_next_test(0)
             
         except Exception as e:
-            self.status_var.set(f"Error running test: {str(e)}")
+            self.set_status(f"Error running test: {str(e)}")
             messagebox.showerror("Test Error", str(e))
             # Show the control panel window in case of error
             self.root.deiconify()
@@ -566,6 +608,41 @@ class ControlPanel:
         else:
             messagebox.showerror("Error", "Failed to update images.")
 
+    def refresh_run_log_status(self):
+        """
+        Read the contents of run_log.txt and display it in the status bar.
+        """
+        log_file_path = self.config.get_run_log_path()
+        try:
+            if os.path.exists(log_file_path):
+                with open(log_file_path, "r", encoding="utf-8") as f:
+                    log_content = f.read().strip()
+                if log_content:
+                    self.set_status(log_content)
+                else:
+                    self.set_status("Run log is empty.")
+            else:
+                self.set_status("Run log file not found.")
+        except Exception as e:
+            self.set_status(f"Error reading run log: {e}")
+
+    def clear_log(self):
+        """
+        Clear the run log file and the status bar display.
+        """
+        log_file_path = self.config.get_run_log_path()
+        
+        if not messagebox.askyesno("Clear Log", "Are you sure you want to clear the run log?"):
+            return
+        try:
+            # Erase the log file
+            with open(log_file_path, "w", encoding="utf-8") as f:
+                pass  # Opening in 'w' mode truncates the file
+            # Clear the status bar
+            self.refresh_run_log_status()
+        except Exception as e:
+            self.set_status(f"Error clearing run log: {e}")
+
     @classmethod
     def bring_to_front_and_refresh(cls):
         """
@@ -578,6 +655,7 @@ class ControlPanel:
                 cls._instance.root.focus_force()
                 cls._instance.refresh_test_list()
                 cls._instance.refresh_result_list()
+                cls._instance.refresh_run_log_status()
             except Exception as e:
                 print(f"Error bringing ControlPanel to front: {e}")
 

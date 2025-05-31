@@ -64,7 +64,7 @@
     "Control_Panel": {
         "title": "Test Control Panel",
         "width": 1000,
-        "height": 600,
+        "height": 1000,
         "position": {
             "x": 100,
             "y": 100
@@ -92,7 +92,8 @@
         "project_root" : "C:\\projectPython\\ATA_V2",
         "db_path": "C:\\projectPython\\ATA_V2\\DB",
         "test_path": "C:\\projectPython\\ATA_V2\\DB\\Test",
-        "result_path": "C:\\projectPython\\ATA_V2\\DB\\Result"
+        "result_path": "C:\\projectPython\\ATA_V2\\DB\\Result",
+        "run_log_path": "C:\\projectPython\\ATA_V2\\DB\\run_log.txt"
     },
     "Image_compare": {
         "position_tolerance": 0,

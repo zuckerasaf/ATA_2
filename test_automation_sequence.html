@@ -1,0 +1,98 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Test Automation Sequence Diagram</title>
+            <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+            <script>
+                mermaid.initialize({ startOnLoad: true });
+            </script>
+        </head>
+        <body>
+            <div class="mermaid">
+            sequenceDiagram
+    title Test Automation Flow
+
+    participant TestRunner
+
+    TestRunner->>config: get_keyboard_quit_key()
+    TestRunner->>config: get_print_screen_key()
+    TestRunner->>mouse: Controller()
+    TestRunner->>keyboard: Controller()
+    TestRunner->>queue: Queue()
+    TestRunner->>time: time()
+    TestRunner->>TestRunner: strftime(%Y-%m-%d %H:%M:%S)
+    TestRunner->>datetime: now()
+    TestRunner->>TestRunner: stop()
+    TestRunner->>TestRunner: after(0)
+    TestRunner->>TestRunner: stop()
+    TestRunner->>TestRunner: after(0)
+    TestRunner->>self: _create_event(event, time_total, time_diff)
+    TestRunner->>TestRunner: add_event(resevent)
+    TestRunner->>time: time()
+    TestRunner->>time: sleep(0.1)
+    TestRunner->>TestRunner: press(button)
+    TestRunner->>self: peek_next_event()
+    TestRunner->>TestRunner: winfo_exists()
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>time: sleep(0.1)
+    TestRunner->>TestRunner: release(button)
+    TestRunner->>TestRunner: lower()
+    TestRunner->>TestRunner: release(button)
+    TestRunner->>json: loads()
+    TestRunner->>TestRunner: press(button)
+    TestRunner->>time: sleep(wait_time)
+    TestRunner->>time: sleep(0.1)
+    TestRunner->>self: _create_event(event, time_total, time_diff)
+    TestRunner->>TestRunner: split(')
+    TestRunner->>TestRunner: add_event(resevent)
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>TestRunner: put(True)
+    TestRunner->>time: sleep(0.1)
+    TestRunner->>TestRunner: press()
+    TestRunner->>TestRunner: release()
+    TestRunner->>TestRunner: press(key_text)
+    TestRunner->>TestRunner: release(key_text)
+    TestRunner->>TestRunner: add_event(resevent)
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>time: time()
+    TestRunner->>TestRunner: split(: )
+    TestRunner->>TestRunner: basename()
+    TestRunner->>TestRunner: append()
+    TestRunner->>TestRunner: split(: )
+    TestRunner->>config: get(minmumMatchPresent_high)
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>TestRunner: put(True)
+    TestRunner->>TestRunner: add_event(resevent)
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>config: get(minmumMatchPresent_medium)
+    TestRunner->>config: get(minmumMatchPresent_low)
+    TestRunner->>TestRunner: split(: )
+    TestRunner->>config: get(match_percentage_ref)
+    TestRunner->>self: _create_event(event, time_total, time_diff)
+    TestRunner->>config: get_scroll_sensitivity()
+    TestRunner->>TestRunner: scroll(0)
+    TestRunner->>TestRunner: add_event(resevent)
+    TestRunner->>time: time()
+    TestRunner->>TestRunner: split(: )
+    TestRunner->>TestRunner: lower()
+    TestRunner->>TestRunner: winfo_exists()
+    TestRunner->>TestRunner: update_event(resevent)
+    TestRunner->>keyboard: Listener()
+    TestRunner->>TestRunner: start()
+    TestRunner->>TestRunner: put(True)
+    TestRunner->>TestRunner: stop()
+    TestRunner->>time: sleep()
+    TestRunner->>self: execute_mouse_scroll(event)
+    TestRunner->>event_window: update_event(event)
+    TestRunner->>TestRunner: startswith(mouse_)
+    TestRunner->>time: time()
+    TestRunner->>self: execute_mouse_event(event)
+    TestRunner->>event_window: update_event(event)
+    TestRunner->>event_window: update_event(event)
+    TestRunner->>self: execute_keyboard_event(event)
+
+            </div>
+        </body>
+        </html>
+        

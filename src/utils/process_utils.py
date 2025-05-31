@@ -179,6 +179,7 @@ def cleanup_and_restart(event_window, lock_file="cursor_listener.lock"):
     Clean up resources and restart the control panel.
 
     This function deletes the lock file, destroys the event window, and restarts the control panel.
+    It ensures proper cleanup sequence and handles potential errors during the process.
 
     Parameters
     ----------
@@ -187,20 +188,35 @@ def cleanup_and_restart(event_window, lock_file="cursor_listener.lock"):
     lock_file : str, optional
         Path to the lock file to remove.
     """
-    # Delete the lock file to ensure clean restart
     try:
+        # Delete the lock file to ensure clean restart
         if os.path.exists(lock_file):
             os.remove(lock_file)
             print(f"Lock file {lock_file} deleted successfully")
     except Exception as e:
         print(f"Error deleting lock file: {e}")
-        
-    # Destroy the event window
-    event_window.destroy()
-    time.sleep(0.2)
     
-    # Restart the control panel
-    restart_control_panel()
+    try:
+        # Schedule the window destruction and control panel restart
+        def delayed_cleanup():
+            try:
+                # Destroy the event window
+                if event_window.winfo_exists():
+                    event_window.destroy()
+                # # Add a small delay to ensure window is destroyed
+                # event_window.after(200, restart_control_panel)
+            except Exception as e:
+                print(f"Error during cleanup: {e}")
+                # # Try to restart control panel even if window destruction fails
+                # restart_control_panel()
+        
+        # Schedule the cleanup in the main thread
+        event_window.after(0, delayed_cleanup)
+        
+    except Exception as e:
+        print(f"Error scheduling cleanup: {e}")
+        # Fallback to immediate restart if scheduling fails
+        restart_control_panel()
 
 
 def save_test(test, test_name=None, state="running", result_folder_path=None):

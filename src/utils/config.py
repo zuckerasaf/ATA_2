@@ -142,3 +142,7 @@ class Config:
     def get_scroll_sensitivity(self) -> float:
         """Get the mouse scroll sensitivity factor."""
         return self.get('mouse.scroll_sensitivity', 0.1)  # Default to 0.1 if not specified
+    
+    def get_run_log_path(self) -> str:
+        """Get the run log path."""
+        return self.get('paths.run_log_path', 'run_log.txt')
