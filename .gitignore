@@ -4,3 +4,7 @@ src/utils/__pycache__/*
 src/gui/__pycache__/*
 src/tests/__pycache__/*
 C:/projectPython/ATA_V2/cursor_listener.lock
+control_panel.lock
+test_automation_sequence.mmd
+test_class_diagram.mmd
+src/Doc/__pycache__/create_Doc.cpython-310.pyc

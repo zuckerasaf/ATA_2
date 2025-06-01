@@ -66,8 +66,8 @@
         "width": 1000,
         "height": 1000,
         "position": {
-            "x": 100,
-            "y": 100
+            "x": 10,
+            "y": 10
         }
     },
     "Test_Name_Dialog": {

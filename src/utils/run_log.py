@@ -69,7 +69,8 @@ class RunLog:
             The path to the file where the log should be saved.
         """
         with open(filepath, "a", encoding="utf-8") as f:
-            f.write(self.get_summary()) 
+            f.write("\n")  # Add an empty line before the new log entry
+            f.write(self.get_summary())
 
     def erase(self):
         """

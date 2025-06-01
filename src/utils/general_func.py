@@ -38,6 +38,9 @@ sys.path.insert(0, project_root)
 from src.utils.test import Test
 from src.utils.event_mouse_keyboard import Event
 from src.utils.config import Config
+from src.utils.run_log import RunLog
+
+run_log = RunLog()
 
 def speech_to_text(duration=5, sample_rate=16000, model_size="base"):
     """
@@ -168,12 +171,18 @@ def create_test_from_json(filepath):
         
     except FileNotFoundError:
         print(f"Error: File not found at {filepath}")
+        run_log.add(f"Error: File not found at {filepath}", level="ERROR")
+        run_log.save_to_file()
         return None
     except json.JSONDecodeError:
-        print(f"Error: Invalid JSON format in {filepath}")
+        print(f"Error: Invalid JSON format in {filepath}")  
+        run_log.add(f"Error: Invalid JSON format in {filepath}", level="ERROR") 
+        run_log.save_to_file()
         return None
     except Exception as e:
         print(f"Error loading test data: {e}")
+        run_log.add(f"Error loading test data: {e}", level="ERROR")
+        run_log.save_to_file()
         return None
     
 def update_images_to_test(result_folder_path):

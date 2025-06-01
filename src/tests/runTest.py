@@ -420,8 +420,8 @@ class TestRunner:
                     if self.event_window:
                         self.event_window.update_event(resevent)
 
-                    run_log.add("screenshot has been taken for -" + os.path.basename(resevent.pic_path) + " the match percentage is " + str(match_percentage), level="INFO")
-                    run_log.add(os.path.basename(resevent.pic_path) + " full path is:  " + str(resevent.pic_path), level="IMAGE")
+                    run_log.add("screenshot has been taken for -" + os.path.basename(resevent.pic_path) + " the match percentage is " + str(match_percentage) + " / " +  str(match_percentage_ref), level="INFO")
+                    run_log.add(str(resevent.pic_path), level="IMAGE")
                     
                     if match_percentage < match_percentage_ref:
                         print(f"Match percentage is less than {config.get('match_percentage_ref')}, ending test...")
@@ -608,17 +608,7 @@ def main(test_full_name=None, callback=None):
     bool
         True if the test ran successfully, False otherwise.
     """
-    # Check if another instance is already running
-    # if is_already_running(lock_file):
-    #     print("Another instance is already running, terminating it...")
-    #     # Register cleanup function to terminate the running instance
-    #     register_cleanup(lock_file)
-    #     # Wait a moment for cleanup to complete
-    #     time.sleep(0.5)
-    #     # Try again after cleanup
-    #     if is_already_running(lock_file):
-    #         print("Failed to terminate running instance")
-    #         return False
+
     
     # Register cleanup function
     register_cleanup(lock_file)

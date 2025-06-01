@@ -167,9 +167,15 @@ class ControlPanel:
         inner_frame = ttk.Frame(frame)
         inner_frame.pack(fill="both", expand=True)
 
-        # Text widget
+        # Text widget - make it selectable but read-only
         self.status_text = tk.Text(inner_frame, height=20, wrap="none")
         self.status_text.pack(side="left", fill="both", expand=True)
+        
+        # Bind click event to select entire line
+        self.status_text.bind("<Button-1>", self.select_line)
+        # Prevent text editing but allow selection
+        self.status_text.bind("<Key>", lambda e: "break")
+        self.status_text.bind("<Button-3>", lambda e: "break")  # Disable right-click menu
 
         # Vertical scrollbar
         v_scrollbar = ttk.Scrollbar(inner_frame, orient="vertical", command=self.status_text.yview)
@@ -181,18 +187,34 @@ class ControlPanel:
         self.status_text.configure(xscrollcommand=h_scrollbar.set)
         h_scrollbar.pack(side="bottom", fill="x")
 
-        # Optionally, set initial text
-        self.status_text.insert("1.0", "Ready")
-        self.status_text.config(state="disabled")
+        # Add a button to open selected image
+        ttk.Button(frame, text="Open Selected Image", command=self.open_image).pack(pady=5)
+
+    def select_line(self, event):
+        """Select the entire line when clicked."""
+        try:
+            # Get the line number where the click occurred
+            index = self.status_text.index(f"@{event.x},{event.y}")
+            line_start = f"{index} linestart"
+            line_end = f"{index} lineend"
+            
+            # Select the entire line
+            self.status_text.tag_remove("sel", "1.0", "end")
+            self.status_text.tag_add("sel", line_start, line_end)
+            
+            # Make sure the selection is visible
+            self.status_text.see(line_start)
+        except Exception as e:
+            print(f"Error in select_line: {e}")
 
     def set_status(self, message):
         """
         Set the status message in the status bar.
         """
-        self.status_text.config(state="normal")
+        self.status_text.config(state="normal")  # Enable editing temporarily
         self.status_text.delete("1.0", tk.END)
         self.status_text.insert("1.0", message)
-        self.status_text.config(state="disabled")
+        self.status_text.config(state="normal")  # Keep it editable for selection
 
     def _populate_list(self, listbox, directory_path, file_pattern, state):
         """
@@ -658,6 +680,41 @@ class ControlPanel:
                 cls._instance.refresh_run_log_status()
             except Exception as e:
                 print(f"Error bringing ControlPanel to front: {e}")
+    
+    def open_image(self):
+        """Open the image in the image viewer."""
+        try:
+            # Check if there's any text selected
+            try:
+                selected_line = self.status_text.get("sel.first", "sel.last")
+            except tk.TclError:
+                messagebox.showwarning("No Selection", "Please click on a line containing [IMAGE] to select it.")
+                return
+
+            # Check if the line contains [IMAGE]
+            if "[IMAGE]" in selected_line:
+                # Extract the image path (everything after the timestamp)
+                parts = selected_line.split(": ", 1)  # Split on first ": " to separate timestamp from path
+                if len(parts) > 1:
+                    image_path = parts[1].strip()
+                    if os.path.exists(image_path):
+                        if sys.platform == 'win32':
+                            # Open the result image
+                            os.startfile(image_path)
+                            # Try to open the corresponding diff image
+                            diff_path = image_path.replace("_Result.jpg", "_Result_diff.jpg")
+                            if os.path.exists(diff_path):
+                                os.startfile(diff_path)
+                        else:
+                            messagebox.showerror("Error", "Image opening is only supported on Windows.")
+                    else:
+                        messagebox.showerror("Error", f"Image file not found: {image_path}")
+                else:
+                    messagebox.showerror("Error", "Invalid image path format in log.")
+            else:
+                messagebox.showwarning("No Image Selected", "Please select a line containing [IMAGE].")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open image: {str(e)}")
 
 def main():
     # If already open, just bring to front and refresh
