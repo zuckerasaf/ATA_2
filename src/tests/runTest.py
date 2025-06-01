@@ -404,7 +404,7 @@ class TestRunner:
                     
                     # Now compare the images using the saved file paths
                     match_percentage, result_path = compare_images(event.pic_path, screenshot_path, self.result_folder_path)
-                    resevent.step_resau = "match percentage is "+str(match_percentage)
+                    #resevent.step_resau = "match percentage is "+str(match_percentage)
 
                     if resevent.priority == "high":
                         match_percentage_ref = config.get("minmumMatchPresent_high")
@@ -412,17 +412,27 @@ class TestRunner:
                         match_percentage_ref = config.get("minmumMatchPresent_medium")
                     else:
                         match_percentage_ref = config.get("minmumMatchPresent_low")
-                   
+
+
+                    pass_criteria = 100-self.current_test.accuracy_level*5
+                    if match_percentage < pass_criteria:
+                        resevent.step_resau = " failed, grade is " + str(match_percentage) + " < " + str(pass_criteria)
+                        status="failed"
+                    else:
+                        resevent.step_resau = " passed, grade is " + str(match_percentage) + " > " + str(pass_criteria)   
+                        status="passed"
+
                     self.current_test.numOfSteps += 1
-                    self.current_test.stepResult.append([str(resevent.image_name),str(match_percentage)])  
+                    self.current_test.stepResult.append(["step -" + str(event.screenshot_counter),status])  
                     self.current_test.comment2 = match_percentage
                     self.save = True # Resume saving events    
                     if self.event_window:
                         self.event_window.update_event(resevent)
 
-                    run_log.add("screenshot has been taken for -" + os.path.basename(resevent.pic_path) + " the match percentage is " + str(match_percentage) + " / " +  str(match_percentage_ref), level="INFO")
+
+                    run_log.add(event.step_desc + " - " + resevent.step_resau, level="INFO")
                     run_log.add(str(resevent.pic_path), level="IMAGE")
-                    
+
                     if match_percentage < match_percentage_ref:
                         print(f"Match percentage is less than {config.get('match_percentage_ref')}, ending test...")
                         # Save the test data using the imported save_test function
@@ -435,7 +445,7 @@ class TestRunner:
                         self.running = False
                         self.current_test.add_event(resevent)  # Add event to current test
                         self.event_window.update_event(resevent) # Update the floating window
-                        run_log.add("the "  + os.path.basename(resevent.pic_path)+   " gain match precentage of bellow the cretira -> " + str(match_percentage_ref) + "<- Test Stopped -> " , level="WARNING")
+                        run_log.add("the "  + os.path.basename(resevent.pic_path)+   " gain match precentage of bellow the continue cretira -> " + str(match_percentage_ref) + "<- Test Stopped -> " , level="WARNING")
         
         # Handle special keys
         special_key_map = {
