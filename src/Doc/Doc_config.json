@@ -1,51 +1,56 @@
 {
     "system_info": {
         "software": {
-            "os": {
+            "SW_1": 
+            {
                 "name": "Windows 10",
                 "version": "10.0.19045",
-                "build": "19045.3693"
+                "comment": "this is a comment"
             },
-            "application": {
+            "SW_2": {
                 "name": "ATA",
                 "version": "2.0.0",
-                "build_date": "2024-03-20"
+                "comment": "this is a comment"
             },
-            "dependencies": {
-                "python": "3.9.0",
-                "opencv": "4.8.0",
-                "numpy": "1.24.0"
+            "SW_3": {
+                "name": "TBD_3",
+                "version": "TBD_3",
+                "comment": "this is a comment"
             }
         },
         "hardware": {
-            "cpu": {
-                "model": "Intel Core i7",
-                "cores": 8,
-                "frequency": "3.6 GHz"
+            "PC_1": {
+                "name": "PC_1",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
             },
-            "memory": {
-                "total": "16 GB",
-                "type": "DDR4"
+            "PC_2": {
+                "name": "PC_2",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
             },
-            "display": {
-                "resolution": "1920x1080",
-                "refresh_rate": "60 Hz"
+            "PC_3": {
+                "name": "PC_3",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
             }
         }
     },
     "environment": {
-        "test_environment": {
-            "name": "Development",
-            "type": "Local",
-            "location": "Lab 1"
+        "Param_1": {
+            "name": "Param_1",
+            "type": "Param_1",
+            "location": "Param_1"
         },
-        "network": {
-            "type": "LAN",
-            "speed": "1 Gbps"
+        "Param_2": {
+            "name": "Param_2",
+            "type": "Param_2",
+            "location": "Param_2"
         },
-        "storage": {
-            "type": "SSD",
-            "capacity": "1 TB"
+        "Param_3": {
+            "name": "Param_3",
+            "type": "Param_3",
+            "location": "Param_3"
         }
     },
     "document_settings": {

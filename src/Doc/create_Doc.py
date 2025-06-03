@@ -59,13 +59,11 @@ def add_system_info_section(doc, config):
     
     The section includes:
         - Software Information:
-            * Operating System details
-            * Application version and build date
-            * Dependencies and their versions
+            * Multiple software components (SW_1, SW_2, etc.)
+            * Version and comments for each
         - Hardware Information:
-            * CPU specifications
-            * Memory configuration
-            * Display settings
+            * Multiple PC configurations (PC_1, PC_2, etc.)
+            * Comments and specifications for each
     """
     doc.add_heading("System Information", level=1)
     
@@ -73,71 +71,50 @@ def add_system_info_section(doc, config):
     doc.add_heading("Software", level=2)
     software = config.get('system_info', {}).get('software', {})
     
-    # OS Info
-    os_info = software.get('os', {})
-    doc.add_paragraph(f"Operating System: {os_info.get('name', '')} {os_info.get('version', '')} (Build {os_info.get('build', '')})")
-    
-    # Application Info
-    app_info = software.get('application', {})
-    doc.add_paragraph(f"Application: {app_info.get('name', '')} v{app_info.get('version', '')} (Built: {app_info.get('build_date', '')})")
-    
-    # Dependencies
-    doc.add_paragraph("Dependencies:")
-    deps = software.get('dependencies', {})
-    for dep, version in deps.items():
-        doc.add_paragraph(f"  • {dep}: {version}", style='List Bullet')
+    # Add each software component
+    for sw_key, sw_info in software.items():
+        doc.add_paragraph(f"{sw_info.get('name', '')}:")
+        doc.add_paragraph(f"  Version: {sw_info.get('version', '')}")
+        if sw_info.get('comment') and sw_info.get('comment') != '_':
+            doc.add_paragraph(f"  Comment: {sw_info.get('comment', '')}")
     
     # Hardware Information
     doc.add_heading("Hardware", level=2)
     hardware = config.get('system_info', {}).get('hardware', {})
     
-    # CPU Info
-    cpu = hardware.get('cpu', {})
-    doc.add_paragraph(f"CPU: {cpu.get('model', '')} ({cpu.get('cores', '')} cores, {cpu.get('frequency', '')})")
-    
-    # Memory Info
-    memory = hardware.get('memory', {})
-    doc.add_paragraph(f"Memory: {memory.get('total', '')} {memory.get('type', '')}")
-    
-    # Display Info
-    display = hardware.get('display', {})
-    doc.add_paragraph(f"Display: {display.get('resolution', '')} @ {display.get('refresh_rate', '')}")
+    # Add each PC configuration
+    for pc_key, pc_info in hardware.items():
+        doc.add_paragraph(f"{pc_info.get('name', '')}:")
+        if pc_info.get('comment_1') and pc_info.get('comment_1') != '_':
+            doc.add_paragraph(f"  {pc_info.get('comment_1', '')}")
+        if pc_info.get('comment_2') and pc_info.get('comment_2') != '_':
+            doc.add_paragraph(f"  {pc_info.get('comment_2', '')}")
 
 def add_environment_section(doc, config):
     """
     Add environment information section to the document.
     
     This function creates a section detailing the test environment configuration,
-    including the test environment settings, network configuration, and storage details.
+    including multiple parameter sets for the test environment.
     
     Args:
         doc: The document object to add content to
         config: The configuration dictionary containing environment information
     
     The section includes:
-        - Test Environment:
-            * Environment name and type
-            * Location information
-        - Network:
-            * Network type and speed
-        - Storage:
-            * Storage type and capacity
+        - Multiple parameter sets (Param_1, Param_2, etc.):
+            * Name
+            * Type
+            * Location
     """
     doc.add_heading("Test Environment", level=1)
     env = config.get('environment', {})
     
-    # Test Environment
-    test_env = env.get('test_environment', {})
-    doc.add_paragraph(f"Environment: {test_env.get('name', '')} ({test_env.get('type', '')})")
-    doc.add_paragraph(f"Location: {test_env.get('location', '')}")
-    
-    # Network
-    network = env.get('network', {})
-    doc.add_paragraph(f"Network: {network.get('type', '')} ({network.get('speed', '')})")
-    
-    # Storage
-    storage = env.get('storage', {})
-    doc.add_paragraph(f"Storage: {storage.get('type', '')} ({storage.get('capacity', '')})")
+    # Add each parameter set
+    for param_key, param_info in env.items():
+        doc.add_heading(param_info.get('name', param_key), level=2)
+        doc.add_paragraph(f"Type: {param_info.get('type', '')}")
+        doc.add_paragraph(f"Location: {param_info.get('location', '')}")
 
 def apply_document_settings(doc, config):
     """
@@ -152,8 +129,8 @@ def apply_document_settings(doc, config):
     
     The function applies:
         - Header settings:
-            * Company name
-            * Department
+            * Company name (Elbit Systems)
+            * Department (factory acceptance test)
             * Project name
         - Footer settings:
             * Confidentiality notice
