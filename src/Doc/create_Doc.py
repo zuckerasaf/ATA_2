@@ -13,7 +13,7 @@ import json
 import sys
 import os
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, RGBColor, Pt
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from datetime import datetime
@@ -23,6 +23,173 @@ import subprocess
 # Add project root to Python path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, project_root)
+
+def load_doc_config():
+    """
+    Load the document configuration from Doc_config.json.
+    
+    This function reads the configuration file that contains system information,
+    environment settings, and document formatting preferences.
+    
+    Returns:
+        dict: The configuration data containing:
+            - system_info: Software and hardware details
+            - environment: Test environment settings
+            - document_settings: Formatting and styling preferences
+    """
+    try:
+        config_path = os.path.join(os.path.dirname(__file__), "Doc_config.json")
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading document config: {e}")
+        return {}
+
+def add_system_info_section(doc, config):
+    """
+    Add system information section to the document.
+    
+    This function creates a detailed section about the system configuration,
+    including both software and hardware information. It formats the information
+    in a hierarchical structure with appropriate headings.
+    
+    Args:
+        doc: The document object to add content to
+        config: The configuration dictionary containing system information
+    
+    The section includes:
+        - Software Information:
+            * Operating System details
+            * Application version and build date
+            * Dependencies and their versions
+        - Hardware Information:
+            * CPU specifications
+            * Memory configuration
+            * Display settings
+    """
+    doc.add_heading("System Information", level=1)
+    
+    # Software Information
+    doc.add_heading("Software", level=2)
+    software = config.get('system_info', {}).get('software', {})
+    
+    # OS Info
+    os_info = software.get('os', {})
+    doc.add_paragraph(f"Operating System: {os_info.get('name', '')} {os_info.get('version', '')} (Build {os_info.get('build', '')})")
+    
+    # Application Info
+    app_info = software.get('application', {})
+    doc.add_paragraph(f"Application: {app_info.get('name', '')} v{app_info.get('version', '')} (Built: {app_info.get('build_date', '')})")
+    
+    # Dependencies
+    doc.add_paragraph("Dependencies:")
+    deps = software.get('dependencies', {})
+    for dep, version in deps.items():
+        doc.add_paragraph(f"  • {dep}: {version}", style='List Bullet')
+    
+    # Hardware Information
+    doc.add_heading("Hardware", level=2)
+    hardware = config.get('system_info', {}).get('hardware', {})
+    
+    # CPU Info
+    cpu = hardware.get('cpu', {})
+    doc.add_paragraph(f"CPU: {cpu.get('model', '')} ({cpu.get('cores', '')} cores, {cpu.get('frequency', '')})")
+    
+    # Memory Info
+    memory = hardware.get('memory', {})
+    doc.add_paragraph(f"Memory: {memory.get('total', '')} {memory.get('type', '')}")
+    
+    # Display Info
+    display = hardware.get('display', {})
+    doc.add_paragraph(f"Display: {display.get('resolution', '')} @ {display.get('refresh_rate', '')}")
+
+def add_environment_section(doc, config):
+    """
+    Add environment information section to the document.
+    
+    This function creates a section detailing the test environment configuration,
+    including the test environment settings, network configuration, and storage details.
+    
+    Args:
+        doc: The document object to add content to
+        config: The configuration dictionary containing environment information
+    
+    The section includes:
+        - Test Environment:
+            * Environment name and type
+            * Location information
+        - Network:
+            * Network type and speed
+        - Storage:
+            * Storage type and capacity
+    """
+    doc.add_heading("Test Environment", level=1)
+    env = config.get('environment', {})
+    
+    # Test Environment
+    test_env = env.get('test_environment', {})
+    doc.add_paragraph(f"Environment: {test_env.get('name', '')} ({test_env.get('type', '')})")
+    doc.add_paragraph(f"Location: {test_env.get('location', '')}")
+    
+    # Network
+    network = env.get('network', {})
+    doc.add_paragraph(f"Network: {network.get('type', '')} ({network.get('speed', '')})")
+    
+    # Storage
+    storage = env.get('storage', {})
+    doc.add_paragraph(f"Storage: {storage.get('type', '')} ({storage.get('capacity', '')})")
+
+def apply_document_settings(doc, config):
+    """
+    Apply document formatting settings from config.
+    
+    This function applies the document-wide formatting settings including headers,
+    footers, fonts, and colors as specified in the configuration file.
+    
+    Args:
+        doc: The document object to apply settings to
+        config: The configuration dictionary containing document settings
+    
+    The function applies:
+        - Header settings:
+            * Company name
+            * Department
+            * Project name
+        - Footer settings:
+            * Confidentiality notice
+            * Document version
+        - Formatting:
+            * Font families and sizes
+            * Color schemes
+            * Heading styles
+    """
+    settings = config.get('document_settings', {})
+    
+    # Apply header settings
+    header = settings.get('header', {})
+    section = doc.sections[0]
+    header_paragraph = section.header.paragraphs[0]
+    header_paragraph.text = f"{header.get('company_name', '')} - {header.get('department', '')} - {header.get('project', '')}"
+    
+    # Apply footer settings
+    footer = settings.get('footer', {})
+    footer_paragraph = section.footer.paragraphs[0]
+    footer_paragraph.text = f"{footer.get('confidentiality', '')} | Version: {footer.get('document_version', '')}"
+    
+    # Apply formatting
+    formatting = settings.get('formatting', {})
+    fonts = formatting.get('font', {})
+    colors = formatting.get('colors', {})
+    
+    # Set default font
+    doc.styles['Normal'].font.name = fonts.get('body', 'Calibri')
+    doc.styles['Normal'].font.size = Pt(fonts.get('size', {}).get('body', 11))
+    
+    # Set heading fonts
+    for i in range(1, 3):
+        style = doc.styles[f'Heading {i}']
+        style.font.name = fonts.get('heading', 'Arial')
+        style.font.size = Pt(fonts.get('size', {}).get(f'heading{i}', 14))
 
 def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_path=True):
     """
@@ -52,6 +219,9 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
         doc = Document()
         config = Config()
         
+        # Load document configuration
+        doc_config = load_doc_config()
+        
         # Add title page and TOC placeholder if multiple documents
         if len(json_path_list) > 1:
             # Title page
@@ -59,6 +229,14 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
             doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             doc.add_page_break()
             
+            # Add system and environment information
+            add_system_info_section(doc, doc_config)
+            doc.add_page_break()
+            add_environment_section(doc, doc_config)
+            doc.add_page_break()
+        
+        # Apply document settings
+        apply_document_settings(doc, doc_config)
         
         for json_path in json_path_list:
             # Load JSON data
@@ -191,18 +369,18 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
                 run._r.append(fldChar2)
 
             section = doc.sections[0]
+             
+            # # Header
+            # header = section.header
+            # header_paragraph = header.paragraphs[0]
+            # header_paragraph.text = data.get(f"auto generate of {Type} document", "Test Report")
 
-            # Header
-            header = section.header
-            header_paragraph = header.paragraphs[0]
-            header_paragraph.text = data.get(f"auto generate of {Type} document", "Test Report")
-
-            # Footer
-            footer = section.footer
-            footer_paragraph = footer.paragraphs[0]
-            footer_paragraph.text = "Page "
-            add_page_number(footer_paragraph)
-            footer_paragraph.add_run(f" | Date: {datetime.now().strftime('%Y-%m-%d')}")
+            # # Footer
+            # footer = section.footer
+            # footer_paragraph = footer.paragraphs[0]
+            # footer_paragraph.text = "Page "
+            # add_page_number(footer_paragraph)
+            # footer_paragraph.add_run(f" | Date: {datetime.now().strftime('%Y-%m-%d')}")
 
             doc.add_page_break()
 

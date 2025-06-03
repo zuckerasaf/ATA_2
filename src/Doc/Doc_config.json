@@ -1,0 +1,78 @@
+{
+    "system_info": {
+        "software": {
+            "os": {
+                "name": "Windows 10",
+                "version": "10.0.19045",
+                "build": "19045.3693"
+            },
+            "application": {
+                "name": "ATA",
+                "version": "2.0.0",
+                "build_date": "2024-03-20"
+            },
+            "dependencies": {
+                "python": "3.9.0",
+                "opencv": "4.8.0",
+                "numpy": "1.24.0"
+            }
+        },
+        "hardware": {
+            "cpu": {
+                "model": "Intel Core i7",
+                "cores": 8,
+                "frequency": "3.6 GHz"
+            },
+            "memory": {
+                "total": "16 GB",
+                "type": "DDR4"
+            },
+            "display": {
+                "resolution": "1920x1080",
+                "refresh_rate": "60 Hz"
+            }
+        }
+    },
+    "environment": {
+        "test_environment": {
+            "name": "Development",
+            "type": "Local",
+            "location": "Lab 1"
+        },
+        "network": {
+            "type": "LAN",
+            "speed": "1 Gbps"
+        },
+        "storage": {
+            "type": "SSD",
+            "capacity": "1 TB"
+        }
+    },
+    "document_settings": {
+        "header": {
+            "company_name": "Elbit Systems",
+            "department": "factory acceptance test",
+            "project": "Project xxx"
+        },
+        "footer": {
+            "confidentiality": "Internal Use Only",
+            "document_version": "1.0"
+        },
+        "formatting": {
+            "font": {
+                "heading": "Arial",
+                "body": "Calibri",
+                "size": {
+                    "heading1": 16,
+                    "heading2": 14,
+                    "body": 11
+                }
+            },
+            "colors": {
+                "header": "#2F5496",
+                "footer": "#2F5496",
+                "table_header": "#D9E1F2"
+            }
+        }
+    }
+} 
