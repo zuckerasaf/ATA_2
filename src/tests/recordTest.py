@@ -493,7 +493,7 @@ def main(test_name=None, starting_point="none"):
     close_existing_mouse_threads()
     
     # Create the floating window with test name
-    event_window = EventWindow(test_name=test_name)
+    event_window = EventWindow(test_name=test_name, run_number=1, run_total=1)
     
     # Create the event listener
     listener = EventListener(event_window, test_name, starting_point)

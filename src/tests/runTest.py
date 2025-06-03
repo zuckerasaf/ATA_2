@@ -180,6 +180,8 @@ class TestRunner:
                 if self.event_window:
                     self.event_window.after(0, self.event_window.destroy)
                 # Signal completion through queue
+                run_log.add("the stop button was pressed in the middle of the test " + self.test.comment1.split(": ")[1], level="INFO")
+                run_log.save_to_file()
                 self.completion_queue.put(True)
                 return False
         except AttributeError:
@@ -191,6 +193,8 @@ class TestRunner:
                 if self.event_window:
                     self.event_window.after(0, self.event_window.destroy)
                 # Signal completion through queue
+                run_log.add("the stop button was pressed in the middle of the test " + self.test.comment1.split(": ")[1], level="INFO")
+                run_log.save_to_file()
                 self.completion_queue.put(True)
                 return False
             else:
@@ -391,6 +395,7 @@ class TestRunner:
             screenshot = capture_screen(resevent.pic_x,resevent.pic_y,resevent.pic_width,resevent.pic_height)
             if screenshot:
                 self.screenshot_counter += 1
+                resevent.screenshot_counter = self.screenshot_counter
                 self.test
                 
                 screenshot_filename, screenshot_path = generate_screenshot_filename(
@@ -599,7 +604,7 @@ class TestRunner:
              
             print("Test execution completed, sent completion signal")
 
-def main(test_full_name=None, callback=None):
+def main(test_full_name=None, callback=None, run_number=1, run_total=1):
     """
     Main entry point for running a test from a JSON file.
 
@@ -646,7 +651,7 @@ def main(test_full_name=None, callback=None):
         test_name = os.path.basename(os.path.dirname(filename))
         
         # Create and show the event window with test name
-        event_window = EventWindow(test_name=test_name)
+        event_window = EventWindow(test_name=test_name, run_number=run_number, run_total=run_total)
         run_log.clear()
         run_log.add(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", level="INFO")
         run_log.add("start test " + test_name, level="INFO")

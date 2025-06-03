@@ -46,7 +46,7 @@ class EventWindow(tk.Tk):
         Handle window closing.
     """
 
-    def __init__(self, test_name=None):
+    def __init__(self, test_name=None, run_number=1, run_total=1):
         """
         Initialize the EventWindow with the given test name.
 
@@ -62,7 +62,7 @@ class EventWindow(tk.Tk):
         
         # Configure window
         base_title = config.get_Event_Monitor_window_title()
-        self.title(f"{base_title} - {test_name}" if test_name else base_title)
+        self.title(f"{base_title} - {test_name} - Run #{run_number} / {run_total}" if test_name else base_title)
         self.attributes('-alpha', config.get_Event_Monitor_window_opacity())  # Set transparency
         self.attributes('-topmost', True)  # Always on top
         
@@ -130,7 +130,7 @@ class EventWindow(tk.Tk):
         event : Event
             The event data to display.
         """
-        text = f"Event #{event.counter} | Position: {event.position} | Type: {event.event_type} | Action: {event.action} | Time: {event.time}ms"
+        text = f" Event #{event.counter} | Position: {event.position} | Type: {event.event_type} | Action: {event.action} | Time: {event.time}ms"
         self.event_label.config(text=text)
         
     def on_closing(self):

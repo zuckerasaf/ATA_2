@@ -503,7 +503,7 @@ class ControlPanel:
                     self.root.after(100, lambda: run_next_test(test_index + 1))
                 
                 # Use the copied test file path for running the test with callback
-                success = start_runing(result_test_file, callback=test_completed_callback)
+                success = start_runing(result_test_file, callback=test_completed_callback, run_number=test_index+1, run_total=len(test_names))
                 if not success:
                     # If test failed to start, show control panel and continue with next test
                     if self.config.get("multiWindow") == False:
