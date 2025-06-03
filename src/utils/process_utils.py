@@ -249,6 +249,7 @@ def save_test(test, test_name=None, state="running", result_folder_path=None):
     """
     Doctype = "ATP"
     DocPictures=True
+    json_path_list = []
     try:
         # Get paths from config
         from src.utils.config import Config
@@ -281,7 +282,8 @@ def save_test(test, test_name=None, state="running", result_folder_path=None):
            
         
         print(f"Test data saved to: {result_file}")
-        create_doc_from_json(result_file, DocPictures, Doctype)
+        json_path_list.append (result_file)
+        create_doc_from_json(json_path_list, DocPictures, Doctype)
         return result_file
         
     except Exception as e:

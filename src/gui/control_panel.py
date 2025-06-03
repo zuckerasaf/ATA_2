@@ -11,6 +11,7 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 import shutil
 import subprocess
+import json
 
 # Add project root to Python path for module imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -150,9 +151,20 @@ class ControlPanel:
         frame.grid(row=0, column=1, padx=5, pady=5, sticky="ns")
         ttk.Button(frame, text="Record", command=self.start_recording).pack(pady=5)
         ttk.Button(frame, text="Run", command=self.run_test).pack(pady=5)
+        
+        # Add separator frame for gap
+        separator = ttk.Frame(frame, height=50)
+        separator.pack(pady=5)
+        
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Update Images", command=self.update_images).pack(pady=5)
+        ttk.Button(frame, text="Create Doc", command=self.create_document).pack(pady=5)
+        # Add separator frame for gap
+        separator = ttk.Frame(frame, height=50)
+        separator.pack(pady=5)
+
         ttk.Button(frame, text="Close", command=self.on_closing).pack(pady=5)
+
         ttk.Button(frame, text="Clear Log", command=self.clear_log).pack(pady=5, side="bottom")
 
     def create_status_bar(self):
@@ -257,7 +269,8 @@ class ControlPanel:
                     file_info.append({
                         'name': name,
                         'creation_time': creation_time,
-                        'display_name': f"{display_name} - {creation_date}"
+                        'display_name': f"{display_name} - {creation_date}",
+                        'has_failed': 'failed' in str(test_summary).lower()
                     })
                     if state == "result":
                         # Store mapping from display string to actual folder name
@@ -266,9 +279,13 @@ class ControlPanel:
             # Sort by creation time (newest first)
             file_info.sort(key=lambda x: x['creation_time'], reverse=True)
             
-            # Add sorted items to listbox
+            # Add sorted items to listbox with colors
             for item in file_info:
                 listbox.insert(tk.END, item['display_name'])
+                if item['has_failed']:
+                    listbox.itemconfig(listbox.size()-1, {'fg': 'red'})
+                else:
+                    listbox.itemconfig(listbox.size()-1, {'fg': 'green'})
                 
     def refresh_test_list(self):
         """Refresh the list of available tests."""
@@ -715,6 +732,73 @@ class ControlPanel:
                 messagebox.showwarning("No Image Selected", "Please select a line containing [IMAGE].")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
+
+    def create_document(self):
+        """Create a Word document from selected tests or results."""
+        try:
+            # Get selections from both lists
+            test_selections = self.test_listbox.curselection()
+            result_selections = self.result_listbox.curselection()
+            
+            if not test_selections and not result_selections:
+                messagebox.showwarning("No Selection", "Please select at least one test or result from the lists.")
+                return
+
+            # Get paths from config
+            paths_config = self.config.get('paths', {})
+            db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
+            test_path = paths_config.get('test_path', "Test")
+            result_path = paths_config.get('result_path', "Result")
+
+            # Create list to store JSON paths
+            json_paths = []
+
+            # Process test selections
+            for selection in test_selections:
+                display_text = self.test_listbox.get(selection)
+                test_name = self._extract_name_from_display(display_text)
+                test_dir = os.path.join(db_path, test_path, test_name)
+                json_file = os.path.join(test_dir, f"{test_name}.json")
+                
+                if os.path.exists(json_file):
+                    json_paths.append(json_file)
+
+                TYPE="ATP"
+
+            # Process result selections
+            for selection in result_selections:
+                display_text = self.result_listbox.get(selection)
+                folder_name = self.result_display_to_folder.get(display_text, None)
+                if folder_name:
+                    result_dir = os.path.join(db_path, result_path, folder_name)
+                    # Look for JSON files in the result directory
+                    for file in os.listdir(result_dir):
+                        if file.endswith('.json'):
+                            json_file = os.path.join(result_dir, file)
+                            if os.path.exists(json_file):
+                                json_paths.append(json_file)
+                    
+                TYPE="ATR"
+
+            if not json_paths:
+                messagebox.showwarning("No Files", "No valid JSON files found in selected items.")
+                return
+
+            # Import the document creation function
+            from src.Doc.create_Doc import create_doc_from_json
+
+            # Create the document
+            success = create_doc_from_json(json_paths, pictures=True, Type=TYPE, Regular_doc_path=False)
+            
+            if success:
+                messagebox.showinfo("Success", "Document created successfully!")
+            else:
+                messagebox.showerror("Error", "Failed to create document.")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
+
 
 def main():
     # If already open, just bring to front and refresh
