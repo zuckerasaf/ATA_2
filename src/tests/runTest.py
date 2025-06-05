@@ -148,7 +148,7 @@ class TestRunner:
 
         # Create a new test instance for the running one 
         self.current_test = Test(
-            config="nothing for now",
+            config=test.config,
             comment1=f"Test: {test.comment1}",
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             starting_point=test.starting_point,

@@ -97,9 +97,10 @@
     },
     "Image_compare": {
         "position_tolerance": 0,
-        "tolerance": 0,
+        "tolerance": 10,
         "debug": true,
-        "threshold" : 0.8
+        "threshold" : 0.8,
+        "frame_threshold": 20
     },
     "minmumMatchPresent_high": 80,
     "minmumMatchPresent_medium": 50,

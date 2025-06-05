@@ -146,3 +146,15 @@ class Config:
     def get_run_log_path(self) -> str:
         """Get the run log path."""
         return self.get('paths.run_log_path', 'run_log.txt')
+    
+    def get_Image_compare_config(self) -> dict:
+        """Get the Image compare configuration."""
+        return self.get('Image_compare', {
+            'position_tolerance': 0,
+            'tolerance': 0,
+            'debug': True,
+            'threshold': 0.8,
+            'frame_threshold': 20
+        })
+    
+    
