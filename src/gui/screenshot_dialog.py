@@ -231,6 +231,9 @@ class ScreenshotDialog:
         """
         Create a transparent overlay window showing the selected area.
 
+        This method creates a semi-transparent window that shows the selected area
+        while keeping both the overlay and main dialog on top of other windows.
+
         Parameters
         ----------
         x : int
@@ -268,10 +271,13 @@ class ScreenshotDialog:
             # Make window visible
             self.overlay_window.deiconify()
             
-            # Ensure the main dialog stays on top
-            self.dialog.lift()
+            # Keep both windows on top
             self.dialog.attributes('-topmost', True)
-            self.dialog.after(100, lambda: self.dialog.attributes('-topmost', False))
+            self.overlay_window.attributes('-topmost', True)
+            
+            # Make sure the dialog is clickable
+            self.dialog.lift()
+            self.dialog.focus_force()
             
         except Exception as e:
             print(f"Error creating overlay window: {e}")

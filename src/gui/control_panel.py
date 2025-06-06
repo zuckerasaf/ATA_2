@@ -2,6 +2,13 @@
 Control Panel UI for test recording and execution.
 
 This module provides the main GUI for managing test cases, running tests, updating images, and viewing results.
+It includes functionality for:
+- Recording new test cases with metadata (name, purpose, accuracy level, precondition)
+- Running single or multiple test cases
+- Updating test images
+- Viewing test results and logs
+- Creating test documentation
+- Managing test and result lists
 """
 
 import os
@@ -19,7 +26,7 @@ sys.path.insert(0, project_root)
 
 from src.tests.recordTest import main as start_recording
 from src.tests.runTest import main as start_runing
-from src.utils.general_func import create_test_from_json, display_test_data, update_images_to_test
+from src.utils.general_func import  display_test_data, update_images_to_test
 from src.utils.config import Config
 from src.gui.test_name_dialog import TestNameDialog
 from src.utils.starting_points import go_to_starting_point
@@ -31,11 +38,51 @@ class ControlPanel:
     """
     Main class for the ATA Control Panel GUI.
 
-    Handles the creation and management of the test and result lists, control buttons, status bar,
-    and all user interactions for recording and running tests.
+    This class implements a singleton pattern to ensure only one instance of the control panel
+    is open at a time. It provides a comprehensive interface for test management with the following features:
 
-    This class now supports a singleton pattern: if an instance is already open, you can call
-    ControlPanel.bring_to_front_and_refresh() to bring the window to the front and refresh the lists.
+    - Test Recording:
+        * Create new tests with metadata (name, purpose, accuracy level, precondition)
+        * Select starting points for tests
+        * Record test steps with mouse and keyboard actions
+
+    - Test Execution:
+        * Run single or multiple tests
+        * View real-time test execution status
+        * Handle test failures and errors
+
+    - Test Management:
+        * View and organize test cases
+        * Update test images
+        * Create test documentation
+        * Navigate to test folders
+
+    - Result Management:
+        * View test results
+        * Access test logs
+        * Clear logs
+        * View detailed execution status
+
+    The GUI is divided into three main sections:
+    1. Left panel: List of available tests
+    2. Center panel: Control buttons for test operations
+    3. Right panel: List of test results
+    4. Bottom panel: Status bar showing execution details
+
+    Attributes
+    ----------
+    _instance : ControlPanel
+        Class variable implementing the singleton pattern
+    root : tk.Tk
+        The root Tkinter window
+    config : Config
+        Configuration object for loading settings
+    test_listbox : tk.Listbox
+        Listbox showing available tests
+    result_listbox : tk.Listbox
+        Listbox showing test results
+    status_text : tk.Text
+        Text widget showing execution status
     """
 
     _instance = None  # Class variable to track the open instance
@@ -83,8 +130,15 @@ class ControlPanel:
         
     def killOldListener(self):
         """
-        Kill any old mouse listener process and remove the lock file if it exists.
-        This prevents multiple listeners from running at the same time.
+        Kill any existing mouse listener process and clean up its lock file.
+
+        This method ensures that only one mouse listener is running at a time by:
+        1. Checking for the existence of a lock file
+        2. Reading the process ID from the lock file
+        3. Terminating the process using taskkill
+        4. Removing the lock file
+
+        This is called during application shutdown to prevent orphaned listener processes.
         """
         try:
             lock_file = "cursor_listener.lock"
@@ -99,7 +153,6 @@ class ControlPanel:
                     os.remove(lock_file)
                 except:
                     pass
-            #self.status_var.set("Terminating all listeners and closing application...")
             self.root.update()
         except Exception as e:
             print(f"Error during shutdown: {e}")
@@ -107,7 +160,12 @@ class ControlPanel:
     def on_closing(self):
         """
         Handle the window close event.
-        Ensures all listeners are killed and the application exits cleanly.
+
+        This method is called when the user attempts to close the control panel window.
+        It ensures a clean shutdown by:
+        1. Killing any active mouse listeners
+        2. Clearing the singleton instance
+        3. Destroying the root window
         """
         self.killOldListener()
         # Clear the singleton instance on close
@@ -119,14 +177,18 @@ class ControlPanel:
         """
         Create a generic list frame with scrollbars.
 
+        This method creates a labeled frame containing a listbox with both vertical
+        and horizontal scrollbars. The listbox is stored as an instance variable
+        using the provided name.
+
         Args:
-            parent: The parent widget
-            title: The title for the LabelFrame
-            column: The column number for grid placement
-            listbox_var_name: The name of the instance variable to store the listbox
+            parent (tk.Widget): The parent widget to contain the frame
+            title (str): The title for the LabelFrame
+            column (int): The column number for grid placement
+            listbox_var_name (str): The name of the instance variable to store the listbox
 
         Returns:
-            The created frame.
+            ttk.LabelFrame: The created frame containing the listbox and scrollbars
         """
         frame = ttk.LabelFrame(parent, text=title)
         frame.grid(row=0, column=column, padx=5, pady=5, sticky="nsew")
@@ -145,7 +207,18 @@ class ControlPanel:
 
     def create_control_buttons_frame(self):
         """
-        Create the center frame containing control buttons for recording, running, updating, and closing.
+        Create the center frame containing control buttons for test operations.
+
+        This method creates a frame with buttons for:
+        - Recording new tests
+        - Running tests
+        - Navigating to test folders
+        - Updating test images
+        - Creating test documentation
+        - Closing the application
+        - Clearing logs
+
+        The buttons are arranged vertically with separators for visual grouping.
         """
         frame = ttk.Frame(self.root)
         frame.grid(row=0, column=1, padx=5, pady=5, sticky="ns")
@@ -169,8 +242,21 @@ class ControlPanel:
 
     def create_status_bar(self):
         """
-        Create the status bar at the bottom of the window to show the status of the last run,
-        with vertical and horizontal scrollbars.
+        Create the status bar at the bottom of the window.
+
+        This method creates a status bar that shows the execution status of tests.
+        Features include:
+        - A text widget for displaying status messages
+        - Vertical and horizontal scrollbars
+        - Line selection on click
+        - Read-only text to prevent modification
+        - Disabled right-click menu
+
+        The status bar is used to display:
+        - Test execution progress
+        - Error messages
+        - Success/failure status
+        - Other important notifications
         """
         frame = ttk.LabelFrame(self.root, text="Status of the Last Run")
         frame.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky="ew")
@@ -221,7 +307,16 @@ class ControlPanel:
 
     def set_status(self, message):
         """
-        Set the status message in the status bar.
+        Update the status text widget with a new message.
+
+        This method:
+        1. Clears the current status text
+        2. Inserts the new message
+        3. Ensures the new message is visible
+        4. Updates the display
+
+        Args:
+            message (str): The message to display in the status bar
         """
         self.status_text.config(state="normal")  # Enable editing temporarily
         self.status_text.delete("1.0", tk.END)
@@ -230,15 +325,21 @@ class ControlPanel:
 
     def _populate_list(self, listbox, directory_path, file_pattern, state):
         """
-        Generic function to populate a listbox with files from a directory.
-        
+        Populate a listbox with files from a directory.
+
+        This method:
+        1. Clears the current listbox contents
+        2. Gets a list of files matching the pattern
+        3. Sorts the files by modification time
+        4. Inserts the files into the listbox with timestamps
+        5. Updates the listbox state
+
         Args:
-            listbox: The listbox widget to populate
-            directory_path: Path to the directory containing the files
-            file_pattern: Lambda function that takes a filename and returns the path to the actual file
-                        (e.g., lambda name: os.path.join(directory, name, f"{name}.json"))
+            listbox (tk.Listbox): The listbox to populate
+            directory_path (str): Path to the directory containing the files
+            file_pattern (str): Pattern to match files (e.g., "*.json")
+            state (str): The state to set for the listbox ("normal" or "disabled")
         """
-        # Clear the listbox
         listbox.delete(0, tk.END)
         
         if state == "result":
@@ -288,7 +389,13 @@ class ControlPanel:
                     listbox.itemconfig(listbox.size()-1, {'fg': 'green'})
                 
     def refresh_test_list(self):
-        """Refresh the list of available tests."""
+        """Refresh the list of test .
+
+        This method:
+        1. Gets the test directory path from config
+        2. Populates the test listbox with JSON files
+        3. Enables the listbox for interaction
+        """
         # Get paths from config
         paths_config = self.config.get('paths', {})
         db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
@@ -304,7 +411,13 @@ class ControlPanel:
         )
         
     def refresh_result_list(self):
-        """Refresh the list of available results."""
+        """Refresh the list of test results.
+
+        This method:
+        1. Gets the result directory path from config
+        2. Populates the result listbox with JSON files
+        3. Enables the listbox for interaction
+        """
         # Get paths from config
         paths_config = self.config.get('paths', {})
         db_path = paths_config.get('db_path', os.path.join(project_root, "DB"))
@@ -321,26 +434,25 @@ class ControlPanel:
         
     def _extract_name_from_display(self, display_text):
         """
-        Extract the original name from the display text.
-        
+        Extract the test name from a display text string.
+
         Args:
-            display_text: The text shown in the listbox (format: "name - date")
-            
+            display_text (str): The display text in format "timestamp - filename"
+
         Returns:
-            The original name without the date suffix
+            str: The extracted test name
         """
         return display_text.split(" - ")[0]
         
     def _extract_test_name_from_timestamp(self, filename):
         """
         Extract the test name from a timestamped filename.
-        Example: '20250418_162642_test1.json' -> 'test1'
-        
+
         Args:
-            filename: The timestamped filename
-            
+            filename (str): The filename in format "timestamp_filename.json"
+
         Returns:
-            The test name without the timestamp prefix
+            str: The extracted test name
         """
         # Split by underscore and take the last part before .json
         parts = filename.split('_')
@@ -350,7 +462,21 @@ class ControlPanel:
         return filename  # Return original if format doesn't match
         
     def start_recording(self):
-        """Start recording a new test."""
+        """
+        Start recording a new test.
+
+        This method:
+        1. Shows a dialog to get test metadata (name, purpose, accuracy, precondition)
+        2. Creates a new test directory
+        3. Saves the test metadata
+        4. Starts the recording process
+        5. Updates the test list when recording is complete
+
+        The recording process captures:
+        - Mouse movements and clicks
+        - Keyboard input
+        - Screenshots at each step
+        """
         try:
             # First, try to kill any existing listener
             self.killOldListener()
@@ -369,7 +495,8 @@ class ControlPanel:
             test_data = dialog.result
             test_name = test_data['name']
             starting_point = test_data['starting_point']
-            
+            precondition = test_data['precondition']
+
             print(f"Starting recording with test name: {test_name}")  # Debug print
             
             self.set_status(f"Recording new test: {test_name}")
@@ -405,7 +532,7 @@ class ControlPanel:
                 self.root.destroy()
                 #run_log.clear()
                 # Start recording with the specified test name and starting point
-                start_recording(test_name, starting_point)
+                start_recording(test_name, starting_point, precondition)
             except Exception as e:
                 print(f"Error during recording: {e}")
                 raise e
@@ -431,7 +558,21 @@ class ControlPanel:
             self.root.deiconify()
             
     def run_test(self):
-        """Run the selected tests."""
+        """
+        Run selected test(s).
+
+        This method:
+        1. Gets the selected test(s) from the listbox
+        2. Creates a result directory for each test
+        3. Runs each test in sequence
+        4. Updates the result list when complete
+
+        The test execution:
+        - Follows the recorded steps
+        - Takes screenshots for comparison
+        - Logs the execution results
+        - Handles any errors that occur
+        """
         self.killOldListener()
 
         selections = self.test_listbox.curselection()
@@ -522,16 +663,14 @@ class ControlPanel:
 
     def _convert_display_to_timestamp(self, display_text, is_result=False):
         """
-        Convert display format back to timestamp format.
-        For results: 'Result_9 - 2025-04-26 09:29:02' -> '20250426_092902_9'
-        For tests: 'test1 - 2025-04-26 09:29:02' -> 'test1'
-        
+        Convert a display text to a timestamped filename.
+
         Args:
-            display_text: The text shown in the listbox (format: "name - date")
-            is_result: Boolean indicating if this is from the result list
-            
+            display_text (str): The display text in format "timestamp - filename"
+            is_result (bool): Whether this is a result file
+
         Returns:
-            The timestamped filename format for results, or original name for tests
+            str: The timestamped filename
         """
         try:
             # Split the display text into name and date parts
@@ -561,7 +700,14 @@ class ControlPanel:
             return display_text  # Return original if conversion fails
 
     def go_to_folder(self):
-        """Open the selected test or result folder in file explorer."""
+        """
+        Open the folder of the selected test or result.
+
+        This method:
+        1. Gets the selected item from either listbox
+        2. Determines if it's a test or result
+        3. Opens
+        """
         try:
             test_selections = self.test_listbox.curselection()
             result_selections = self.result_listbox.curselection()
@@ -604,7 +750,15 @@ class ControlPanel:
             messagebox.showerror("Error", f"Failed to open folder: {str(e)}")
 
     def update_images(self):
-        """Copy images from selected result folder to corresponding test folder."""
+        """
+        Update images for the selected test.
+
+        This method:
+        1. Gets the selected test from the listbox
+        2. Updates the test images with current screen state
+        3. Refreshes the test list
+        """
+        
         selections = self.result_listbox.curselection()
         if not selections:
             messagebox.showwarning("No Result Selected", "Please select a result folder to update images from.")
@@ -649,7 +803,12 @@ class ControlPanel:
 
     def refresh_run_log_status(self):
         """
-        Read the contents of run_log.txt and display it in the status bar.
+        Refresh the run log status display.
+
+        This method:
+        1. Gets the current run log content
+        2. Updates the status text widget
+        3. Ensures the latest content is visible
         """
         log_file_path = self.config.get_run_log_path()
         try:
@@ -667,7 +826,12 @@ class ControlPanel:
 
     def clear_log(self):
         """
-        Clear the run log file and the status bar display.
+        Clear the run log.
+
+        This method:
+        1. Clears the run log file
+        2. Updates the status display
+        3. Shows a confirmation message
         """
         log_file_path = self.config.get_run_log_path()
         
@@ -685,7 +849,16 @@ class ControlPanel:
     @classmethod
     def bring_to_front_and_refresh(cls):
         """
-        If the ControlPanel is already open, bring its window to the front and refresh the lists.
+        Bring the control panel window to front and refresh its contents.
+
+        This class method:
+        1. Checks if an instance exists
+        2. Brings the window to front
+        3. Refreshes the test and result lists
+        4. Refreshes the run log status
+
+        Returns:
+            bool: True if the window was brought to front, False if no instance exists
         """
         if cls._instance is not None:
             try:
@@ -699,7 +872,14 @@ class ControlPanel:
                 print(f"Error bringing ControlPanel to front: {e}")
     
     def open_image(self):
-        """Open the image in the image viewer."""
+        """
+        Open the image in the image viewer.
+
+        This method:
+        1. Checks if there's any text selected
+        2. Extracts the image path from the selected line
+        3. Opens the image in the image viewer
+        """
         try:
             # Check if there's any text selected
             try:
@@ -734,7 +914,13 @@ class ControlPanel:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
 
     def create_document(self):
-        """Create a Word document from selected tests or results."""
+        """
+        Create a Word document from selected tests or results.
+
+        This method:
+        1. Gets the selected tests or results
+        2. Creates a list of JSON paths
+        """
         try:
             # Get selections from both lists
             test_selections = self.test_listbox.curselection()

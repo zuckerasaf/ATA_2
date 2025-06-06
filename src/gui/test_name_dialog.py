@@ -3,7 +3,7 @@ Dialog for entering test name and starting point.
 """
 
 import tkinter as tk
-from tkinter import ttk, StringVar, messagebox
+from tkinter import ttk, StringVar, messagebox, Text
 from src.utils.config import Config
 from src.utils.general_func import generate_random_word
 
@@ -72,6 +72,24 @@ class TestNameDialog:
         self.accuracy_var = tk.IntVar(value=5)
         accuracy_frame = ttk.Frame(main_frame)
         accuracy_frame.pack(fill="x", pady=(0, 10))
+
+        # Test precondition Section
+        ttk.Label(main_frame, text="Test Precondition:").pack(anchor="w", pady=(0, 5))
+        
+        # Create a frame to hold the text widget and scrollbar
+        precondition_frame = ttk.Frame(main_frame)
+        precondition_frame.pack(fill="x", pady=(0, 10))
+        
+        # Create scrollbar for description
+        precondition_scrollbar = ttk.Scrollbar(precondition_frame)
+        precondition_scrollbar.pack(side="right", fill="y")
+
+        self.precondition_text = Text(precondition_frame, height=4, width=40, yscrollcommand=precondition_scrollbar.set)
+        self.precondition_text.insert(1.0, "the test Precondition is " )
+        self.precondition_text.pack(side="left", fill="x", expand=True)
+
+        # Configure scrollbar to work with text widget
+        precondition_scrollbar.config(command=self.precondition_text.yview)
         
         ttk.Label(accuracy_frame, text="Low").pack(side="left")
         accuracy_scale = ttk.Scale(
@@ -111,7 +129,7 @@ class TestNameDialog:
         self.name_entry.focus_set()
         
         # Bind keyboard shortcuts
-        self.dialog.bind('<Return>', lambda e: self._on_ok())
+        # self.dialog.bind('<Return>', lambda e: self._on_ok())
         self.dialog.bind('<Escape>', lambda e: self._on_cancel())
         
         # Prevent closing the window with the X button
@@ -149,7 +167,8 @@ class TestNameDialog:
             'name': name,
             'purpose': self.purpose_var.get().strip(),
             'accuracy_level': self.accuracy_var.get(),
-            'starting_point': self.starting_point_var.get()
+            'starting_point': self.starting_point_var.get(),
+            'precondition': self.precondition_text.get(1.0, tk.END).strip()
         }
         print(f"Dialog result: {self.result}")  # Debug print
         self.dialog.destroy()

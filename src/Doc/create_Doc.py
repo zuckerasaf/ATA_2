@@ -228,6 +228,9 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
             doc.add_paragraph(f"Accuracy Level: {data.get('accuracy_level', '')}")
             doc.add_paragraph(f"Timestamp: {data.get('timestamp', '')}")
 
+            doc.add_heading("Test precondition", level=2)    
+            doc.add_paragraph(f"Description: {data.get('precondition', '')}")
+            
             doc.add_heading("Steps summary table", level=2)
             # Add summary table for all steps
             table = doc.add_table(rows=1, cols=5)

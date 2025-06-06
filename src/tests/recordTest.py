@@ -105,7 +105,7 @@ class EventListener:
         Handle mouse scroll events.
     """
 
-    def __init__(self, event_window, test_name=None, starting_point="none"):
+    def __init__(self, event_window, test_name=None, starting_point="none", precondition="nothing for now"):
         """
         Initialize the EventListener with the given event window and test name.
 
@@ -117,6 +117,8 @@ class EventListener:
             The name of the test being recorded.
         starting_point : str, optional
             The starting point for the test recording.
+        precondition : str, optional
+            The precondition for the test recording.
         """
         self.counter = 0
         self.screenshot_counter = 0
@@ -137,7 +139,7 @@ class EventListener:
         
         # Create a new test instance
         self.current_test = Test(
-            config="nothing for now",
+            config= precondition,
             comment1=f"Test: {test_name}" if test_name else "Test started",
             comment2=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             starting_point=starting_point,
@@ -366,6 +368,8 @@ class EventListener:
                                 event.image_name = dialog.result['image_name']
                                 self.current_test.total_time_in_screenshot_dialog += time_in_dialog
 
+                                
+                                run_log.add(str(event.pic_path), level="IMAGE")
                                 run_log.add("screenshot taken with name " + dialog.result['image_name'], level="INFO")
 
 
@@ -462,7 +466,7 @@ class EventListener:
             self.event_window.update_event(event)
             self.last_event_time = neto_time
 
-def main(test_name=None, starting_point="none"):
+def main(test_name=None, starting_point="none", precondition="nothing for now"):
     """
     Main function to start the test recording process.
 
@@ -496,7 +500,7 @@ def main(test_name=None, starting_point="none"):
     event_window = EventWindow(test_name=test_name, run_number=1, run_total=1)
     
     # Create the event listener
-    listener = EventListener(event_window, test_name, starting_point)
+    listener = EventListener(event_window, test_name, starting_point, precondition)
     
     # Start the mouse listener
     mouse_listener = mouse.Listener(

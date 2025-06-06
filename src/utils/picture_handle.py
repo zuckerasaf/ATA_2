@@ -223,15 +223,15 @@ def compare_images(source, target, result_folder):
             cv2.imwrite(thresh_path, thresh)
             print(f"Saved threshold image to: {thresh_path}")
         
-        # Find contours of differences
-        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # # Find contours of differences
+        # contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
-        # Create a mask for differences
-        mask = np.zeros_like(source_gray)
-        cv2.drawContours(mask, contours, -1, (0, 0, 255), -1)  # Red color for differences
+        # # Create a mask for differences
+        # mask = np.zeros_like(source_gray)
+        # cv2.drawContours(mask, contours, -1, (0, 0, 255), -1)  # Red color for differences
         
-        # Create result image (only showing differences)
-        result = cv2.bitwise_and(source_gray, mask)
+        # # Create result image (only showing differences)
+        # result = cv2.bitwise_and(source_gray, mask)
         
         # Calculate match percentage
         total_pixels = source_gray.size
@@ -240,11 +240,11 @@ def compare_images(source, target, result_folder):
         debug_print(f"Match percentage: {match_percentage}")
         
         # Generate result filename
-        result_dif_filename = target_name+"diff_.jpg"
+        result_dif_filename = target_name+"_diffrence.jpg"
         result_dif_path = os.path.join(result_folder, result_dif_filename)
         
         # Save result image
-        cv2.imwrite(result_dif_path, result)
+        cv2.imwrite(result_dif_path, thresh)
         
         return int(match_percentage), result_dif_path
         
