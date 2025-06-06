@@ -231,6 +231,7 @@ class ControlPanel:
         
         ttk.Button(frame, text="Go to", command=self.go_to_folder).pack(pady=5)
         ttk.Button(frame, text="Update Images", command=self.update_images).pack(pady=5)
+        ttk.Button(frame, text="Edit Test", command=self.edit_test).pack(pady=5)
         ttk.Button(frame, text="Create Doc", command=self.create_document).pack(pady=5)
         # Add separator frame for gap
         separator = ttk.Frame(frame, height=50)
@@ -914,6 +915,13 @@ class ControlPanel:
                 messagebox.showwarning("No Image Selected", "Please select a line containing [IMAGE].")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open image: {str(e)}")
+    def edit_test(self):
+        """
+        Edit the selected test.
+        messagebox.showinfo("Edit Test", "Edit the selected test.")
+        """
+        messagebox.showinfo("Edit Test", "Edit the selected test future feature.")
+
 
     def create_document(self):
         """

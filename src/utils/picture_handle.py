@@ -94,35 +94,44 @@ def generate_screenshot_filename(test_name, counter, image_name, state, result_f
     except Exception as e:
         print(f"Error generating screenshot filename: {e}")
         return None, None
-def debug_print(debug,debug_log,*args, **kwargs):
+
+def debug_print(debug, debug_log, *args, **kwargs):
     """Helper function to print to both console and debug log"""
     print(*args, **kwargs)
     if debug and debug_log:
         debug_log.write(" ".join(str(arg) for arg in args) + "\n")
 
-
 def compare_images(source, target, result_folder):
     """
-    Compare two images and generate a visual difference map.
+    Compare two images and generate a visual difference map with detailed analysis.
     
-    This function performs a detailed comparison between source and target images,
-    including:
-    - Position matching with tolerance
-    - Pixel-by-pixel difference analysis
-    - Generation of difference visualization
-    - Debug output if enabled
+    This function performs a comprehensive comparison between source and target images:
+    1. Position Matching:
+       - Uses template matching to find the target image within the source
+       - Applies configurable position tolerance
+       - Trims images to matched regions for accurate comparison
     
-    The comparison uses configurable tolerances for both position and pixel matching.
+    2. Pixel Analysis:
+       - Converts images to grayscale for comparison
+       - Calculates absolute difference between images
+       - Applies threshold to identify significant differences
+       - Generates difference visualization
+    
+    3. Debug Features (when enabled):
+       - Saves intermediate images (grayscale, difference, threshold)
+       - Creates detailed debug log with pixel statistics
+       - Generates visual difference map
+       - Provides percentage match calculation
     
     Args:
         source (str): Path to the source (reference) image
-        target (str): Path to the target (test) image
-        result_folder (str): Folder to save comparison results and debug images
+        target (str): Path to the target (test) image to compare against source
+        result_folder (str): Directory to save comparison results and debug outputs
         
     Returns:
         tuple: (match_percentage, result_image_path)
             - match_percentage (int): Percentage of matching pixels (0-100)
-            - result_image_path (str): Path to the generated difference image
+            - result_image_path (str): Path to the generated difference visualization
     """
     config = Config()
     image_compare_config = config.get('Image_compare', {})
@@ -132,7 +141,7 @@ def compare_images(source, target, result_folder):
     source_name = os.path.basename(source).split(".")[0]
     target_name = os.path.basename(target).split(".")[0]
 
-    # Create debug log file if in debug mode
+    # Initialize debug logging if debug mode is enabled
     debug_log = None
     if debug:
         debug_log_path = os.path.join(result_folder, f"{target_name}_debug_log.txt")
@@ -198,7 +207,7 @@ def compare_images(source, target, result_folder):
         
         # Save difference image for debugging if requested
         if debug:
-            # Calculate and print pixel statistics
+            # Calculate and log pixel statistics
             total_pixels = diff.shape[0] * diff.shape[1]
             non_zero_pixels = cv2.countNonZero(diff)
             debug_print(debug,debug_log,f"Total pixels in image: {total_pixels} in {target_name}")
