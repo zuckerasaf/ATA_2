@@ -94,6 +94,12 @@ def generate_screenshot_filename(test_name, counter, image_name, state, result_f
     except Exception as e:
         print(f"Error generating screenshot filename: {e}")
         return None, None
+def debug_print(debug,debug_log,*args, **kwargs):
+    """Helper function to print to both console and debug log"""
+    print(*args, **kwargs)
+    if debug and debug_log:
+        debug_log.write(" ".join(str(arg) for arg in args) + "\n")
+
 
 def compare_images(source, target, result_folder):
     """
@@ -130,17 +136,13 @@ def compare_images(source, target, result_folder):
     debug_log = None
     if debug:
         debug_log_path = os.path.join(result_folder, f"{target_name}_debug_log.txt")
-        debug_log = open(debug_log_path, 'w', encoding='utf-8')
+        debug_log = open(debug_log_path, 'a', encoding='utf-8')
         # Write header with timestamp
-        debug_log.write(f"\n Debug Log for {target_name}\n")
-        debug_log.write(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        debug_log.write("="*50 + "\n\n")
+        debug_print(True,debug_log,f"\n Debug Log for {target_name}\n")
+        debug_print(True,debug_log,f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        debug_print(True,debug_log,"="*50 + "\n\n")
 
-    def debug_print(*args, **kwargs):
-        """Helper function to print to both console and debug log"""
-        print(*args, **kwargs)
-        if debug and debug_log:
-            debug_log.write(" ".join(str(arg) for arg in args) + "\n")
+
 
     try:
         # Read images
@@ -199,9 +201,9 @@ def compare_images(source, target, result_folder):
             # Calculate and print pixel statistics
             total_pixels = diff.shape[0] * diff.shape[1]
             non_zero_pixels = cv2.countNonZero(diff)
-            debug_print(f"Total pixels in image: {total_pixels} in {target_name}")
-            debug_print(f"According to Diff Number of non-zero pixels (differences) between {target_name} and {source_name}: {non_zero_pixels}")
-            debug_print(f"Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
+            debug_print(debug,debug_log,f"Total pixels in image: {total_pixels} in {target_name}")
+            debug_print(debug,debug_log,f"According to Diff Number of non-zero pixels (differences) between {target_name} and {source_name}: {non_zero_pixels}")
+            debug_print(debug,debug_log,f"Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
             print(f"Total pixels in image: {total_pixels} in {target_name}")
             print(f" According to Diff Number of non-zero pixels (differences) between {target_name} and {source_name}: {non_zero_pixels}")
             print(f"Thresh Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
@@ -216,8 +218,8 @@ def compare_images(source, target, result_folder):
         if debug:
             thresh_path = os.path.join(result_folder, target_name+"_thresh.jpg")
             non_zero_pixels = cv2.countNonZero(thresh)
-            debug_print(f"according to Thresh Number of non-zero pixels (differences) with {tolerance}: {non_zero_pixels}")
-            debug_print(f"Thresh Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}% ")
+            debug_print(debug,debug_log,f"according to Thresh Number of non-zero pixels (differences) with {tolerance}: {non_zero_pixels}")
+            debug_print(debug,debug_log,f"Thresh Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}% ")
             print(f"according to Thresh Number of non-zero pixels (differences) with {tolerance}: {non_zero_pixels}")
             print(f"Percentage of different pixels: {(non_zero_pixels/total_pixels)*100:.2f}%")
             cv2.imwrite(thresh_path, thresh)
@@ -237,7 +239,7 @@ def compare_images(source, target, result_folder):
         total_pixels = source_gray.size
         diff_pixels = cv2.countNonZero(thresh)
         match_percentage = ((total_pixels - diff_pixels) / total_pixels) * 100
-        debug_print(f"Match percentage: {match_percentage}")
+        debug_print(debug,debug_log,f"Match percentage: {match_percentage}")
         
         # Generate result filename
         result_dif_filename = target_name+"_diffrence.jpg"
@@ -283,6 +285,9 @@ def find_image_offset(source_gray, target_gray, result_folder=None, debug=False,
             - match_confidence (float): Confidence of the match (0-1)
             - matched_region (numpy.ndarray): The region from source image that matches the trimmed target
     """
+    debug_log_path = os.path.join(result_folder, f"{target_name}_debug_log.txt")
+    debug_log = open(debug_log_path, 'a', encoding='utf-8')
+
     try:
         # Trim 10 pixels from each edge of the target image
         h, w = target_gray.shape
@@ -306,7 +311,14 @@ def find_image_offset(source_gray, target_gray, result_folder=None, debug=False,
         print(f"Result Matrix Shape: {result.shape}")
         print(f"Result Matrix Type: {result.dtype}")
         print(f"Result Matrix Range: [{result.min():.4f}, {result.max():.4f}]")
-        
+        debug_print(debug,debug_log,f"Template Matching Results:")
+        debug_print(debug,debug_log,f"Max Value (Best Match Confidence): {max_val:.4f}")
+        debug_print(debug,debug_log,f"Max Location (Best Match Position): {max_loc}")
+        debug_print(debug,debug_log,f"Min Value (Worst Match): {min_val:.4f}")
+        debug_print(debug,debug_log,f"Min Location (Worst Match Position): {min_loc}")
+        debug_print(debug,debug_log,f"Result Matrix Shape: {result.shape}")
+        debug_print(debug,debug_log,f"Result Matrix Type: {result.dtype}")
+        debug_print(debug,debug_log,f"Result Matrix Range: [{result.min():.4f}, {result.max():.4f}]")
         # Get dimensions of trimmed target
         h, w = target_gray.shape
         
@@ -365,6 +377,9 @@ def find_image_offset(source_gray, target_gray, result_folder=None, debug=False,
             print(f"Best Match Confidence: {match_confidence:.4f}")
             print(f"Required Threshold: {threshold}")
             return False, 0, 0, 0, 0, match_confidence, None
+            debug_print(debug,debug_log,f"No Match Found!")
+            debug_print(debug,debug_log,f"Best Match Confidence: {match_confidence:.4f}")
+            debug_print(debug,debug_log,f"Required Threshold: {threshold}") 
             
     except Exception as e:
         print(f"Error finding image offset: {e}")
