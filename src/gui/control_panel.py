@@ -450,6 +450,7 @@ class ControlPanel:
 
         Args:
             filename (str): The filename in format "timestamp_filename.json"
+            timestamp (str): The timestamp in format "YYYYMMDD_HHMMSS"
 
         Returns:
             str: The extracted test name
@@ -457,7 +458,8 @@ class ControlPanel:
         # Split by underscore and take the last part before .json
         parts = filename.split('_')
         if len(parts) >= 3:  # Ensure we have timestamp parts and test name
-            test_name = parts[-1].replace('.json', '')
+            test_name = filename[16:]
+            #test_name = parts[2:]
             return test_name
         return filename  # Return original if format doesn't match
         
