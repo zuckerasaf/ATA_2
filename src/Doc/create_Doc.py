@@ -200,7 +200,7 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
         doc_config = load_doc_config()
         
         # Add title page and TOC placeholder if multiple documents
-        if len(json_path_list) > 1:
+        if Regular_doc_path == False:
             # Title page
             doc.add_heading(f"auto generate of {Type} document", level=0)
             doc.add_paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -225,11 +225,12 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
             doc.add_heading("TestData", level=2)
             doc.add_paragraph(f"Description: {data.get('comment2', '')}")
             doc.add_paragraph(f"Starting Point: {data.get('starting_point', '')}")
-            doc.add_paragraph(f"Accuracy Level: {data.get('accuracy_level', '')}")
+            acuuracy_value =100 - (data.get('accuracy_level', '') *5)
+            doc.add_paragraph(f"The pass criteria is {acuuracy_value}% , the accuracy level is {data.get('accuracy_level', '')}")
             doc.add_paragraph(f"Timestamp: {data.get('timestamp', '')}")
 
             doc.add_heading("Test precondition", level=2)    
-            doc.add_paragraph(f"Description: {data.get('precondition', '')}")
+            doc.add_paragraph(f"Description: {data.get('config', '')}")
             
             doc.add_heading("Steps summary table", level=2)
             # Add summary table for all steps
@@ -288,6 +289,7 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
                         doc.add_paragraph(f"Position: X= {event.get('pic_x', '')} , Y= {event.get('pic_y', '')} \t Dimension: W= {event.get('pic_width', '')} , H= {event.get('pic_height', '')}")
                         doc.add_paragraph(f"Result: {event.get('step_resau', '')}")
                         doc.add_paragraph(f"Time: {event.get('time', '')} ms")
+                        doc.add_paragraph(f"pic_path: {event.get('pic_path', '')}")
 
                         # Add image if available and not "none"
                         pic_path = event.get("pic_path", "none")
@@ -302,9 +304,12 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
                                     available_width = page_width - left_margin - right_margin
                                     img_width = (available_width / 2) - Inches(0.1)
 
-                                    # Prepare diff image path
+                                    # Prepare original (gray) image path remove the _Result from the end of the path
                                     base, ext = os.path.splitext(pic_path)
-                                    diff_path = base + "diff_" + ext
+                                    print(f"base: '{base}'")
+                                    print(f"base[:-6]: '{base[:-6]}'")
+                                    diff_path = base[:-6] + "gray" + ext
+                                    print(f"diff_path: '{diff_path}'")
                                     # Create a table with 2 columns for side-by-side images
                                     img_table = doc.add_table(rows=2, cols=2)
                                     img_table.autofit = False
@@ -323,7 +328,7 @@ def create_doc_from_json(json_path_list, pictures=True, Type="ATP", Regular_doc_
                                     cell2_caption = img_table.cell(1, 1)
                                     cell1_caption.text = f"Figure: {event.get('image_name', '')}"
                                     cell1_caption.paragraphs[0].alignment = 1
-                                    cell2_caption.text = "Figure: Diff"
+                                    cell2_caption.text = "Figure: original in gray scale"
                                     cell2_caption.paragraphs[0].alignment = 1
                                 else:
                                     doc.add_picture(pic_path, width=Inches(4))

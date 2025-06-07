@@ -365,9 +365,17 @@ class ControlPanel:
                 if os.path.exists(file_path):
                     # Get file creation time
                     creation_time = os.path.getctime(file_path)
-                    # Format the creation time
-                    creation_date = datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d %H:%M:%S')
+                    
                     # Store file info
+                    if state == "test":
+                        # Format the creation time
+                        creation_date = datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d %H:%M:%S')
+                    else:
+                        parts = name.split("_")[0:2]  # ['20250605', '085117']
+                        dt = datetime.strptime(parts[0] + parts[1], "%Y%m%d%H%M%S")
+                        creation_date = dt.strftime("%Y-%m-%d %H:%M:%S")
+
+                    #creation_time = creation_time.timestamp()
                     file_info.append({
                         'name': name,
                         'creation_time': creation_time,
@@ -902,6 +910,9 @@ class ControlPanel:
                             # Open the result image
                             os.startfile(image_path)
                             # Try to open the corresponding diff image
+                            diff_path = image_path.replace("_Result.jpg", "_gray.jpg")
+                            if os.path.exists(diff_path):
+                                os.startfile(diff_path)
                             diff_path = image_path.replace("_Result.jpg", "_Result_diff.jpg")
                             if os.path.exists(diff_path):
                                 os.startfile(diff_path)
@@ -969,7 +980,7 @@ class ControlPanel:
                     result_dir = os.path.join(db_path, result_path, folder_name)
                     # Look for JSON files in the result directory
                     for file in os.listdir(result_dir):
-                        if file.endswith('.json'):
+                        if file.endswith('.json') and file.startswith('Result'):
                             json_file = os.path.join(result_dir, file)
                             if os.path.exists(json_file):
                                 json_paths.append(json_file)
