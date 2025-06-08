@@ -282,6 +282,7 @@ class EventListener:
         neto_time = time_total - self.current_test.total_time_in_screenshot_dialog
         time_diff = neto_time - self.last_event_time
 
+        event = None  # <-- Initialize event to None
         try: # the "try" part deal with all the NOT speaceial keys tha one that got valid {key.char}
            event = Event(
                 counter=self.counter,
@@ -294,8 +295,6 @@ class EventListener:
                 step_on=f"{config.get_step_prefix()} {self.counter}",
                 time_from_last=time_diff
             )
-            
-
         except AttributeError:
             # Handle special keys such as print and quit ....
             if key.name in config.get_special_keys() :
@@ -396,13 +395,9 @@ class EventListener:
                     return False
             else:
                 self.save = True  
-        if self.save == True:        
-            # Add event to current test
+        if self.save == True and event is not None:        # <-- Only use event if it was assigned
             self.current_test.add_event(event)
-            
-            # Update the floating window
             self.event_window.update_event(event)
-            
         self.last_event_time = neto_time
 
     def on_scroll(self, x, y, dx, dy):

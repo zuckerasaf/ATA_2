@@ -5,6 +5,7 @@ Configuration utility for managing application settings.
 import json
 import os
 from typing import Dict, Any
+import sys
 
 class Config:
     _instance = None
@@ -20,8 +21,35 @@ class Config:
             self._load_config()
     
     def _load_config(self):
-        """Load configuration from JSON file."""
-        config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+        """
+        Load the document configuration from config.json.
+        
+        This function reads the configuration file that contains application settings.
+        
+       
+                dict: The configuration data containing:
+                    - keyboard: Keyboard settings
+                    - mouse: Mouse settings
+                    - event: Event settings
+                    - paths: Path settings
+                    - Image_compare: Image compare settings
+                    - Control_Panel: Control Panel settings
+                    - startingPoint: Starting point for tests
+                    - Test_Name_Dialog: Test Name Dialog settings
+                    - track_mouse_scroll: Mouse scroll tracking settings
+                    - Test_Name_Dialog: Test Name Dialog settings
+                    - track_mouse_scroll: Mouse scroll tracking settings
+                    - Test_Name_Dialog: Test Name Dialog settings
+
+        """
+        if getattr(sys, 'frozen', False):
+            # Running as a PyInstaller bundle
+            base_path = os.path.dirname(sys.executable)
+            #base_path = sys._MEIPASS
+            config_path = os.path.join(base_path, 'config.json')
+        else:
+            base_path = os.path.dirname(__file__)
+            config_path = os.path.join(base_path, 'config.json')
         try:
             with open(config_path, 'r') as f:
                 self._config = json.load(f)

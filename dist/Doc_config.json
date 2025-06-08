@@ -1,0 +1,83 @@
+{
+    "system_info": {
+        "software": {
+            "SW_1": 
+            {
+                "name": "Windows 10",
+                "version": "10.0.19045",
+                "comment": "this is a comment"
+            },
+            "SW_2": {
+                "name": "ATA",
+                "version": "2.0.0",
+                "comment": "this is a comment"
+            },
+            "SW_3": {
+                "name": "TBD_3",
+                "version": "TBD_3",
+                "comment": "this is a comment"
+            }
+        },
+        "hardware": {
+            "PC_1": {
+                "name": "PC_1",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
+            },
+            "PC_2": {
+                "name": "PC_2",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
+            },
+            "PC_3": {
+                "name": "PC_3",
+                "comment_1": "this is a comment",
+                "comment_2": "this is another comment"
+            }
+        }
+    },
+    "environment": {
+        "Param_1": {
+            "name": "Param_1",
+            "type": "Param_1",
+            "location": "Param_1"
+        },
+        "Param_2": {
+            "name": "Param_2",
+            "type": "Param_2",
+            "location": "Param_2"
+        },
+        "Param_3": {
+            "name": "Param_3",
+            "type": "Param_3",
+            "location": "Param_3"
+        }
+    },
+    "document_settings": {
+        "header": {
+            "company_name": "Elbit Systems",
+            "department": "factory acceptance test",
+            "project": "Project xxx"
+        },
+        "footer": {
+            "confidentiality": "Internal Use Only",
+            "document_version": "1.0"
+        },
+        "formatting": {
+            "font": {
+                "heading": "Arial",
+                "body": "Calibri",
+                "size": {
+                    "heading1": 16,
+                    "heading2": 14,
+                    "body": 11
+                }
+            },
+            "colors": {
+                "header": "#2F5496",
+                "footer": "#2F5496",
+                "table_header": "#D9E1F2"
+            }
+        }
+    }
+} 
