@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.gui package &mdash; ATA_V2  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.tests package" href="src.tests.html" />
+    <link rel="prev" title="src.Doc package" href="src.Doc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ATA_V2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="src.Doc.html">src.Doc package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src.gui package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.gui.control_panel">src.gui.control_panel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.gui.control_panel.ControlPanel"><code class="docutils literal notranslate"><span class="pre">ControlPanel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.gui.control_panel.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.gui.event_window">src.gui.event_window module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.gui.event_window.EventWindow"><code class="docutils literal notranslate"><span class="pre">EventWindow</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.gui.screenshot_dialog">src.gui.screenshot_dialog module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.gui.screenshot_dialog.ScreenshotDialog"><code class="docutils literal notranslate"><span class="pre">ScreenshotDialog</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.gui.test_name_dialog">src.gui.test_name_dialog module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.gui.test_name_dialog.TestNameDialog"><code class="docutils literal notranslate"><span class="pre">TestNameDialog</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.gui">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.tests.html">src.tests package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.utils.html">src.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ATA_V2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">src.gui package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.gui.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src-gui-package">
+<h1>src.gui package<a class="headerlink" href="#src-gui-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-src.gui.control_panel">
+<span id="src-gui-control-panel-module"></span><h2>src.gui.control_panel module<a class="headerlink" href="#module-src.gui.control_panel" title="Link to this heading"></a></h2>
+<p>Control Panel UI for test recording and execution.</p>
+<p>This module provides the main GUI for managing test cases, running tests, updating images, and viewing results.
+It includes functionality for:
+- Recording new test cases with metadata (name, purpose, accuracy level, precondition)
+- Running single or multiple test cases
+- Updating test images
+- Viewing test results and logs
+- Creating test documentation
+- Managing test and result lists</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.gui.control_panel.</span></span><span class="sig-name descname"><span class="pre">ControlPanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Main class for the ATA Control Panel GUI.</p>
+<p>This class implements a singleton pattern to ensure only one instance of the control panel
+is open at a time. It provides a comprehensive interface for test management with the following features:</p>
+<dl class="simple">
+<dt>Test Recording:</dt><dd><ul class="simple">
+<li><p>Create new tests with metadata (name, purpose, accuracy level, precondition)</p></li>
+<li><p>Select starting points for tests</p></li>
+<li><p>Record test steps with mouse and keyboard actions</p></li>
+</ul>
+</dd>
+<dt>Test Execution:</dt><dd><ul class="simple">
+<li><p>Run single or multiple tests</p></li>
+<li><p>View real-time test execution status</p></li>
+<li><p>Handle test failures and errors</p></li>
+</ul>
+</dd>
+<dt>Test Management:</dt><dd><ul class="simple">
+<li><p>View and organize test cases</p></li>
+<li><p>Update test images</p></li>
+<li><p>Create test documentation</p></li>
+<li><p>Navigate to test folders</p></li>
+</ul>
+</dd>
+<dt>Result Management:</dt><dd><ul class="simple">
+<li><p>View test results</p></li>
+<li><p>Access test logs</p></li>
+<li><p>Clear logs</p></li>
+<li><p>View detailed execution status</p></li>
+</ul>
+</dd>
+</dl>
+<p>The GUI is divided into three main sections:
+1. Left panel: List of available tests
+2. Center panel: Control buttons for test operations
+3. Right panel: List of test results
+4. Bottom panel: Status bar showing execution details</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel._instance">
+<span class="sig-name descname"><span class="pre">_instance</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel._instance" title="Link to this definition"></a></dt>
+<dd><p>Class variable implementing the singleton pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.gui.control_panel.ControlPanel" title="src.gui.control_panel.ControlPanel">ControlPanel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.root">
+<span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.root" title="Link to this definition"></a></dt>
+<dd><p>The root Tkinter window</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Tk</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.config" title="Link to this definition"></a></dt>
+<dd><p>Configuration object for loading settings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.config.Config" title="src.utils.config.Config">Config</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.test_listbox">
+<span class="sig-name descname"><span class="pre">test_listbox</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.test_listbox" title="Link to this definition"></a></dt>
+<dd><p>Listbox showing available tests</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Listbox</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.result_listbox">
+<span class="sig-name descname"><span class="pre">result_listbox</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.result_listbox" title="Link to this definition"></a></dt>
+<dd><p>Listbox showing test results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Listbox</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.status_text">
+<span class="sig-name descname"><span class="pre">status_text</span></span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.status_text" title="Link to this definition"></a></dt>
+<dd><p>Text widget showing execution status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Text</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.bring_to_front_and_refresh">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bring_to_front_and_refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.bring_to_front_and_refresh" title="Link to this definition"></a></dt>
+<dd><p>Bring the control panel window to front and refresh its contents.</p>
+<p>This class method:
+1. Checks if an instance exists
+2. Brings the window to front
+3. Refreshes the test and result lists
+4. Refreshes the run log status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the window was brought to front, False if no instance exists</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.clear_log">
+<span class="sig-name descname"><span class="pre">clear_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.clear_log" title="Link to this definition"></a></dt>
+<dd><p>Clear the run log.</p>
+<p>This method:
+1. Clears the run log file
+2. Updates the status display
+3. Shows a confirmation message</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.create_control_buttons_frame">
+<span class="sig-name descname"><span class="pre">create_control_buttons_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.create_control_buttons_frame" title="Link to this definition"></a></dt>
+<dd><p>Create the center frame containing control buttons for test operations.</p>
+<p>This method creates a frame with buttons for:
+- Recording new tests
+- Running tests
+- Navigating to test folders
+- Updating test images
+- Creating test documentation
+- Closing the application
+- Clearing logs</p>
+<p>The buttons are arranged vertically with separators for visual grouping.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.create_document">
+<span class="sig-name descname"><span class="pre">create_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.create_document" title="Link to this definition"></a></dt>
+<dd><p>Create a Word document from selected tests or results.</p>
+<p>This method:
+1. Gets the selected tests or results
+2. Creates a list of JSON paths</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.create_list_frame">
+<span class="sig-name descname"><span class="pre">create_list_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">listbox_var_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.create_list_frame" title="Link to this definition"></a></dt>
+<dd><p>Create a generic list frame with scrollbars.</p>
+<p>This method creates a labeled frame containing a listbox with both vertical
+and horizontal scrollbars. The listbox is stored as an instance variable
+using the provided name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>tk.Widget</em>) – The parent widget to contain the frame</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – The title for the LabelFrame</p></li>
+<li><p><strong>column</strong> (<em>int</em>) – The column number for grid placement</p></li>
+<li><p><strong>listbox_var_name</strong> (<em>str</em>) – The name of the instance variable to store the listbox</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The created frame containing the listbox and scrollbars</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ttk.LabelFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.create_status_bar">
+<span class="sig-name descname"><span class="pre">create_status_bar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.create_status_bar" title="Link to this definition"></a></dt>
+<dd><p>Create the status bar at the bottom of the window.</p>
+<p>This method creates a status bar that shows the execution status of tests.
+Features include:
+- A text widget for displaying status messages
+- Vertical and horizontal scrollbars
+- Line selection on click
+- Read-only text to prevent modification
+- Disabled right-click menu</p>
+<p>The status bar is used to display:
+- Test execution progress
+- Error messages
+- Success/failure status
+- Other important notifications</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.edit_test">
+<span class="sig-name descname"><span class="pre">edit_test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.edit_test" title="Link to this definition"></a></dt>
+<dd><p>Edit the selected test.
+messagebox.showinfo(“Edit Test”, “Edit the selected test.”)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.go_to_folder">
+<span class="sig-name descname"><span class="pre">go_to_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.go_to_folder" title="Link to this definition"></a></dt>
+<dd><p>Open the folder of the selected test or result.</p>
+<p>This method:
+1. Gets the selected item from either listbox
+2. Determines if it’s a test or result
+3. Opens</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.killOldListener">
+<span class="sig-name descname"><span class="pre">killOldListener</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.killOldListener" title="Link to this definition"></a></dt>
+<dd><p>Kill any existing mouse listener process and clean up its lock file.</p>
+<p>This method ensures that only one mouse listener is running at a time by:
+1. Checking for the existence of a lock file
+2. Reading the process ID from the lock file
+3. Terminating the process using taskkill
+4. Removing the lock file</p>
+<p>This is called during application shutdown to prevent orphaned listener processes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.on_closing">
+<span class="sig-name descname"><span class="pre">on_closing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.on_closing" title="Link to this definition"></a></dt>
+<dd><p>Handle the window close event.</p>
+<p>This method is called when the user attempts to close the control panel window.
+It ensures a clean shutdown by:
+1. Killing any active mouse listeners
+2. Clearing the singleton instance
+3. Destroying the root window</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.open_image">
+<span class="sig-name descname"><span class="pre">open_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.open_image" title="Link to this definition"></a></dt>
+<dd><p>Open the image in the image viewer.</p>
+<p>This method:
+1. Checks if there’s any text selected
+2. Extracts the image path from the selected line
+3. Opens the image in the image viewer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.refresh_result_list">
+<span class="sig-name descname"><span class="pre">refresh_result_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.refresh_result_list" title="Link to this definition"></a></dt>
+<dd><p>Refresh the list of test results.</p>
+<p>Populates the result listbox with available result files from the configured directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.refresh_run_log_status">
+<span class="sig-name descname"><span class="pre">refresh_run_log_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.refresh_run_log_status" title="Link to this definition"></a></dt>
+<dd><p>Refresh the run log status display.</p>
+<p>This method:
+1. Gets the current run log content
+2. Updates the status text widget
+3. Ensures the latest content is visible</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.refresh_test_list">
+<span class="sig-name descname"><span class="pre">refresh_test_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.refresh_test_list" title="Link to this definition"></a></dt>
+<dd><p>Refresh the list of test cases.</p>
+<p>Populates the test listbox with available test files from the configured directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.run_test">
+<span class="sig-name descname"><span class="pre">run_test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.run_test" title="Link to this definition"></a></dt>
+<dd><p>Run selected test(s).</p>
+<p>This method:
+1. Gets the selected test(s) from the listbox
+2. Creates a result directory for each test
+3. Runs each test in sequence
+4. Updates the result list when complete</p>
+<p>The test execution:
+- Follows the recorded steps
+- Takes screenshots for comparison
+- Logs the execution results
+- Handles any errors that occur</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.select_line">
+<span class="sig-name descname"><span class="pre">select_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.select_line" title="Link to this definition"></a></dt>
+<dd><p>Select the entire line in the status text widget when clicked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – The Tkinter event object containing click coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.set_status">
+<span class="sig-name descname"><span class="pre">set_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.set_status" title="Link to this definition"></a></dt>
+<dd><p>Update the status text widget with a new message.</p>
+<p>This method:
+1. Clears the current status text
+2. Inserts the new message
+3. Ensures the new message is visible
+4. Updates the display</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – The message to display in the status bar</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.start_recording">
+<span class="sig-name descname"><span class="pre">start_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.start_recording" title="Link to this definition"></a></dt>
+<dd><p>Start recording a new test.</p>
+<p>Shows a dialog to get test metadata, creates a new test directory, saves metadata, and starts the recording process.
+Captures mouse/keyboard actions and screenshots at each step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.control_panel.ControlPanel.update_images">
+<span class="sig-name descname"><span class="pre">update_images</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.ControlPanel.update_images" title="Link to this definition"></a></dt>
+<dd><p>Update images for the selected test.</p>
+<p>This method:
+1. Gets the selected test from the listbox
+2. Updates the test images with current screen state
+3. Refreshes the test list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.gui.control_panel.main">
+<span class="sig-prename descclassname"><span class="pre">src.gui.control_panel.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.control_panel.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-src.gui.event_window">
+<span id="src-gui-event-window-module"></span><h2>src.gui.event_window module<a class="headerlink" href="#module-src.gui.event_window" title="Link to this heading"></a></h2>
+<p>Floating window for displaying event data.</p>
+<p>This module provides a floating window to display event data during test execution.
+It includes an EventWindow class that updates the displayed event information and handles window dragging.</p>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>EventWindow</dt><dd><p>A class that creates a floating window to display event data.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.gui.event_window.</span></span><span class="sig-name descname"><span class="pre">EventWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_total</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.event_window.EventWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tk</span></code></p>
+<p>A class that creates a floating window to display event data.</p>
+<p>This class initializes a Tkinter window that displays event data and allows for window dragging.
+It updates the displayed event information and handles window closing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.frame">
+<span class="sig-name descname"><span class="pre">frame</span></span><a class="headerlink" href="#src.gui.event_window.EventWindow.frame" title="Link to this definition"></a></dt>
+<dd><p>The main frame of the window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ttk.Frame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.event_label">
+<span class="sig-name descname"><span class="pre">event_label</span></span><a class="headerlink" href="#src.gui.event_window.EventWindow.event_label" title="Link to this definition"></a></dt>
+<dd><p>The label that displays the event data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ttk.Label</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#src.gui.event_window.EventWindow.x" title="Link to this definition"></a></dt>
+<dd><p>The initial x-coordinate for window dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.y">
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#src.gui.event_window.EventWindow.y" title="Link to this definition"></a></dt>
+<dd><p>The initial y-coordinate for window dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.start_move">
+<span class="sig-name descname"><span class="pre">start_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.event_window.EventWindow.start_move" title="Link to this definition"></a></dt>
+<dd><p>Start window dragging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.on_move">
+<span class="sig-name descname"><span class="pre">on_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.event_window.EventWindow.on_move" title="Link to this definition"></a></dt>
+<dd><p>Handle window dragging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.update_event">
+<span class="sig-name descname"><span class="pre">update_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.event_window.EventWindow.update_event" title="Link to this definition"></a></dt>
+<dd><p>Update the displayed event data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.event_window.EventWindow.on_closing">
+<span class="sig-name descname"><span class="pre">on_closing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.event_window.EventWindow.on_closing" title="Link to this definition"></a></dt>
+<dd><p>Handle window closing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">on_closing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Handle window closing.</p>
+<p>This function closes any existing mouse listener threads, terminates the running instance,
+and destroys the window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">on_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Handle window dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>tk.Event</em>) – The event that triggered the dragging.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">start_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Start window dragging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>tk.Event</em>) – The event that triggered the start of dragging.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">update_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Update the displayed event data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="src.utils.html#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><em>Event</em></a>) – The event data to display.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.gui.screenshot_dialog">
+<span id="src-gui-screenshot-dialog-module"></span><h2>src.gui.screenshot_dialog module<a class="headerlink" href="#module-src.gui.screenshot_dialog" title="Link to this heading"></a></h2>
+<p>Dialog for configuring screenshot event data.</p>
+<p>This module provides a dialog for configuring screenshot event data, including priority, image name,
+Print Screen window configuration, step description, and step acceptance criteria.</p>
+<section id="id4">
+<h3>Classes<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ScreenshotDialog</dt><dd><p>A class that creates a dialog for configuring screenshot event data.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.gui.screenshot_dialog.</span></span><span class="sig-name descname"><span class="pre">ScreenshotDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screenshot_counter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class that creates a dialog for configuring screenshot event data.</p>
+<p>This class initializes a Tkinter dialog that allows users to configure various aspects of a screenshot event,
+including priority, image name, Print Screen window configuration, step description, and step acceptance criteria.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.result">
+<span class="sig-name descname"><span class="pre">result</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.result" title="Link to this definition"></a></dt>
+<dd><p>The result dictionary containing the dialog data if the user pressed OK, or None if cancelled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.config" title="Link to this definition"></a></dt>
+<dd><p>The configuration object used to retrieve dialog and Print Screen window options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.config.Config" title="src.utils.config.Config">Config</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.screenshot_counter">
+<span class="sig-name descname"><span class="pre">screenshot_counter</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.screenshot_counter" title="Link to this definition"></a></dt>
+<dd><p>The counter for the number of screenshots taken.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.selection_state">
+<span class="sig-name descname"><span class="pre">selection_state</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.selection_state" title="Link to this definition"></a></dt>
+<dd><p>The current state of the area selection process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.start_x">
+<span class="sig-name descname"><span class="pre">start_x</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.start_x" title="Link to this definition"></a></dt>
+<dd><p>The x-coordinate of the first click during area selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.start_y">
+<span class="sig-name descname"><span class="pre">start_y</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.start_y" title="Link to this definition"></a></dt>
+<dd><p>The y-coordinate of the first click during area selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.current_rect">
+<span class="sig-name descname"><span class="pre">current_rect</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.current_rect" title="Link to this definition"></a></dt>
+<dd><p>The current rectangle coordinates during area selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.selection_canvas">
+<span class="sig-name descname"><span class="pre">selection_canvas</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.selection_canvas" title="Link to this definition"></a></dt>
+<dd><p>The canvas used for area selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Canvas or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.mouse_listener">
+<span class="sig-name descname"><span class="pre">mouse_listener</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.mouse_listener" title="Link to this definition"></a></dt>
+<dd><p>The mouse listener for area selection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>mouse.Listener or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog.overlay_window">
+<span class="sig-name descname"><span class="pre">overlay_window</span></span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog.overlay_window" title="Link to this definition"></a></dt>
+<dd><p>The overlay window showing the selected area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Toplevel or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._create_overlay_window">
+<span class="sig-name descname"><span class="pre">_create_overlay_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._create_overlay_window" title="Link to this definition"></a></dt>
+<dd><p>Create a transparent overlay window showing the selected area.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._remove_overlay_window">
+<span class="sig-name descname"><span class="pre">_remove_overlay_window</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._remove_overlay_window" title="Link to this definition"></a></dt>
+<dd><p>Remove the overlay window if it exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._start_area_selection">
+<span class="sig-name descname"><span class="pre">_start_area_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._start_area_selection" title="Link to this definition"></a></dt>
+<dd><p>Start the area selection process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._on_click">
+<span class="sig-name descname"><span class="pre">_on_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._on_click" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse click event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._reset_ps_values">
+<span class="sig-name descname"><span class="pre">_reset_ps_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._reset_ps_values" title="Link to this definition"></a></dt>
+<dd><p>Reset Print Screen window values to defaults.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._on_ok">
+<span class="sig-name descname"><span class="pre">_on_ok</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._on_ok" title="Link to this definition"></a></dt>
+<dd><p>Handle OK button click.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.screenshot_dialog.ScreenshotDialog._on_cancel">
+<span class="sig-name descname"><span class="pre">_on_cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.screenshot_dialog.ScreenshotDialog._on_cancel" title="Link to this definition"></a></dt>
+<dd><p>Handle Cancel button click.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.gui.test_name_dialog">
+<span id="src-gui-test-name-dialog-module"></span><h2>src.gui.test_name_dialog module<a class="headerlink" href="#module-src.gui.test_name_dialog" title="Link to this heading"></a></h2>
+<p>Dialog for entering test name and starting point.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.gui.test_name_dialog.</span></span><span class="sig-name descname"><span class="pre">TestNameDialog</span></span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dialog for entering a new test’s metadata, including name, purpose, accuracy level, and starting point.</p>
+<p>This dialog is used in the Control Panel to prompt the user for information when creating a new test.
+It provides fields for the test name, test purpose, accuracy level (with a slider), and starting point (from a list).
+The dialog validates the test name and returns the collected data as a dictionary when the user confirms.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog.result">
+<span class="sig-name descname"><span class="pre">result</span></span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog.result" title="Link to this definition"></a></dt>
+<dd><p>The result dictionary containing the test parameters if the user pressed OK, or None if cancelled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog.config" title="Link to this definition"></a></dt>
+<dd><p>The configuration object used to retrieve dialog and starting point options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.config.Config" title="src.utils.config.Config">Config</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog.dialog">
+<span class="sig-name descname"><span class="pre">dialog</span></span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog.dialog" title="Link to this definition"></a></dt>
+<dd><p>The Tkinter toplevel window for the dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tk.Toplevel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog.update_accuracy_label">
+<span class="sig-name descname"><span class="pre">update_accuracy_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog.update_accuracy_label" title="Link to this definition"></a></dt>
+<dd><p>Update the accuracy level label when the slider changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog._on_ok">
+<span class="sig-name descname"><span class="pre">_on_ok</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog._on_ok" title="Link to this definition"></a></dt>
+<dd><p>Handle the OK button click, validate input, and store the result.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.gui.test_name_dialog.TestNameDialog._on_cancel">
+<span class="sig-name descname"><span class="pre">_on_cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.gui.test_name_dialog.TestNameDialog._on_cancel" title="Link to this definition"></a></dt>
+<dd><p>Handle the Cancel button click and close the dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">update_accuracy_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd><p>Update the accuracy level label when the slider changes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.gui">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.gui" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src.Doc.html" class="btn btn-neutral float-left" title="src.Doc package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.tests.html" class="btn btn-neutral float-right" title="src.tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Your Name.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+ATA_V2 documentation
+====================
+
+Welcome to the documentation for the ATA_V2 Automated Testing Application.
+
+This project provides a Tkinter-based GUI for automated test management, execution, and reporting.
+
+.. toctree::
+   :maxdepth=2
+   :caption: Contents:
+
+   modules 

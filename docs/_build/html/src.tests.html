@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.tests package &mdash; ATA_V2  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.utils package" href="src.utils.html" />
+    <link rel="prev" title="src.gui package" href="src.gui.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ATA_V2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="src.Doc.html">src.Doc package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.gui.html">src.gui package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src.tests package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.tests.recordTest">src.tests.recordTest module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.tests.recordTest.EventListener"><code class="docutils literal notranslate"><span class="pre">EventListener</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.tests.recordTest.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.tests.runTest">src.tests.runTest module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.tests.runTest.TestRunner"><code class="docutils literal notranslate"><span class="pre">TestRunner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.tests.runTest.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.utils.html">src.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ATA_V2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">src.tests package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src-tests-package">
+<h1>src.tests package<a class="headerlink" href="#src-tests-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-src.tests.recordTest">
+<span id="src-tests-recordtest-module"></span><h2>src.tests.recordTest module<a class="headerlink" href="#module-src.tests.recordTest" title="Link to this heading"></a></h2>
+<p>Test recording module for capturing mouse and keyboard events.</p>
+<p>This module provides functionality to record mouse and keyboard events during test execution.
+It includes an EventListener class that captures mouse movements, clicks, keyboard presses, and scroll events,
+and updates a floating event window with the recorded events.</p>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>EventListener</dt><dd><p>A class that listens for mouse and keyboard events and records them for test execution.</p>
+</dd>
+</dl>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>main(test_name=None, starting_point=”none”)</dt><dd><p>Main function to start the test recording process.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.tests.recordTest.</span></span><span class="sig-name descname"><span class="pre">EventListener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precondition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nothing</span> <span class="pre">for</span> <span class="pre">now'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.EventListener" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class that listens for mouse and keyboard events and records them for test execution.</p>
+<p>This class captures mouse movements, clicks, keyboard presses, and scroll events,
+and updates a floating event window with the recorded events.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.counter">
+<span class="sig-name descname"><span class="pre">counter</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.counter" title="Link to this definition"></a></dt>
+<dd><p>Counter for the number of events recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.screenshot_counter">
+<span class="sig-name descname"><span class="pre">screenshot_counter</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.screenshot_counter" title="Link to this definition"></a></dt>
+<dd><p>Counter for the number of screenshots taken.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.start_time" title="Link to this definition"></a></dt>
+<dd><p>The start time of the recording in milliseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.last_event_time">
+<span class="sig-name descname"><span class="pre">last_event_time</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.last_event_time" title="Link to this definition"></a></dt>
+<dd><p>The time of the last recorded event in milliseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.neto_time">
+<span class="sig-name descname"><span class="pre">neto_time</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.neto_time" title="Link to this definition"></a></dt>
+<dd><p>The net time elapsed since the start of the recording, excluding time spent in the screenshot dialog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.running">
+<span class="sig-name descname"><span class="pre">running</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.running" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether the event listener is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.save">
+<span class="sig-name descname"><span class="pre">save</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.save" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether to save the recorded events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.event_window">
+<span class="sig-name descname"><span class="pre">event_window</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.event_window" title="Link to this definition"></a></dt>
+<dd><p>The floating window that displays the recorded events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.gui.html#src.gui.event_window.EventWindow" title="src.gui.event_window.EventWindow">EventWindow</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.quit_key">
+<span class="sig-name descname"><span class="pre">quit_key</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.quit_key" title="Link to this definition"></a></dt>
+<dd><p>The key used to quit the recording.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.print_screen_key">
+<span class="sig-name descname"><span class="pre">print_screen_key</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.print_screen_key" title="Link to this definition"></a></dt>
+<dd><p>The key used to take a screenshot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.test_name">
+<span class="sig-name descname"><span class="pre">test_name</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.test_name" title="Link to this definition"></a></dt>
+<dd><p>The name of the test being recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.dialog_open">
+<span class="sig-name descname"><span class="pre">dialog_open</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.dialog_open" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether a dialog is open.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.last_press_position">
+<span class="sig-name descname"><span class="pre">last_press_position</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.last_press_position" title="Link to this definition"></a></dt>
+<dd><p>The last position where a mouse button was pressed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.last_press_time">
+<span class="sig-name descname"><span class="pre">last_press_time</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.last_press_time" title="Link to this definition"></a></dt>
+<dd><p>The time when the last mouse button was pressed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.drag_positions">
+<span class="sig-name descname"><span class="pre">drag_positions</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.drag_positions" title="Link to this definition"></a></dt>
+<dd><p>List of positions recorded during a drag operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.drag_times">
+<span class="sig-name descname"><span class="pre">drag_times</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.drag_times" title="Link to this definition"></a></dt>
+<dd><p>List of times recorded during a drag operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.current_test">
+<span class="sig-name descname"><span class="pre">current_test</span></span><a class="headerlink" href="#src.tests.recordTest.EventListener.current_test" title="Link to this definition"></a></dt>
+<dd><p>The current test instance being recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.test.Test" title="src.utils.test.Test">Test</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.on_move">
+<span class="sig-name descname"><span class="pre">on_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.EventListener.on_move" title="Link to this definition"></a></dt>
+<dd><p>Track mouse movement during drag operations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.on_click">
+<span class="sig-name descname"><span class="pre">on_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.EventListener.on_click" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse click events, including drag operations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.on_press">
+<span class="sig-name descname"><span class="pre">on_press</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.EventListener.on_press" title="Link to this definition"></a></dt>
+<dd><p>Handle keyboard press events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.recordTest.EventListener.on_scroll">
+<span class="sig-name descname"><span class="pre">on_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.EventListener.on_scroll" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse scroll events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">on_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse click events, including drag operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – The x-coordinate of the mouse.</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – The y-coordinate of the mouse.</p></li>
+<li><p><strong>button</strong> (<em>Button</em>) – The mouse button that was clicked.</p></li>
+<li><p><strong>pressed</strong> (<em>bool</em>) – Whether the button was pressed or released.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the event should be tracked, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">on_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Track mouse movement during drag operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – The x-coordinate of the mouse.</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – The y-coordinate of the mouse.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">on_press</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Handle keyboard press events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>Key</em>) – The key that was pressed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the event should be tracked, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">on_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse scroll events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – The x-coordinate of the mouse.</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – The y-coordinate of the mouse.</p></li>
+<li><p><strong>dx</strong> (<em>int</em>) – The horizontal scroll amount.</p></li>
+<li><p><strong>dy</strong> (<em>int</em>) – The vertical scroll amount.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the event should be tracked, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.tests.recordTest.main">
+<span class="sig-prename descclassname"><span class="pre">src.tests.recordTest.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precondition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nothing</span> <span class="pre">for</span> <span class="pre">now'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.recordTest.main" title="Link to this definition"></a></dt>
+<dd><p>Main function to start the test recording process.</p>
+<p>This function initializes the event window and event listener, starts mouse and keyboard listeners,
+and runs the main event loop for recording test events. It is the entry point for running a test recording session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the test being recorded. If None, a default name is used.</p></li>
+<li><p><strong>starting_point</strong> (<em>str</em><em>, </em><em>optional</em>) – The starting point for the test recording. Defaults to “none”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Test object containing all recorded events and metadata.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.test.Test" title="src.utils.test.Test">Test</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.tests.runTest">
+<span id="src-tests-runtest-module"></span><h2>src.tests.runTest module<a class="headerlink" href="#module-src.tests.runTest" title="Link to this heading"></a></h2>
+<p>Script to create and run a Test instance from a JSON file.</p>
+<p>This module provides functionality to load a test from a JSON file and execute its recorded events,
+including mouse, keyboard, and screenshot actions. It includes a TestRunner class for event execution
+and a main() function as the entry point for running a test.</p>
+<section id="id4">
+<h3>Classes<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>TestRunner</dt><dd><p>Class for executing test events loaded from a JSON file.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Functions<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>main(test_full_name=None, callback=None)</dt><dd><p>Main entry point for running a test from a JSON file.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.tests.runTest.</span></span><span class="sig-name descname"><span class="pre">TestRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_folder_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for executing test events loaded from a JSON file.</p>
+<p>This class handles the execution of mouse, keyboard, and screenshot events as recorded in a test JSON file.
+It manages event timing, window updates, and test completion signaling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.counter">
+<span class="sig-name descname"><span class="pre">counter</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.counter" title="Link to this definition"></a></dt>
+<dd><p>Counter for the number of events executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.screenshot_counter">
+<span class="sig-name descname"><span class="pre">screenshot_counter</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.screenshot_counter" title="Link to this definition"></a></dt>
+<dd><p>Counter for the number of screenshots taken.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.start_time" title="Link to this definition"></a></dt>
+<dd><p>The start time of the test execution in milliseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.last_event_time">
+<span class="sig-name descname"><span class="pre">last_event_time</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.last_event_time" title="Link to this definition"></a></dt>
+<dd><p>The time of the last executed event in milliseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.save">
+<span class="sig-name descname"><span class="pre">save</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.save" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether to save the executed events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.test">
+<span class="sig-name descname"><span class="pre">test</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.test" title="Link to this definition"></a></dt>
+<dd><p>The Test object containing the events to execute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.test.Test" title="src.utils.test.Test">Test</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.running">
+<span class="sig-name descname"><span class="pre">running</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.running" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether the test is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.quit_key">
+<span class="sig-name descname"><span class="pre">quit_key</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.quit_key" title="Link to this definition"></a></dt>
+<dd><p>The key used to quit the test execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.print_screen_key">
+<span class="sig-name descname"><span class="pre">print_screen_key</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.print_screen_key" title="Link to this definition"></a></dt>
+<dd><p>The key used to take a screenshot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.keyboard_listener">
+<span class="sig-name descname"><span class="pre">keyboard_listener</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.keyboard_listener" title="Link to this definition"></a></dt>
+<dd><p>The keyboard listener for quit key detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keyboard.Listener or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.mouse_controller">
+<span class="sig-name descname"><span class="pre">mouse_controller</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.mouse_controller" title="Link to this definition"></a></dt>
+<dd><p>The mouse controller for simulating mouse events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>mouse.Controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.keyboard_controller">
+<span class="sig-name descname"><span class="pre">keyboard_controller</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.keyboard_controller" title="Link to this definition"></a></dt>
+<dd><p>The keyboard controller for simulating keyboard events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keyboard.Controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.event_window">
+<span class="sig-name descname"><span class="pre">event_window</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.event_window" title="Link to this definition"></a></dt>
+<dd><p>The floating window that displays the executed events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.gui.html#src.gui.event_window.EventWindow" title="src.gui.event_window.EventWindow">EventWindow</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.result_folder_path">
+<span class="sig-name descname"><span class="pre">result_folder_path</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.result_folder_path" title="Link to this definition"></a></dt>
+<dd><p>Path to the result folder for saving test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.test_completed">
+<span class="sig-name descname"><span class="pre">test_completed</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.test_completed" title="Link to this definition"></a></dt>
+<dd><p>Flag indicating whether the test has completed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.completion_queue">
+<span class="sig-name descname"><span class="pre">completion_queue</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.completion_queue" title="Link to this definition"></a></dt>
+<dd><p>Queue for signaling test completion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>queue.Queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.current_test">
+<span class="sig-name descname"><span class="pre">current_test</span></span><a class="headerlink" href="#src.tests.runTest.TestRunner.current_test" title="Link to this definition"></a></dt>
+<dd><p>The Test object for the current execution session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.test.Test" title="src.utils.test.Test">Test</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.on_press">
+<span class="sig-name descname"><span class="pre">on_press</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.on_press" title="Link to this definition"></a></dt>
+<dd><p>Handle keyboard press events during test execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.peek_next_event">
+<span class="sig-name descname"><span class="pre">peek_next_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.peek_next_event" title="Link to this definition"></a></dt>
+<dd><p>Look at the next event without consuming it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner._create_event">
+<span class="sig-name descname"><span class="pre">_create_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_diff</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner._create_event" title="Link to this definition"></a></dt>
+<dd><p>Helper function to create an Event object for execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.execute_mouse_event">
+<span class="sig-name descname"><span class="pre">execute_mouse_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.execute_mouse_event" title="Link to this definition"></a></dt>
+<dd><p>Execute a mouse event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.execute_keyboard_event">
+<span class="sig-name descname"><span class="pre">execute_keyboard_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.execute_keyboard_event" title="Link to this definition"></a></dt>
+<dd><p>Execute a keyboard event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.execute_mouse_scroll">
+<span class="sig-name descname"><span class="pre">execute_mouse_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.execute_mouse_scroll" title="Link to this definition"></a></dt>
+<dd><p>Execute a mouse scroll event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.tests.runTest.TestRunner.run_test">
+<span class="sig-name descname"><span class="pre">run_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.TestRunner.run_test" title="Link to this definition"></a></dt>
+<dd><p>Execute all events in the test.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">execute_keyboard_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd><p>Execute a keyboard event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="src.utils.html#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><em>Event</em></a>) – The keyboard event to execute.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">execute_mouse_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd><p>Execute a mouse event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="src.utils.html#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><em>Event</em></a>) – The mouse event to execute.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">execute_mouse_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd><p>Execute a mouse scroll event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="src.utils.html#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><em>Event</em></a>) – The mouse scroll event to execute.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">on_press</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd><p>Handle keyboard press events during test execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>Key</em>) – The key that was pressed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>False if the quit key is pressed, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">peek_next_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd><p>Look at the next event without consuming it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>current_index</strong> (<em>int</em>) – The current index in the event list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The next event if available, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.utils.html#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event">Event</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">run_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd><p>Execute all events in the test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event_window</strong> (<a class="reference internal" href="src.gui.html#src.gui.event_window.EventWindow" title="src.gui.event_window.EventWindow"><em>EventWindow</em></a>) – The floating window to display event updates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.tests.runTest.main">
+<span class="sig-prename descclassname"><span class="pre">src.tests.runTest.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_full_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_total</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.tests.runTest.main" title="Link to this definition"></a></dt>
+<dd><p>Main entry point for running a test from a JSON file.</p>
+<p>This function loads a test from a JSON file, creates the event window, and executes the test events.
+It supports an optional callback to be called upon test completion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_full_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The full path to the test JSON file to run.</p></li>
+<li><p><strong>callback</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function to call when the test completes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the test ran successfully, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.tests" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src.gui.html" class="btn btn-neutral float-left" title="src.gui package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.utils.html" class="btn btn-neutral float-right" title="src.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Your Name.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

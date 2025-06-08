@@ -41,23 +41,23 @@ class ControlPanel:
     This class implements a singleton pattern to ensure only one instance of the control panel
     is open at a time. It provides a comprehensive interface for test management with the following features:
 
-    - Test Recording:
+    Test Recording:
         * Create new tests with metadata (name, purpose, accuracy level, precondition)
         * Select starting points for tests
         * Record test steps with mouse and keyboard actions
 
-    - Test Execution:
+    Test Execution:
         * Run single or multiple tests
         * View real-time test execution status
         * Handle test failures and errors
 
-    - Test Management:
+    Test Management:
         * View and organize test cases
         * Update test images
         * Create test documentation
         * Navigate to test folders
 
-    - Result Management:
+    Result Management:
         * View test results
         * Access test logs
         * Clear logs
@@ -69,22 +69,14 @@ class ControlPanel:
     3. Right panel: List of test results
     4. Bottom panel: Status bar showing execution details
 
-    Attributes
-    ----------
-    _instance : ControlPanel
-        Class variable implementing the singleton pattern
-    root : tk.Tk
-        The root Tkinter window
-    config : Config
-        Configuration object for loading settings
-    test_listbox : tk.Listbox
-        Listbox showing available tests
-    result_listbox : tk.Listbox
-        Listbox showing test results
-    status_text : tk.Text
-        Text widget showing execution status
+    Attributes:
+        _instance (ControlPanel): Class variable implementing the singleton pattern
+        root (tk.Tk): The root Tkinter window
+        config (Config): Configuration object for loading settings
+        test_listbox (tk.Listbox): Listbox showing available tests
+        result_listbox (tk.Listbox): Listbox showing test results
+        status_text (tk.Text): Text widget showing execution status
     """
-
     _instance = None  # Class variable to track the open instance
 
     def __init__(self, root):
@@ -290,7 +282,12 @@ class ControlPanel:
         ttk.Button(frame, text="Open Selected Image", command=self.open_image).pack(pady=5)
 
     def select_line(self, event):
-        """Select the entire line when clicked."""
+        """
+        Select the entire line in the status text widget when clicked.
+
+        Args:
+            event: The Tkinter event object containing click coordinates.
+        """
         try:
             # Get the line number where the click occurred
             index = self.status_text.index(f"@{event.x},{event.y}")
@@ -398,12 +395,10 @@ class ControlPanel:
                     listbox.itemconfig(listbox.size()-1, {'fg': 'green'})
                 
     def refresh_test_list(self):
-        """Refresh the list of test .
+        """
+        Refresh the list of test cases.
 
-        This method:
-        1. Gets the test directory path from config
-        2. Populates the test listbox with JSON files
-        3. Enables the listbox for interaction
+        Populates the test listbox with available test files from the configured directory.
         """
         # Get paths from config
         paths_config = self.config.get('paths', {})
@@ -420,12 +415,10 @@ class ControlPanel:
         )
         
     def refresh_result_list(self):
-        """Refresh the list of test results.
+        """
+        Refresh the list of test results.
 
-        This method:
-        1. Gets the result directory path from config
-        2. Populates the result listbox with JSON files
-        3. Enables the listbox for interaction
+        Populates the result listbox with available result files from the configured directory.
         """
         # Get paths from config
         paths_config = self.config.get('paths', {})
@@ -476,17 +469,8 @@ class ControlPanel:
         """
         Start recording a new test.
 
-        This method:
-        1. Shows a dialog to get test metadata (name, purpose, accuracy, precondition)
-        2. Creates a new test directory
-        3. Saves the test metadata
-        4. Starts the recording process
-        5. Updates the test list when recording is complete
-
-        The recording process captures:
-        - Mouse movements and clicks
-        - Keyboard input
-        - Screenshots at each step
+        Shows a dialog to get test metadata, creates a new test directory, saves metadata, and starts the recording process.
+        Captures mouse/keyboard actions and screenshots at each step.
         """
         try:
             # First, try to kill any existing listener

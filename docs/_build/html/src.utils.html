@@ -1,0 +1,1344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.utils package &mdash; ATA_V2  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="src.tests package" href="src.tests.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ATA_V2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="src.Doc.html">src.Doc package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.gui.html">src.gui package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.tests.html">src.tests package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src.utils package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.app_lifecycle">src.utils.app_lifecycle module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.app_lifecycle.restart_control_panel"><code class="docutils literal notranslate"><span class="pre">restart_control_panel()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.config">src.utils.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.event_mouse_keyboard">src.utils.event_mouse_keyboard module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.event_mouse_keyboard.Event"><code class="docutils literal notranslate"><span class="pre">Event</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.general_func">src.utils.general_func module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.general_func.create_test_from_json"><code class="docutils literal notranslate"><span class="pre">create_test_from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.general_func.display_test_data"><code class="docutils literal notranslate"><span class="pre">display_test_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.general_func.generate_random_word"><code class="docutils literal notranslate"><span class="pre">generate_random_word()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.general_func.speech_to_text"><code class="docutils literal notranslate"><span class="pre">speech_to_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.general_func.update_images_to_test"><code class="docutils literal notranslate"><span class="pre">update_images_to_test()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.picture_handle">src.utils.picture_handle module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.capture_screen"><code class="docutils literal notranslate"><span class="pre">capture_screen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.compare_images"><code class="docutils literal notranslate"><span class="pre">compare_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.debug_print"><code class="docutils literal notranslate"><span class="pre">debug_print()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.find_image_offset"><code class="docutils literal notranslate"><span class="pre">find_image_offset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.generate_screenshot_filename"><code class="docutils literal notranslate"><span class="pre">generate_screenshot_filename()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.picture_handle.save_screenshot"><code class="docutils literal notranslate"><span class="pre">save_screenshot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.process_utils">src.utils.process_utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.cleanup"><code class="docutils literal notranslate"><span class="pre">cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.cleanup_and_restart"><code class="docutils literal notranslate"><span class="pre">cleanup_and_restart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.close_existing_mouse_threads"><code class="docutils literal notranslate"><span class="pre">close_existing_mouse_threads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.is_already_running"><code class="docutils literal notranslate"><span class="pre">is_already_running()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.register_cleanup"><code class="docutils literal notranslate"><span class="pre">register_cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.save_test"><code class="docutils literal notranslate"><span class="pre">save_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.process_utils.terminate_running_instance"><code class="docutils literal notranslate"><span class="pre">terminate_running_instance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.run_log">src.utils.run_log module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.run_log.RunLog"><code class="docutils literal notranslate"><span class="pre">RunLog</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.starting_points">src.utils.starting_points module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.starting_points.go_to_starting_point"><code class="docutils literal notranslate"><span class="pre">go_to_starting_point()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.starting_points.minimize_all_windows"><code class="docutils literal notranslate"><span class="pre">minimize_all_windows()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.test">src.utils.test module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.test.CompactJSONEncoder"><code class="docutils literal notranslate"><span class="pre">CompactJSONEncoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.test.Test"><code class="docutils literal notranslate"><span class="pre">Test</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils.test_list">src.utils.test_list module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.utils.test_list.TeslList"><code class="docutils literal notranslate"><span class="pre">TeslList</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-src.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ATA_V2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">src.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src-utils-package">
+<h1>src.utils package<a class="headerlink" href="#src-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-src.utils.app_lifecycle">
+<span id="src-utils-app-lifecycle-module"></span><h2>src.utils.app_lifecycle module<a class="headerlink" href="#module-src.utils.app_lifecycle" title="Link to this heading"></a></h2>
+<p>Application lifecycle management functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.app_lifecycle.restart_control_panel">
+<span class="sig-prename descclassname"><span class="pre">src.utils.app_lifecycle.</span></span><span class="sig-name descname"><span class="pre">restart_control_panel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.app_lifecycle.restart_control_panel" title="Link to this definition"></a></dt>
+<dd><p>Restart (or bring to front) the control panel application.</p>
+<p>This function either brings an existing control panel to front or creates a new one
+if none exists. It includes error handling for window management operations.</p>
+</dd></dl>
+
+</section>
+<section id="module-src.utils.config">
+<span id="src-utils-config-module"></span><h2>src.utils.config module<a class="headerlink" href="#module-src.utils.config" title="Link to this heading"></a></h2>
+<p>Configuration utility for managing application settings.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.config.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#src.utils.config.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get" title="Link to this definition"></a></dt>
+<dd><p>Get a configuration value using dot notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Control_Panel_config">
+<span class="sig-name descname"><span class="pre">get_Control_Panel_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Control_Panel_config" title="Link to this definition"></a></dt>
+<dd><p>Get the Control Panel configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Event_Monitor_window_opacity">
+<span class="sig-name descname"><span class="pre">get_Event_Monitor_window_opacity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Event_Monitor_window_opacity" title="Link to this definition"></a></dt>
+<dd><p>Get the window opacity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Event_Monitor_window_position">
+<span class="sig-name descname"><span class="pre">get_Event_Monitor_window_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Event_Monitor_window_position" title="Link to this definition"></a></dt>
+<dd><p>Get the window position as (x, y).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Event_Monitor_window_size">
+<span class="sig-name descname"><span class="pre">get_Event_Monitor_window_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Event_Monitor_window_size" title="Link to this definition"></a></dt>
+<dd><p>Get the window size as (width, height).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Event_Monitor_window_title">
+<span class="sig-name descname"><span class="pre">get_Event_Monitor_window_title</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Event_Monitor_window_title" title="Link to this definition"></a></dt>
+<dd><p>Get the window title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Image_compare_config">
+<span class="sig-name descname"><span class="pre">get_Image_compare_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Image_compare_config" title="Link to this definition"></a></dt>
+<dd><p>Get the Image compare configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Print_Screen_window_position">
+<span class="sig-name descname"><span class="pre">get_Print_Screen_window_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Print_Screen_window_position" title="Link to this definition"></a></dt>
+<dd><p>Get the Print Screen window position as (x, y).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Print_Screen_window_size">
+<span class="sig-name descname"><span class="pre">get_Print_Screen_window_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Print_Screen_window_size" title="Link to this definition"></a></dt>
+<dd><p>Get the Print Screen window size as (width, height).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_Test_Name_Dialog_config">
+<span class="sig-name descname"><span class="pre">get_Test_Name_Dialog_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_Test_Name_Dialog_config" title="Link to this definition"></a></dt>
+<dd><p>Get the Test Name Dialog configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_event_priority">
+<span class="sig-name descname"><span class="pre">get_event_priority</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_event_priority" title="Link to this definition"></a></dt>
+<dd><p>Get the event priority level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_keyboard_quit_key">
+<span class="sig-name descname"><span class="pre">get_keyboard_quit_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_keyboard_quit_key" title="Link to this definition"></a></dt>
+<dd><p>Get the configured quit key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_print_screen_key">
+<span class="sig-name descname"><span class="pre">get_print_screen_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_print_screen_key" title="Link to this definition"></a></dt>
+<dd><p>Get the configured print screen key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_run_log_path">
+<span class="sig-name descname"><span class="pre">get_run_log_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_run_log_path" title="Link to this definition"></a></dt>
+<dd><p>Get the run log path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_scroll_sensitivity">
+<span class="sig-name descname"><span class="pre">get_scroll_sensitivity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_scroll_sensitivity" title="Link to this definition"></a></dt>
+<dd><p>Get the mouse scroll sensitivity factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_special_keys">
+<span class="sig-name descname"><span class="pre">get_special_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_special_keys" title="Link to this definition"></a></dt>
+<dd><p>Get the list of special keys to track.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_starting_point">
+<span class="sig-name descname"><span class="pre">get_starting_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_starting_point" title="Link to this definition"></a></dt>
+<dd><p>Get the configured starting point for tests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_step_prefix">
+<span class="sig-name descname"><span class="pre">get_step_prefix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_step_prefix" title="Link to this definition"></a></dt>
+<dd><p>Get the step prefix for event steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.get_track_drag_threshold">
+<span class="sig-name descname"><span class="pre">get_track_drag_threshold</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.get_track_drag_threshold" title="Link to this definition"></a></dt>
+<dd><p>Get the track drag threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.should_track_mouse_press">
+<span class="sig-name descname"><span class="pre">should_track_mouse_press</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.should_track_mouse_press" title="Link to this definition"></a></dt>
+<dd><p>Check if mouse press events should be tracked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.should_track_mouse_release">
+<span class="sig-name descname"><span class="pre">should_track_mouse_release</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.should_track_mouse_release" title="Link to this definition"></a></dt>
+<dd><p>Check if mouse release events should be tracked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.config.Config.should_track_mouse_scroll">
+<span class="sig-name descname"><span class="pre">should_track_mouse_scroll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.config.Config.should_track_mouse_scroll" title="Link to this definition"></a></dt>
+<dd><p>Check if mouse scroll events should be tracked.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.utils.event_mouse_keyboard">
+<span id="src-utils-event-mouse-keyboard-module"></span><h2>src.utils.event_mouse_keyboard module<a class="headerlink" href="#module-src.utils.event_mouse_keyboard" title="Link to this heading"></a></h2>
+<p>Event class for storing mouse and keyboard events.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.event_mouse_keyboard.</span></span><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neto_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_from_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_in_screenshot_dialog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_desc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_accep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_resau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_resau_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pic_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screenshot_counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pic_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pic_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pic_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pic_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event.PRIORITY_HIGH">
+<span class="sig-name descname"><span class="pre">PRIORITY_HIGH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'high'</span></em><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event.PRIORITY_HIGH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event.PRIORITY_LOW">
+<span class="sig-name descname"><span class="pre">PRIORITY_LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'low'</span></em><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event.PRIORITY_LOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event.PRIORITY_MEDIUM">
+<span class="sig-name descname"><span class="pre">PRIORITY_MEDIUM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'medium'</span></em><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event.PRIORITY_MEDIUM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Create an Event instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.event_mouse_keyboard.Event.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.event_mouse_keyboard.Event.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert event to dictionary format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.utils.general_func">
+<span id="src-utils-general-func-module"></span><h2>src.utils.general_func module<a class="headerlink" href="#module-src.utils.general_func" title="Link to this heading"></a></h2>
+<p>General utility functions for test automation.</p>
+<p>This module provides helper functions for speech-to-text, random word generation, test data loading,
+summary display, and image management for test automation workflows.</p>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>speech_to_text(duration=5, sample_rate=16000, model_size=”base”)</dt><dd><p>Record from microphone and convert speech to text using Whisper.</p>
+</dd>
+<dt>generate_random_word()</dt><dd><p>Generate a random 5-letter word.</p>
+</dd>
+<dt>display_test_data(file_path)</dt><dd><p>Display a summary of test data from a JSON file.</p>
+</dd>
+<dt>create_test_from_json(filepath)</dt><dd><p>Create a Test instance from a JSON file.</p>
+</dd>
+<dt>update_images_to_test(result_folder_path)</dt><dd><p>Copy all _Result.jpg images from a result folder to the corresponding test folder.</p>
+</dd>
+</dl>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.general_func.create_test_from_json">
+<span class="sig-prename descclassname"><span class="pre">src.utils.general_func.</span></span><span class="sig-name descname"><span class="pre">create_test_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.general_func.create_test_from_json" title="Link to this definition"></a></dt>
+<dd><p>Create a Test instance from a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – Path to the test JSON file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Test object if loaded successfully, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.test.Test" title="src.utils.test.Test">Test</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.general_func.display_test_data">
+<span class="sig-prename descclassname"><span class="pre">src.utils.general_func.</span></span><span class="sig-name descname"><span class="pre">display_test_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.general_func.display_test_data" title="Link to this definition"></a></dt>
+<dd><p>Display a summary of test data from a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Path to the test JSON file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of [step name, result] pairs summarizing the test steps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.general_func.generate_random_word">
+<span class="sig-prename descclassname"><span class="pre">src.utils.general_func.</span></span><span class="sig-name descname"><span class="pre">generate_random_word</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.general_func.generate_random_word" title="Link to this definition"></a></dt>
+<dd><p>Generate a random 5-letter word.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A random 5-letter lowercase word.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.general_func.speech_to_text">
+<span class="sig-prename descclassname"><span class="pre">src.utils.general_func.</span></span><span class="sig-name descname"><span class="pre">speech_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'base'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.general_func.speech_to_text" title="Link to this definition"></a></dt>
+<dd><p>Record from microphone and convert speech to text using Whisper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration</strong> (<em>int</em><em>, </em><em>optional</em>) – Recording duration in seconds (default: 5).</p></li>
+<li><p><strong>sample_rate</strong> (<em>int</em><em>, </em><em>optional</em>) – Audio sample rate (default: 16000).</p></li>
+<li><p><strong>model_size</strong> (<em>str</em><em>, </em><em>optional</em>) – Size of the Whisper model to use (default: “base”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transcribed text if successful, otherwise None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.general_func.update_images_to_test">
+<span class="sig-prename descclassname"><span class="pre">src.utils.general_func.</span></span><span class="sig-name descname"><span class="pre">update_images_to_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_folder_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.general_func.update_images_to_test" title="Link to this definition"></a></dt>
+<dd><p>Copy all _Result.jpg images from a result folder to the corresponding test folder.
+Only copies files ending with _Result.jpg and renames them by removing _Result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>result_folder_path</strong> (<em>str</em>) – Path to the result folder (e.g., ‘DB/Result/20250517_224058_paint’).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if images were copied successfully, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.utils.picture_handle">
+<span id="src-utils-picture-handle-module"></span><h2>src.utils.picture_handle module<a class="headerlink" href="#module-src.utils.picture_handle" title="Link to this heading"></a></h2>
+<p>Utility module for handling pictures and screenshots in the ATA testing framework.</p>
+<p>This module provides functionality for:
+- Capturing screenshots of specific screen regions
+- Generating and managing screenshot filenames
+- Comparing images with tolerance and position matching
+- Finding image offsets and matches
+- Saving screenshots to disk</p>
+<p>The module uses OpenCV for image processing and PIL for screenshot capture.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.capture_screen">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">capture_screen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.capture_screen" title="Link to this definition"></a></dt>
+<dd><p>Capture a screenshot of a specific region of the screen.</p>
+<p>This function captures a rectangular region of the screen based on the provided
+coordinates and dimensions. It uses PIL’s ImageGrab for the actual capture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – X-coordinate of the top-left corner</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – Y-coordinate of the top-left corner</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – Width of the capture region</p></li>
+<li><p><strong>height</strong> (<em>int</em>) – Height of the capture region</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The captured screenshot, or None if capture fails</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PIL.Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.compare_images">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">compare_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_folder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.compare_images" title="Link to this definition"></a></dt>
+<dd><p>Compare two images and generate a visual difference map with detailed analysis.</p>
+<p>This function performs a comprehensive comparison between source and target images:
+1. Position Matching:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Uses template matching to find the target image within the source</p></li>
+<li><p>Applies configurable position tolerance</p></li>
+<li><p>Trims images to matched regions for accurate comparison</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Pixel Analysis:
+- Converts images to grayscale for comparison
+- Calculates absolute difference between images
+- Applies threshold to identify significant differences
+- Generates difference visualization</p></li>
+<li><p>Debug Features (when enabled):
+- Saves intermediate images (grayscale, difference, threshold)
+- Creates detailed debug log with pixel statistics
+- Generates visual difference map
+- Provides percentage match calculation</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em>) – Path to the source (reference) image</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – Path to the target (test) image to compare against source</p></li>
+<li><p><strong>result_folder</strong> (<em>str</em>) – Directory to save comparison results and debug outputs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(match_percentage, result_image_path)</dt><dd><ul class="simple">
+<li><p>match_percentage (int): Percentage of matching pixels (0-100)</p></li>
+<li><p>result_image_path (str): Path to the generated difference visualization</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.debug_print">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">debug_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_log</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.debug_print" title="Link to this definition"></a></dt>
+<dd><p>Helper function to print to both console and debug log</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.find_image_offset">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">find_image_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_gray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_gray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.find_image_offset" title="Link to this definition"></a></dt>
+<dd><p>Find if target image exists within source image and calculate its offset.</p>
+<p>This function uses template matching to find if the target image exists within
+the source image, accounting for potential position differences. It includes:
+- Edge trimming to improve matching
+- Confidence scoring
+- Debug visualization
+- Position offset calculation
+- Extraction of matching region from source image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_gray</strong> (<em>numpy.ndarray</em>) – Grayscale source image</p></li>
+<li><p><strong>target_gray</strong> (<em>numpy.ndarray</em>) – Grayscale target image to find</p></li>
+<li><p><strong>result_folder</strong> (<em>str</em><em>, </em><em>optional</em>) – Folder to save debug visualization</p></li>
+<li><p><strong>debug</strong> (<em>bool</em>) – If True, saves visualization of the match</p></li>
+<li><p><strong>target_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the target image for debug files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(found, offset_x, offset_y, match_confidence, matched_region)</dt><dd><ul class="simple">
+<li><p>found (bool): True if target was found in source</p></li>
+<li><p>offset_x (int): X coordinate of the match</p></li>
+<li><p>offset_y (int): Y coordinate of the match</p></li>
+<li><p>match_confidence (float): Confidence of the match (0-1)</p></li>
+<li><p>matched_region (numpy.ndarray): The region from source image that matches the trimmed target</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.generate_screenshot_filename">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">generate_screenshot_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_folder_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.generate_screenshot_filename" title="Link to this definition"></a></dt>
+<dd><p>Generate a filename for a screenshot based on test context and state.</p>
+<p>This function creates appropriate filenames for screenshots based on whether
+they are being taken during test recording or result comparison. It handles
+both test and result directory structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_name</strong> (<em>str</em>) – Name of the test</p></li>
+<li><p><strong>counter</strong> (<em>int</em>) – Screenshot counter number</p></li>
+<li><p><strong>image_name</strong> (<em>str</em>) – Name to use for the image</p></li>
+<li><p><strong>state</strong> (<em>str</em>) – Current state (“Recording” or “Result”)</p></li>
+<li><p><strong>result_folder_path</strong> (<em>str</em>) – Path to the result folder when in result state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(filename, full_path) or (None, None) if generation fails</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.picture_handle.save_screenshot">
+<span class="sig-prename descclassname"><span class="pre">src.utils.picture_handle.</span></span><span class="sig-name descname"><span class="pre">save_screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screenshot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.picture_handle.save_screenshot" title="Link to this definition"></a></dt>
+<dd><p>Save a screenshot to disk.</p>
+<p>This function saves a PIL Image object to the specified filepath in JPEG format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>screenshot</strong> (<em>PIL.Image</em>) – The screenshot to save</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – The path where the screenshot should be saved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filepath where the screenshot was saved, or None if save fails</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.utils.process_utils">
+<span id="src-utils-process-utils-module"></span><h2>src.utils.process_utils module<a class="headerlink" href="#module-src.utils.process_utils" title="Link to this heading"></a></h2>
+<p>Utility functions for process management.</p>
+<p>This module provides utility functions for managing processes, including checking if an instance is already running,
+terminating running instances, cleaning up resources, and saving test data.</p>
+<section id="id1">
+<h3>Functions<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cleanup(lock_file)</dt><dd><p>Remove the lock file upon program exit.</p>
+</dd>
+<dt>terminate_running_instance(lock_file)</dt><dd><p>Terminate the running instance of the program.</p>
+</dd>
+<dt>is_already_running(lock_file)</dt><dd><p>Check if another instance of the program is already running.</p>
+</dd>
+<dt>register_cleanup(lock_file)</dt><dd><p>Register the cleanup function to run on exit.</p>
+</dd>
+<dt>cleanup_and_restart(event_window, lock_file=”cursor_listener.lock”)</dt><dd><p>Clean up resources and restart the control panel.</p>
+</dd>
+<dt>save_test(test, test_name=None, state=”running”, result_folder_path=None)</dt><dd><p>Save the test data to a file.</p>
+</dd>
+<dt>close_existing_mouse_threads()</dt><dd><p>Close any existing mouse listener threads.</p>
+</dd>
+</dl>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.cleanup">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Remove the lock file upon program exit.</p>
+<p>This function is registered to run on program exit to ensure the lock file is removed,
+preventing issues with subsequent program starts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lock_file</strong> (<em>str</em>) – Path to the lock file to remove.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If an error occurs while removing the lock file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.cleanup_and_restart">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">cleanup_and_restart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lock_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cursor_listener.lock'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.cleanup_and_restart" title="Link to this definition"></a></dt>
+<dd><p>Clean up resources and restart the control panel.</p>
+<p>This function deletes the lock file, destroys the event window, and restarts the control panel.
+It ensures proper cleanup sequence and handles potential errors during the process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_window</strong> (<em>tk.Toplevel</em>) – The event window to destroy.</p></li>
+<li><p><strong>lock_file</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the lock file to remove.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.close_existing_mouse_threads">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">close_existing_mouse_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.close_existing_mouse_threads" title="Link to this definition"></a></dt>
+<dd><p>Close any existing mouse listener threads.</p>
+<p>This function iterates through all threads and stops any thread named “MouseListener”,
+ensuring no lingering threads remain active.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.is_already_running">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">is_already_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.is_already_running" title="Link to this definition"></a></dt>
+<dd><p>Check if another instance of the program is already running.</p>
+<p>If another instance is found, this function attempts to terminate it.
+If the lock file still exists after termination, it indicates a failure to terminate the instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lock_file</strong> (<em>str</em>) – Path to the lock file to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if another instance is running and couldn’t be terminated, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If an error occurs while checking if the program is running.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.register_cleanup">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">register_cleanup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.register_cleanup" title="Link to this definition"></a></dt>
+<dd><p>Register the cleanup function to run on exit.</p>
+<p>This function registers the cleanup function to be called when the program exits,
+ensuring the lock file is removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lock_file</strong> (<em>str</em>) – Path to the lock file to remove on exit.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.save_test">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">save_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'running'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_folder_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.save_test" title="Link to this definition"></a></dt>
+<dd><p>Save the test data to a file.</p>
+<p>This function saves the test data to a JSON file, either in the result directory or the test directory,
+depending on the state of the test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test</strong> (<a class="reference internal" href="#src.utils.test.Test" title="src.utils.test.Test"><em>Test</em></a>) – The Test object to save.</p></li>
+<li><p><strong>test_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the test.</p></li>
+<li><p><strong>state</strong> (<em>str</em><em>, </em><em>optional</em>) – State of the test (“running” or “recording”).</p></li>
+<li><p><strong>result_folder_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the result folder.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the saved file, or None if an error occurs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If an error occurs while saving the test data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.process_utils.terminate_running_instance">
+<span class="sig-prename descclassname"><span class="pre">src.utils.process_utils.</span></span><span class="sig-name descname"><span class="pre">terminate_running_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.process_utils.terminate_running_instance" title="Link to this definition"></a></dt>
+<dd><p>Terminate the running instance of the program.</p>
+<p>This function reads the PID from the lock file and attempts to terminate the process.
+It first tries a graceful termination and waits for the process to end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lock_file</strong> (<em>str</em>) – Path to the lock file containing the PID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the process was successfully terminated, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If an error occurs while terminating the process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.utils.run_log">
+<span id="src-utils-run-log-module"></span><h2>src.utils.run_log module<a class="headerlink" href="#module-src.utils.run_log" title="Link to this heading"></a></h2>
+<p>RunLog utility for collecting and managing log messages during test or recording runs.</p>
+<p>This class provides a simple interface to accumulate messages, retrieve summaries, and save logs to a file.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.run_log.</span></span><span class="sig-name descname"><span class="pre">RunLog</span></span><a class="headerlink" href="#src.utils.run_log.RunLog" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>General-purpose log container for test/recording runs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.run_log.RunLog.add" title="Link to this definition"></a></dt>
+<dd><p>Add a message to the log with an optional level.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog.get_summary">
+<span class="sig-name descname"><span class="pre">get_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.run_log.RunLog.get_summary" title="Link to this definition"></a></dt>
+<dd><p>Get the full log as a single string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.run_log.RunLog.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear all log entries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog.save_to_file">
+<span class="sig-name descname"><span class="pre">save_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.run_log.RunLog.save_to_file" title="Link to this definition"></a></dt>
+<dd><p>Save the log to a text file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Add a message to the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – The message to add.</p></li>
+<li><p><strong>level</strong> (<em>str</em><em>, </em><em>optional</em>) – The log level (e.g., ‘INFO’, ‘WARNING’, ‘ERROR’). Default is ‘INFO’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Clear all log entries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.run_log.RunLog.erase">
+<span class="sig-name descname"><span class="pre">erase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.run_log.RunLog.erase" title="Link to this definition"></a></dt>
+<dd><p>Erase the log file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – The path to the file where the log should be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">get_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Get the full log as a single string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The concatenated log entries, separated by newlines.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">save_to_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>Save the log to a text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – The path to the file where the log should be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.utils.starting_points">
+<span id="src-utils-starting-points-module"></span><h2>src.utils.starting_points module<a class="headerlink" href="#module-src.utils.starting_points" title="Link to this heading"></a></h2>
+<p>Module for handling different starting points for test recording.</p>
+<p>This module provides utility functions to navigate to various starting points before beginning test recording.
+It supports minimizing all windows to show the desktop, opening Google Maps, and placeholders for other points.</p>
+<section id="id5">
+<h3>Functions<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>minimize_all_windows()</dt><dd><p>Minimize all windows to show the desktop.</p>
+</dd>
+<dt>go_to_starting_point(point_name)</dt><dd><p>Navigate to the specified starting point before beginning test recording.</p>
+</dd>
+</dl>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.starting_points.go_to_starting_point">
+<span class="sig-prename descclassname"><span class="pre">src.utils.starting_points.</span></span><span class="sig-name descname"><span class="pre">go_to_starting_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.starting_points.go_to_starting_point" title="Link to this definition"></a></dt>
+<dd><p>Navigate to the specified starting point before beginning test recording.</p>
+<p>This function handles navigation to various predefined starting points, such as minimizing all windows to show the desktop
+or opening Google Maps in a browser. It uses configuration values for URLs and supports extension for additional points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>point_name</strong> (<em>str</em>) – Name of the starting point (e.g., “desktop”, “google_map”, “point_B”, “point_C”, “none”).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if successfully navigated to the starting point, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.starting_points.minimize_all_windows">
+<span class="sig-prename descclassname"><span class="pre">src.utils.starting_points.</span></span><span class="sig-name descname"><span class="pre">minimize_all_windows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.starting_points.minimize_all_windows" title="Link to this definition"></a></dt>
+<dd><p>Minimize all windows to show the desktop.</p>
+<p>This function simulates the Windows + D hotkey to minimize all open windows and display the desktop.
+It is useful for setting a clean starting point before running or recording a test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the hotkey press fails or pyautogui encounters an error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.utils.test">
+<span id="src-utils-test-module"></span><h2>src.utils.test module<a class="headerlink" href="#module-src.utils.test" title="Link to this heading"></a></h2>
+<p>Test class for storing test-related data including events, configuration, and comments.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.test.CompactJSONEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.test.</span></span><span class="sig-name descname"><span class="pre">CompactJSONEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.CompactJSONEncoder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONEncoder</span></code></p>
+<p>Custom JSON encoder that handles base64 image data in a compact way.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.CompactJSONEncoder.default">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.CompactJSONEncoder.default" title="Link to this definition"></a></dt>
+<dd><p>Implement this method in a subclass such that it returns
+a serializable object for <code class="docutils literal notranslate"><span class="pre">o</span></code>, or calls the base implementation
+(to raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>).</p>
+<p>For example, to support arbitrary iterators, you could
+implement default like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="c1"># Let the base class default method raise the TypeError</span>
+    <span class="k">return</span> <span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.CompactJSONEncoder.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.CompactJSONEncoder.encode" title="Link to this definition"></a></dt>
+<dd><p>Return a JSON string representation of a Python data structure.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">json.encoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONEncoder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">JSONEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]})</span>
+<span class="go">&#39;{&quot;foo&quot;: [&quot;bar&quot;, &quot;baz&quot;]}&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.test.Test">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.test.</span></span><span class="sig-name descname"><span class="pre">Test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numOfSteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepResult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_time_in_screenshot_dialog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.add_event">
+<span class="sig-name descname"><span class="pre">add_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.add_event" title="Link to this definition"></a></dt>
+<dd><p>Add an event to the test’s event list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event"><em>Event</em></a>) – The event to add</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.clear_events">
+<span class="sig-name descname"><span class="pre">clear_events</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.clear_events" title="Link to this definition"></a></dt>
+<dd><p>Clear all events from the test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Create a Test instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – Dictionary containing test data</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>New Test instance</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.test.Test" title="src.utils.test.Test">Test</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.get_accuracy_level">
+<span class="sig-name descname"><span class="pre">get_accuracy_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.get_accuracy_level" title="Link to this definition"></a></dt>
+<dd><p>Get the accuracy level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current accuracy level (1-10)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.get_events">
+<span class="sig-name descname"><span class="pre">get_events</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.get_events" title="Link to this definition"></a></dt>
+<dd><p>Get all events in the test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all events</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#src.utils.event_mouse_keyboard.Event" title="src.utils.event_mouse_keyboard.Event">Event</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.get_starting_point">
+<span class="sig-name descname"><span class="pre">get_starting_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.get_starting_point" title="Link to this definition"></a></dt>
+<dd><p>Get the starting point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current starting point</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.get_test_comments">
+<span class="sig-name descname"><span class="pre">get_test_comments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.get_test_comments" title="Link to this definition"></a></dt>
+<dd><p>Get both comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(comment1, comment2)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.get_test_config">
+<span class="sig-name descname"><span class="pre">get_test_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.get_test_config" title="Link to this definition"></a></dt>
+<dd><p>Get the configuration string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current configuration string</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.save_to_file">
+<span class="sig-name descname"><span class="pre">save_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'C:\\\\projectPython\\\\ATA_V2\\\\DB'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.save_to_file" title="Link to this definition"></a></dt>
+<dd><p>Save the test data to a JSON file in the specified directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>) – Path to the database directory</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the saved file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.set_accuracy_level">
+<span class="sig-name descname"><span class="pre">set_accuracy_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.set_accuracy_level" title="Link to this definition"></a></dt>
+<dd><p>Set the accuracy level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level</strong> (<em>int</em>) – Accuracy level between 1-10</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If level is not between 1 and 10</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.set_starting_point">
+<span class="sig-name descname"><span class="pre">set_starting_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.set_starting_point" title="Link to this definition"></a></dt>
+<dd><p>Set the starting point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>str</em>) – Starting point for the test</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If point is not a valid starting point</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.set_test_comments">
+<span class="sig-name descname"><span class="pre">set_test_comments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.set_test_comments" title="Link to this definition"></a></dt>
+<dd><p>Set both comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comment1</strong> (<em>str</em>) – First comment</p></li>
+<li><p><strong>comment2</strong> (<em>str</em>) – Second comment</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.set_test_config">
+<span class="sig-name descname"><span class="pre">set_test_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.set_test_config" title="Link to this definition"></a></dt>
+<dd><p>Set the configuration string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>str</em>) – The configuration string to set</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test.Test.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test.Test.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert the test to a dictionary format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary representation of the test</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.utils.test_list">
+<span id="src-utils-test-list-module"></span><h2>src.utils.test_list module<a class="headerlink" href="#module-src.utils.test_list" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.utils.test_list.TeslList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.test_list.</span></span><span class="sig-name descname"><span class="pre">TeslList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tests</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numOfTest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test_list.TeslList" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test_list.TeslList.add_test">
+<span class="sig-name descname"><span class="pre">add_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test_list.TeslList.add_test" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test_list.TeslList.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test_list.TeslList.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.utils.test_list.TeslList.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.test_list.TeslList.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.utils" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src.tests.html" class="btn btn-neutral float-left" title="src.tests package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Your Name.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
