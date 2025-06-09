@@ -185,4 +185,19 @@ class Config:
             'frame_threshold': 20
         })
     
+    def get_invalid_chars(self) -> str:
+        """Get the invalid characters."""
+        return self.get('keyboard.invalid_chars', '<>:\"/\\|?*')
+    
+    def get_comment_screen_key(self) -> str:
+        """Get the comment screen key."""
+        return self.get('keyboard.comment_screen_key', 'f3')
+    
+    def get_Comment_Panel_config(self) -> dict:
+        """Get the Comment Panel configuration."""
+        width = self.get('Comment_Panel.CSW_width', 600)
+        height = self.get('Comment_Panel.CSW_height', 200)
+        position = self.get('Comment_Panel.CSW_position', {'x': 20, 'y': 20})
+        return (width, height, position)
+
     

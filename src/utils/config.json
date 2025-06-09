@@ -28,7 +28,9 @@
             "pause",
             "print_screen"
         ],
-        "print_screen_key": "f2"
+        "print_screen_key": "f2",
+        "invalid_chars": "<>:\"/\\|?*",
+        "comment_screen_key": "f3"
     },
     "mouse": {
         "track_press": true,
@@ -57,6 +59,14 @@
         "PSW_position": {
             "PSW_x": 10,
             "PSW_y": 10
+        }
+    },
+    "Comment_Screen_window": {
+        "CSW_width": 600,
+        "CSW_height": 200,
+        "CSW_position": {
+            "CSW_x": 920,
+            "CSW_y": 20
         }
     },
     "startingPoint": ["none", "desktop", "google_map", "point_B", "point_C"],

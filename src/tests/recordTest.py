@@ -33,6 +33,7 @@ from src.utils.process_utils import is_already_running, register_cleanup, cleanu
 from src.utils.app_lifecycle import restart_control_panel
 from src.gui.event_window import EventWindow
 from src.gui.screenshot_dialog import ScreenshotDialog
+from src.gui.Comment_Dialog import CommentDialog
 from src.utils.starting_points import go_to_starting_point
 from src.utils.run_log import RunLog
 
@@ -130,6 +131,7 @@ class EventListener:
         self.event_window = event_window
         self.quit_key = config.get_keyboard_quit_key()
         self.print_screen_key = config.get_print_screen_key()
+        self.comment_key = config.get_comment_screen_key()
         self.test_name = test_name
         self.dialog_open = False  # Flag to track if dialog is open
         self.last_press_position = None  # Track last press position
@@ -375,6 +377,14 @@ class EventListener:
                      
                     self.save = True
             
+
+                if key.name == self.comment_key:
+                    self.save = False # stop the saving of the listener data while deal with the comment
+                    print("\nComment key pressed...")
+                    dialog = CommentDialog()
+                    dialog.dialog.wait_window()
+                    event.step_desc = dialog.result
+                    self.save = True
 
                 if key.name == self.quit_key:
 

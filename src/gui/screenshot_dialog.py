@@ -133,7 +133,7 @@ class ScreenshotDialog:
             ).pack(side="left", padx=5)
         
         # Image Name Section
-        ttk.Label(main_frame, text="Enter name to the saved image ...:").pack(anchor="w", pady=(0, 5))
+        ttk.Label(main_frame, text="Image name (for the image file name):").pack(anchor="w", pady=(0, 5))
         self.imagName_text = Text(main_frame, height=1, width=40)
         self.imagName_text.insert("1.0", f"Pic_{self.screenshot_counter:03d}")
         self.imagName_text.pack(fill="x", pady=(0, 10))
@@ -397,6 +397,25 @@ class ScreenshotDialog:
         image_name = self.imagName_text.get("1.0", "end-1c")
         step_desc = self.desc_text.get("1.0", "end-1c")
         step_accep = self.accep_text.get("1.0", "end-1c")
+
+
+        if not image_name:
+            messagebox.showwarning(
+                "Invalid Name",
+                "Please enter a image name.",
+                parent=self.dialog
+            )
+            return
+        
+        # Check for invalid characters
+        invalid_chars = '<>:"/\\|?*'
+        if any(char in image_name for char in invalid_chars):
+            messagebox.showwarning(
+                "Invalid Name",
+                f"Image name cannot contain any of these characters: {invalid_chars}",
+                parent=self.dialog
+            )
+            return
         
         # Get Print Screen window values
         try:

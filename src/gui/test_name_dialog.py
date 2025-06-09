@@ -54,7 +54,7 @@ class TestNameDialog:
         main_frame.pack(fill="both", expand=True)
         
         # Test Name Section
-        ttk.Label(main_frame, text="Test Name:").pack(anchor="w", pady=(0, 5))
+        ttk.Label(main_frame, text="Test Name (for the test file name):").pack(anchor="w", pady=(0, 5))
         self.name_var = tk.StringVar()
         self.name_entry = ttk.Entry(main_frame, textvariable=self.name_var, width=40)
         self.name_entry.insert(0, generate_random_word())
