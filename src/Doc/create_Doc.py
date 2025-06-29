@@ -37,8 +37,18 @@ def load_doc_config():
             - environment: Test environment settings
             - document_settings: Formatting and styling preferences
     """
-    try:
+    
+    if getattr(sys, 'frozen', False):
+        # Running as a PyInstaller bundle
+        user_dir = os.path.dirname(sys.executable)
+        #base_path = sys._MEIPASS
+        config_path = os.path.join(user_dir,'Doc_config.json')
+    else:
         config_path = os.path.join(os.path.dirname(__file__), "Doc_config.json")
+    
+    
+    try:
+        #config_path = os.path.join(os.path.dirname(__file__), "Doc_config.json")
         with open(config_path, 'r') as f:
             return json.load(f)
     except Exception as e:

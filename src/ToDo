@@ -1,6 +1,3 @@
-add the Doc option + versions configuration 
-make the major fuckup option - it will end the testing
-update the event window with counter of testing 
-write tthe stsutus to the event logger 
-add scroll
+add edit option to test 
 add handle the control panel in multi momitor configuration 
+
